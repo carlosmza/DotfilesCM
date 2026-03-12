@@ -1,0 +1,61 @@
+layout {
+   tab name="Nvim" focus=true {
+       pane name="󰫢" focus=true
+   }
+   default_tab_template {
+       children
+       pane size=1 borderless=true {
+            plugin location="file:/home/carlos/.config/zellij/plugins/zjstatus.wasm" {
+
+                // Style mode
+                mode_normal        "#[fg=#ea9a97] NORMAL "
+                mode_locked        "#[fg=#ea9a97] LOCKED "
+                mode_pane          "#[fg=#ea9a97] PANE "
+                mode_tab        "#[fg=#ea9a97] TAB "
+                mode_scroll        "#[fg=#ea9a97] SCROLL "
+                mode_enter_search          "#[fg=#ea9a97] ENT_SEARCH "
+                mode_search        "#[fg=#ea9a97] SEARCH "
+                mode_resize        "#[fg=#ea9a97] RESIZE "
+                mode_rename_tab          "#[fg=#ea9a97] REN_TAB "
+                mode_move        "#[fg=#ea9a97] MOVE "
+                mode_rename_pane          "#[fg=#ea9a97] REN_PANE "
+                mode_session        "#[fg=#ea9a97] SESSION "
+                mode_prompt          "#[fg=#ea9a97] PROMPT "
+
+                // Notifications
+                notification_format_unread           "#[fg=#89B4FA,bg=#181825,blink]  #[fg=#89B4FA,bg=#181825] {message} "
+                notification_format_no_notifications "#[fg=#89B4FA,bg=#181825,dim]   "
+                notification_show_interval           "10"
+
+                // Format
+                format_left   "#[] {session} {mode}"
+                format_center  "{tabs}"
+                format_right  " {command_git_branch}"
+                format_space  "+"
+
+                border_enabled  "false"
+                border_char     "─"
+                border_format   "#[fg=#6e6a86]{char}"
+                border_position "top"
+
+                hide_frame_for_single_pane "false"
+
+
+                // Tabs
+                tab_normal   "#[fg=#6e6a86] {name} "
+                tab_active   "#[fg=#9ccfd8,bold,italic] {name} "
+                tab_rename   "#[fg=#eba0ac,bg=#181825] {index} {name} {floating_indicator} "
+
+                command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
+                command_git_branch_format      "#[fg=#3e8fb0] {stdout} "
+                command_git_branch_interval    "10"
+                command_git_branch_rendermode  "static"
+
+                // indicators
+                tab_sync_indicator       "<> "
+                tab_fullscreen_indicator "[] "
+                tab_floating_indicator   "o"
+              }
+          }
+      }
+}

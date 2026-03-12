@@ -1,0 +1,20 @@
+{
+	"clock": {
+		"format": "{:%H:%M}",
+		"format-alt": "{:%A, %B %d, %Y (%R)}  ",
+		"tooltip-format": "<tt><small>{calendar}</small></tt>",
+		"calendar": {
+				"mode": "month",
+				"mode-mon-col": 3,
+				"weeks-pos": "right",
+				"on-scroll": 1,
+				"format": {
+						"months":   "<span color='#a0c4ff'><b>{}</b></span>", // Azul hielo
+						"days":     "<span color='#ffffff'><b>{}</b></span>", // Blanco
+						"weeks":    "<span color='#8a2be2'><b>W{}</b></span>", // Violeta oscuro
+						"weekdays": "<span color='#d8a0ff'><b>{}</b></span>", // Violeta claro
+						"today":    "<span color='#000000' background='#a0c4ff'><b> {} </b></span>" // Texto negro fondo azul
+				}
+		}
+	}
+}

@@ -1,0 +1,15 @@
+themes {
+  sakura {
+    fg "#c5a3a9"        // na: main text
+    bg "#1c1a1c"        // bl: dark background
+    red "#2B1720"       // ia: pink
+    green "#878fb9"     // va: blue
+    yellow "#9e97d0"    // ca: purple (replaces yellow)
+    blue "#878fb9"      // va: blue
+    magenta "#9e97d0"   // ca: purple
+    cyan "#878fb9"      // va: blue
+    orange "#9e97d0"    // ca: purple
+    black "#1c1a1c"     // bl: background
+    white "#c5a3a9"     // na: light text
+  }
+}

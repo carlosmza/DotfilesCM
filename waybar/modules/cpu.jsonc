@@ -1,0 +1,8 @@
+{
+	"cpu": {
+		"interval":1,
+		"format": "󰻠 {usage}% ",
+		"max-length": 10,
+		"on-click-right": "kitty htop"
+	}
+}

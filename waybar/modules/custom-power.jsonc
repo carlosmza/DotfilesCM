@@ -1,0 +1,7 @@
+{
+	"custom/power": {
+			"format" : "⏻",
+			"tooltip": false,
+			"on-click": "/home/carlosm/.config/scripts/system/power-menu.sh" // Menu file in resources folder
+	}
+}

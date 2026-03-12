@@ -1,0 +1,37 @@
+[mgr]
+ratio = [ 2, 3, 3]
+sort_by = "btime"
+sort_reverse = true
+sort_sensitive = true
+sort_dir_first = true
+linemode = "btime"
+show_hidden = true
+show_symlink = true
+title_format = ""
+# Modificar si baja el rendimiento
+max_width = 60
+max_height = 80
+image_filter = "lanczos3"
+image_quality = 90
+# mouse_events   = [ "click", "scroll" ]
+
+[edit]
+# esto no funciona, checar
+exclude = [ "*.ipynb" ]
+
+[open]
+prepend_rules = [
+  { name = "*.pdf", use = "pdf" },
+  { name = "*.docx", use = "office" },
+  { name = "*.xlsx", use = "office" },
+  { name = "*.pptx", use = "office" },
+  { name = "*.png", use = "open" },
+  { name = "*.jpg", use = "open" },
+  { name = "*.mp4", use = "open" },
+  { name = "*.ipynb", use = "notebook" },
+  { name = "*.txt", use = "edit" },
+  { name = "*.c", use = "edit" },
+  { name = "*.py", use = "edit" },
+  { name = "*.md", use = "edit" }
+]
+

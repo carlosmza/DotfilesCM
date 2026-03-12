@@ -1,0 +1,6 @@
+@import "../fonts/font-ln.rasi"
+@import "../layouts/list-power.rasi"
+
+configuration {
+    show-icons: true;
+}

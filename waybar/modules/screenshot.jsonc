@@ -1,0 +1,7 @@
+{
+	"custom/screenshot": {
+		"format": " ",
+		"tooltip": false,
+		"on-click": "/home/carlosm/.config/bin/screenshot-switcher.sh"
+	}
+}

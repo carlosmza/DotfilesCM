@@ -1,0 +1,14 @@
+{
+	"pulseaudio": {
+		"format": "{icon}  {volume}%",
+		"format-bluetooth": " {volume}",
+		"format-bluetooth-muted":" ",
+		"tooltip": false,
+		"format-muted": "",
+		"format-icons": {
+			"default": ["󰝟", "", "󰕾" , ""]
+		},
+		"on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+		"on-click-right": "pavucontrol"
+	}
+}

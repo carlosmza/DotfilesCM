@@ -1,0 +1,69 @@
+{
+    "layer": "top",
+    "include": [
+        "modules/custom-separator.jsonc",
+        "modules/custom-power.jsonc",
+        "modules/custom-theme.jsonc",
+        "modules/battery.jsonc",
+        "modules/clock.jsonc",
+        "modules/cpu.jsonc",
+        "modules/disk.jsonc",
+        "modules/memory.jsonc",
+        "modules/network.jsonc",
+        "modules/pulseaudio.jsonc",
+        "modules/hyprland-workspace.jsonc",
+        "modules/screenshot.jsonc",
+        "modules/clipboard-history.jsonc"
+    ],
+
+    // ── ISLA IZQUIERDA ──────────────────────────────────────────────────────
+    // Navegación: dónde estás y acciones rápidas de sesión
+    "modules-left": [
+        "custom/separator",
+        "hyprland/workspaces",
+        "custom/separator",
+        "custom/clipboard-history",
+        "custom/separator",
+        "custom/theme"
+        // "custom/screenshot"
+    ],
+
+    // ── ISLA CENTRAL ────────────────────────────────────────────────────────
+    // Solo el reloj — protagonista, siempre visible y centrado
+    "modules-center": [
+        "clock"
+    ],
+
+    // ── ISLA DERECHA ────────────────────────────────────────────────────────
+    // Sistema y control: hardware → audio/batería/red → acciones
+    "modules-right": [
+        // "group/hardware",
+				"cpu",
+				"memory",
+				"disk",
+        // "custom/separator",
+        "pulseaudio",
+        "battery",
+        "network",
+        "custom/separator"
+        // "custom/power"
+    ],
+
+    // ── GRUPOS ──────────────────────────────────────────────────────────────
+
+    // Hardware: cpu es el ícono visible, al hover se despliegan memory y disk
+    "group/hardware": {
+        "orientation": "horizontal",
+        "modules": [
+            "cpu",
+            "memory",
+            "disk"
+        ],
+        "drawer": {
+            "transition-duration": 400,
+            "children-class": "not-power",
+            "transition-left-to-right": false  // se despliega hacia la izquierda
+        }
+    }
+}
+

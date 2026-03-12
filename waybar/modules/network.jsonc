@@ -1,0 +1,12 @@
+{
+	"network": {
+		"format-ethernet": "󰈀 ", // Solo icono
+		"format-wifi": " ",  // Solo icono
+		"format-disconnected": " ",
+		"tooltip-format": "{ifname} via {gwaddr}",
+		"tooltip-format-wifi": "{essid} ({signalStrength}%) ",
+		"tooltip-format-ethernet": "{ifname} ",
+		"tooltip-format-disconnected": "Disconnected",
+		"on-click": "kitty nmtui"
+	}
+}

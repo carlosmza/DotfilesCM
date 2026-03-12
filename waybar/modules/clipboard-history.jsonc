@@ -1,0 +1,7 @@
+{
+	"custom/clipboard-history": {
+		"format": " ",
+		"tooltip": false,
+		"on-click": "/home/carlosm/.config/scripts/utilities/clipboard-history.sh"
+	}
+}

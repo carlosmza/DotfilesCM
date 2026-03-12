@@ -1,0 +1,31 @@
+@import "../fonts/font-ln.rasi"
+@import "../themes/theme-ln.rasi"
+
+configuration {
+    show-icons: false;
+}
+
+window {
+    width: 700px;
+    background-color: @bg;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+listview {
+    lines: 12;
+    spacing: 3px;
+}
+
+element {
+    padding: 5px;
+    border-radius: 6px;
+}
+
+element selected {
+    background-color: @bg-alt;
+}
+
+element-text {
+    margin: 0px 0px 0px 5px;
+}

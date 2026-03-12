@@ -1,0 +1,7 @@
+{
+	"disk": {
+		"interval": 1,
+		"format": " {percentage_used}%",
+		"format-alt": " {used}"
+	}
+}

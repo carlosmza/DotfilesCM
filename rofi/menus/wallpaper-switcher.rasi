@@ -1,0 +1,6 @@
+@import "../fonts/font-ln.rasi"
+@import "../layouts/grid.rasi"
+// @import "../themes/theme-ln.rasi"
+configuration {
+    show-icons: true;
+}

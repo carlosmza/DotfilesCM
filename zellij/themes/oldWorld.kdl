@@ -1,0 +1,15 @@
+themes {
+  oldWorld {
+    fg "#C9C7CD"        // na: main text (light gray)
+    bg "#000000"        // bl: dark background (almost black)
+    red "#EA83A5"       // ia: intense pink
+    green "#90B99F"     // va: soft green
+    yellow "#E6B99D"    // ca: beige (replaces yellow)
+    blue "#85B5BA"      // va: blue-green
+    magenta "#92A2D5"   // ca: lavender blue
+    cyan "#85B5BA"      // va: blue-green
+    orange "#F5A191"    // ca: light peach
+    black "#000000"     // bl: dark background (almost black)
+    white "#C9C7CD"     // na: light text (light gray)
+  }
+}
