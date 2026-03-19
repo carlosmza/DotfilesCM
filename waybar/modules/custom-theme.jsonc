@@ -1,7 +1,0 @@
-{
-	"custom/theme": {
-		"format": " ",
-		"tooltip": false,
-		"on-click": "/home/carlosm/.config/scripts/themes/theme-switcher.sh"
-	}
-}

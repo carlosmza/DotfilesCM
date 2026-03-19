@@ -1,0 +1,7 @@
+{
+	"custom/colorscheme": {
+		"format": " ",
+		"tooltip": false,
+		"on-click": "/home/carlosm/.config/scripts/themes/colorscheme-switcher.sh"
+	}
+}

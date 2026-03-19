@@ -9,7 +9,8 @@ op_suspend="  Suspender"
 options="$op_suspend\n$op_shutdown\n$op_reboot\n$op_lock"
 
 # Ejecutamos rofi asegurándonos de que no herede problemas de foco
-chosen=$(echo -e "$options" | rofi -dmenu -i -p "Sistema:" -theme ~/.config/rofi/menus/power-menu.rasi)
+LAYOUT="$HOME/.config/rofi/menus/power-menu.rasi"
+chosen=$(echo -e "$options" | rofi -dmenu -p "Sistema:" -theme "$LAYOUT")
 
 # Si el usuario presiona ESC o cierra rofi sin elegir, salimos del script inmediatamente
 if [[ -z "$chosen" ]]; then

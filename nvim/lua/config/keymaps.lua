@@ -157,3 +157,6 @@ vim.keymap.set({ 'n', 'v', 'i' }, '<Esc>', function()
     end
     return '<Esc>'
 end, { desc = 'Remove search highlighting', expr = true, silent = true })
+
+-- Colorizer
+kmap("n", "<leader>c", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colors"})

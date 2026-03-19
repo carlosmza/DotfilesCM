@@ -1,0 +1,8 @@
+{
+	"custom/mode": {
+		"format": " ",
+		"tooltip": false,
+		"on-click": "/home/carlosm/.config/scripts/themes/dark-light-mode.sh"
+	}
+}
+

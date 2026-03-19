@@ -1,4 +1,4 @@
 # #!/usr/bin/env bash
-STATE_FILE="/home/carlosm/.config/theme/current"
+STATE_FILE="/home/carlosm/.config/system-themes/current"
 LAST_THEME=$(cat "$STATE_FILE" || echo "dark")
 /home/carlosm/.config/scripts/apply-theme.sh "$LAST_THEME"

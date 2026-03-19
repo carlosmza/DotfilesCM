@@ -1,0 +1,7 @@
+{
+	"custom/wallpaper": {
+		"format": " ",
+		"tooltip": false,
+		"on-click": "/home/carlosm/.config/scripts/themes/wallpaper-switcher.sh"
+	}
+}

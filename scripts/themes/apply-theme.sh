@@ -1,38 +1,65 @@
 #!/usr/bin/env bash
+
 PRESETS_FILE="$HOME/.config/swww/swww-presets.conf"
-# ─── Elegir preset aleatorio ──────────────────────────────────────────────────
-# Filtra líneas vacías y comentarios (líneas que empiezan con #)
-# PRESET=$(grep -v '^\s*#' "$PRESETS_FILE" | grep -v '^\s*$' | shuf -n 1)
+
 PRESET=$(grep -v '^\s*#' "$PRESETS_FILE" | sed '/^\s*$/d' | shuf -n1)
 
-if [[ -z "$PRESET" ]]; then
-    echo "Error: no se pudo leer ningún preset del archivo" >&2
+[[ -z "$PRESET" ]] && {
+    echo "Error leyendo preset"
     exit 1
-fi
+}
 
-# recibe 1 solo argumento
 THEME="$1"
-[ -z "$THEME" ] && exit 1
+[[ -z "$THEME" ]] && exit 1
+echo "$THEME"
 
-# asignacion del argumento a un var
 export THEME_COLOR="$THEME"
-echo "export THEME_COLOR=$THEME" > /home/carlosm/.config/theme/env
+echo "export THEME_COLOR=$THEME" > "$HOME/.config/system-themes/env"
 
-if [ "$THEME" = "dark" ]; then
-	gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-  swww img "/home/carlosm/Pictures/Wallpapers/jinx-arcane-sit-dark.jpg" $PRESET
-	ln -sf ~/.config/rofi/themes/dark.rasi ~/.config/rofi/themes/theme.rasi
-	KITTY_THEME="$HOME/.config/kitty/themes/dark.conf"
-	  ln -sf ~/.config/oh-my-posh/dark.json ~/.config/oh-my-posh/current.json
-else
-	gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
-  swww img "/home/carlosm/Pictures/Wallpapers/berserker-light.png" $PRESET
-	ln -sf ~/.config/rofi/themes/light.rasi ~/.config/rofi/themes/theme.rasi
-	KITTY_THEME="$HOME/.config/kitty/themes/light.conf"
-	  ln -sf ~/.config/oh-my-posh/light.json ~/.config/oh-my-posh/current.json
+ROFI_THEME="$HOME/.config/rofi/themes/$THEME.rasi"
+POSH_THEME="$HOME/.config/oh-my-posh/$THEME.json"
+KITTY_THEME="$HOME/.config/kitty/themes/$THEME.conf"
+WALLPAPER="$HOME/Pictures/Wallpapers/$THEME.jpg"
+
+# Esto ya es manejado por otro script
+# Dark / Light
+# if [[ $THEME =~ Dark ]]; then
+# 	# echo "Dark Mode"
+# 	gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+# else
+# 	# echo "Light Mode"
+# 	gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+# fi
+
+# Esto ya es manejado por otro script
+# Wallpaper
+# if [[ -f "$WALLPAPER" ]]; then
+#     swww img "$WALLPAPER" $PRESET
+# fi
+
+# Rofi
+if [[ -f "$ROFI_THEME" ]]; then
+    ln -sf "$ROFI_THEME" ~/.config/rofi/themes/theme-ln.rasi
 fi
 
-ln -sf "$KITTY_THEME" ~/.config/kitty/themes/current.conf
-kitty @ set-colors -a "$KITTY_THEME"
+# Oh My Posh
+# if [[ -f "$POSH_THEME" ]]; then
+#     ln -sf "$POSH_THEME" ~/.config/oh-my-posh/current.json
+# fi
+#
+# # Kitty
+if [[ -f "$KITTY_THEME" ]]; then
+    ln -sf "$KITTY_THEME" ~/.config/kitty/themes/theme-ln.conf
+		# echo "asignando socket"
+		# SOCKET="unix:@mykitty"
+		SOCKET="unix:/tmp/kitty.sock"
+		# echo "socket asignado"
+		# kitty @ --to "$SOCKET" set-colors -a -c "$THEME_FILE" 2>/dev/null \
+		# || kitty @ set-colors -a -c "$THEME_FILE"
+    # kitty @ set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
+    kitty @ --to "$SOCKET" set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
+		# kitty @ --to unix:/tmp/kitty.sock set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
+		echo "Kitty theme:" "$KITTY_THEME"
+fi
+
 exec fish
-# nvim --server "$NVIM_LISTEN_ADDRESS" --remote-send "<cmd>colorscheme $NVIM_THEME<CR>" 2>/dev/null

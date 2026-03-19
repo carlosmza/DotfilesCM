@@ -26,13 +26,13 @@ for img in "$WALLDIR"/*; do
 done
 
 # Crear menú para rofi
-MENU_THEME = ~/.config/rofi/layouts/grid.rasi #Por alguna razon esto no se puede pasar como parametro
+LAYOUT="~/.config/rofi/layouts/grid.rasi" 
 choice=$(for img in "$WALLDIR"/*; do
     name=$(basename "$img")
     thumb="$THUMBDIR/$name"
 
     echo -en "$name\0icon\x1f$thumb\n"
-done | rofi -dmenu -show-icons -theme ~/.config/rofi/menus/wallpaper-switcher.rasi)
-# done | rofi -dmenu -show-icons -theme $MENU_THEME)
+# done | rofi -dmenu -show-icons -theme ~/.config/rofi/menus/wallpaper-switcher.rasi)
+done | rofi -dmenu -show-icons -theme "$LAYOUT")
 
 [ -n "$choice" ] && swww img "$WALLDIR/$choice" $PRESET
