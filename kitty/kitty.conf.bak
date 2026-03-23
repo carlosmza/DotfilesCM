@@ -1,6 +1,4 @@
 # include "/$HOME/.config/kitty/themes/theme-ln.conf" # !(no es necesario por kitty @ set-colors)
-include dark-theme.auto.conf
-include light-theme.auto.conf
 # Config
 # -- Font
 font_family IosevkaTerm Nerd Font
@@ -27,9 +25,3 @@ map ctrl+alt+r load_config_file
 map page_up scroll_page_up
 map page_down scroll_page_down
 map alt+s show_scrollback
-
-
-# BEGIN_KITTY_THEME
-# noirbuddy-oxide
-# include current-theme.conf
-# END_KITTY_THEME
