@@ -1,3 +1,43 @@
+Contexto:
+Actualmente uso el siguiente script Wallpaper-to-colorscheme.sh para obtener una palelta de colores la cual luego es usada para generar un coloscheme para kitty usando
+json-to-kitty.sh
+Conflicto: Los esquemas de colores no me han gustado lo suficiente para usarlos en mi kitty-terminal. Quiero tener un mejor contraste en mis colorschemes para poder ser
+apreciados mejor visualmente. Dime que metricas ajustar para obtener un mejor colorscheme.
+
+# Wallpaper-to-colorscheme.sh
+#!/usr/bin/env bash
+
+WALLDIR="$HOME/Pictures/Wallpapers"
+COLORDIR="$HOME/.config/system-themes/wallpaper-colorschemes"
+
+mkdir -p "$COLORDIR"
+
+for img in "$WALLDIR"/*; do
+    [ -f "$img" ] || continue
+
+    name=$(basename -- "$img")
+    name="${name%.*}"
+
+		median=$(magick "$img" -colorspace Gray -format "%[fx:median*100]" info:)
+    std=$(magick "$img" -colorspace Gray -format "%[fx:standard_deviation*100]" info:)
+
+    if (( $(echo "$median > 55" | bc -l) )); then
+        mode="light"
+    elif (( $(echo "$std > 25 && $median > 40" | bc -l) )); then
+        mode="light"
+    else
+        mode="dark"
+    fi
+    outfile="$COLORDIR/${name}.json"
+
+    echo "[$name] brillo: $brightness → modo: $mode"
+		echo "[$name] → median: $median | std: $std → $mode"
+
+    matugen image "$img" --mode "$mode" --json hex > "$outfile"
+
+done
+
+# json-to-kitty.sh
 #!/usr/bin/env bash
 
 JSONDIR="$HOME/.config/system-themes/wallpaper-colorschemes"
@@ -91,5 +131,6 @@ color13 $color13
 color14 $color14
 color15 $color15
 EOF
-
+ 
 done
+

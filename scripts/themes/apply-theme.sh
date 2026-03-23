@@ -48,18 +48,18 @@ fi
 # fi
 #
 # # Kitty
-if [[ -f "$KITTY_THEME" ]]; then
-    ln -sf "$KITTY_THEME" ~/.config/kitty/themes/theme-ln.conf
-		# echo "asignando socket"
-		# SOCKET="unix:@mykitty"
-		SOCKET="unix:/tmp/kitty.sock"
-		# echo "socket asignado"
-		# kitty @ --to "$SOCKET" set-colors -a -c "$THEME_FILE" 2>/dev/null \
-		# || kitty @ set-colors -a -c "$THEME_FILE"
-    # kitty @ set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
-    kitty @ --to "$SOCKET" set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
-		# kitty @ --to unix:/tmp/kitty.sock set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
-		echo "Kitty theme:" "$KITTY_THEME"
-fi
+# if [[ -f "$KITTY_THEME" ]]; then
+#     ln -sf "$KITTY_THEME" ~/.config/kitty/themes/theme-ln.conf
+# 		# echo "asignando socket"
+# 		# SOCKET="unix:@mykitty"
+# 		SOCKET="unix:/tmp/kitty.sock"
+# 		# echo "socket asignado"
+# 		# kitty @ --to "$SOCKET" set-colors -a -c "$THEME_FILE" 2>/dev/null \
+# 		# || kitty @ set-colors -a -c "$THEME_FILE"
+#     # kitty @ set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
+#     kitty @ --to "$SOCKET" set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
+# 		# kitty @ --to unix:/tmp/kitty.sock set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
+# 		echo "Kitty theme:" "$KITTY_THEME"
+# fi
 
 exec fish

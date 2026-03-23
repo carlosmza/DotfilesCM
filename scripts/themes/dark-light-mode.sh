@@ -10,3 +10,5 @@ else
 	# echo "Light Mode"
 	gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
 fi
+
+echo "$MODE" > /$HOME/.config/system-themes/current
