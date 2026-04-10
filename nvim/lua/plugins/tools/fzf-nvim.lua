@@ -8,9 +8,10 @@ return {
   config = function ()
       local fzf = require("fzf-lua")
     fzf.setup({
+			fzf_colors = true,
       winopts = {
         height = 0.90,
-        width = 0.85,
+        width = 1,
         border = "rounded",
       },
       actions = {
