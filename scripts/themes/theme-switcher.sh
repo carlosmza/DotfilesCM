@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
+ls "$HOME/.config/system-themes/themes/" > /$HOME/.config/system-themes/themes.list
+THEME_LIST="$HOME/.config/system-themes/themes.list"
+LAYOUT="$HOME/.config/rofi/layouts/list-spotlight.rasi"
+# TEMP=$(rofi -dmenu < "$THEME_LIST" -p "Themes" -theme "$LAYOUT")
+TEMP=$(rofi -dmenu < "$THEME_LIST" -p "Themes")
+[ -z "$TEMP" ] && exit 0
+THEME="${TEMP%.*}" 
 
-THEME_LIST="/$HOME/.config/system-themes/themes.list"
-LAYOUT="/$HOME/.config/rofi/layouts/list-spotlight.rasi"
-THEME=$(rofi -dmenu < "$THEME_LIST" -p "Themes" -theme "$LAYOUT")
-
-[ -z "$THEME" ] && exit 0
-
-echo "$THEME" > /home/carlosm/.config/theme/current
-
-/home/carlosm/.config/scripts/apply-theme.sh "$THEME"
+$HOME/.config/scripts/themes/apply-theme.sh "$THEME"
 

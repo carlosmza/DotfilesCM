@@ -14,7 +14,7 @@ kmap("n", "gdt", ":tab split | lua vim.lsp.buf.definition()<CR>",{desc='tab defi
 -- kmap('n', "<C-b>", "<C-b>zz")
 -- kmap('n', "n", "nzzzv")
 -- kmap('n', "N", "Nzzzv")
-
+--
 -- Move lines
 kmap('v', 'K', ":m '<-2<CR>gv=gv")
 kmap('v', 'J', ":m '>+1<CR>gv=gv")
@@ -39,10 +39,16 @@ kmap("n", "<leader>u", "<cmd>set wrap!<CR>", { desc = "Wrap"})
 kmap("n", "<leader>S", "<cmd>set nospell!<CR>", { desc = "Spell"})
 
 -- Save Buffer
-kmap("n", "<leader>s", "<cmd>w<CR>", { desc = "Save"})
+kmap("n", "<leader>w", "<cmd>w<CR>", { desc = "Save"})
 
 -- Quit Buffer
 kmap("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit"})
+
+-- Save Buffer and Exit
+kmap("n", "<leader>W", "<cmd>wq<CR>", { desc = "Save"})
+
+-- Quit Buffer and Exit
+kmap("n", "<leader>Q", "<cmd>q!<CR>", { desc = "Quit"})
 
 -- Yank all Text
 kmap("n", "<leader>Y", "<cmd>%y<CR>", { desc = "Yank All Text"})

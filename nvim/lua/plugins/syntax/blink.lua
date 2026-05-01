@@ -1,9 +1,7 @@
 return {
   "saghen/blink.cmp",
   dependencies = {
-        "neovim/nvim-lspconfig",
         "rafamadriz/friendly-snippets",
-        "L3MON4D3/LuaSnip"
   },
   version = '1.*',
   lazy = "VeryLazy",
@@ -33,9 +31,26 @@ return {
           -- show with a list of providers
           ['<C-space>'] = { function(cmp) cmp.show({ providers = { 'snippets' } }) end },
       },
-      sources = {
-        default = { "lsp", "path", "buffer" },
-      },
+      -- sources = {
+      --   default = { "lsp", "path", "buffer" },
+      -- },
+			-- sources = {
+			-- 	-- per_filetype = {
+			-- 	-- 	qml = { "quickshell", "lsp", "path", "snippets", "buffer" },
+			-- 	-- },
+			-- 	providers = {
+			-- 		-- quickshell = {
+			-- 		-- 	name = "Quickshell",
+			-- 		-- 	module = "quickshell-completions.blink",
+			-- 		-- 	score_offset = 90,
+			-- 		},
+					-- snippets = {
+					-- 	opts = {
+					-- 		-- search_paths = { require("quickshell-completions").get_snippet_path() },
+					-- 	},
+					-- },
+			-- 	},
+			-- },
     })
 
     -- Integración con LSP
@@ -48,6 +63,9 @@ return {
     vim.lsp.config.pyright = {
         capabilities = capabilities
     }
+    -- vim.lsp.config.qmlls = {
+    --     capabilities = capabilities
+    -- }
     -- local lspconfig = require("lspconfig")
     -- lspconfig.clangd.setup({ capabilities = capabilities })
     -- lspconfig.lua_ls.setup({ capabilities = capabilities })

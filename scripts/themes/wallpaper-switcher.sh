@@ -35,4 +35,4 @@ choice=$(for img in "$WALLDIR"/*; do
 # done | rofi -dmenu -show-icons -theme ~/.config/rofi/menus/wallpaper-switcher.rasi)
 done | rofi -dmenu -show-icons -theme "$LAYOUT")
 
-[ -n "$choice" ] && swww img "$WALLDIR/$choice" $PRESET
+[ -n "$choice" ] && awww img "$WALLDIR/$choice"

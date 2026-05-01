@@ -5,11 +5,20 @@ configuration {
     show-icons: true;
 }
 
+prompt {
+    // text: "Apps";
+    enabled: false;
+}
+entry {
+    placeholder: "Apps:";
+}
+
 window {
     width: 600px;
-    background-color: @bg;
+    background-color: @window-bg;
     border-radius: 12px;
     padding: 15px;
+    text-color: @fg;
 }
 
 listview {
@@ -21,18 +30,41 @@ listview {
 element {
     padding: 8px;
     border-radius: 8px;
+    text-color: @fg;
+}
+
+element normal {
+    background-color: transparent;
 }
 
 element selected {
-    background-color: @bg-alt;
+    background-color: @selected-normal-bg;
     border: 2px;
     border-color: @accent;
+    text-color: @selected-normal-fg;
+}
+
+element urgent {
+    background-color: @urgent-bg;
+    text-color: @urgent-fg;
+}
+
+element active {
+    background-color: @active-bg;
+    text-color: @active-fg;
 }
 
 element-icon {
     size: 28px;
+    color: @fg-alt;
+}
+
+element selected element-icon {
+    color: @accent;
 }
 
 element-text {
     margin: 0px 0px 0px 10px;
+    highlight: @highlight;
 }
+

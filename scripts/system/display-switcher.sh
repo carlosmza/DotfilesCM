@@ -3,9 +3,13 @@
 INTERNAL="eDP-1"
 EXTERNAL="HDMI-A-1"
 
-MODE=$(printf "Solo pantalla\nSolo proyector\nExtender\nEspejo" | rofi -dmenu -p "Pantallas")
 
 [ -z "$MODE" ] && exit 0
+
+if hyprctl monitors | grep -q "$EXTERNAL"; then
+	MODE=$(printf "Solo pantalla\nSolo proyector\nExtender\nEspejo" | rofi -dmenu -p "Display")
+else
+	MODE=$(printf "Solo pantalla" | rofi -dmenu -p "Display")
 
 case "$MODE" in
   "Solo pantalla")

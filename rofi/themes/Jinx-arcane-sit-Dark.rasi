@@ -1,9 +1,0 @@
-* {
-    bg:               #1a1112;
-    bg-alt:           #524344;
-    fg:               #f0dedf;
-    fg-alt:           #9f8c8d;
-    accent:           #ffb2b8;
-    background-color: transparent;
-    text-color:       @fg;
-}
