@@ -1,33 +1,34 @@
 #!/usr/bin/env bash
 
-# PRESETS_FILE="$HOME/.config/swww/swww-presets.conf"
-#
-# PRESET=$(grep -v '^\s*#' "$PRESETS_FILE" | sed '/^\s*$/d' | shuf -n1)
-#
-# [[ -z "$PRESET" ]] && {
-#     echo "Error leyendo preset"
-#     exit 1
-# }
-
 THEME="$1"
 [[ -z "$THEME" ]] && exit 1
 echo "$THEME"
 
-MODE=$(jq -r .mode $HOME/.config/system-themes/themes/"$THEME".json)
+MODE=$(jq -r .variant $HOME/.config/system-themes/themes/"$THEME".json)
 HYPR_THEME_DIR="$HOME/.config/hypr/themes/"
 ROFI_THEME_DIR="$HOME/.config/rofi/themes/"
+GENERAL_THEME_DIR="$HOME/.config/system-themes/themes/"
+QUICKSHELL_THEME_DIR="$HOME/.config/quickshell/config/theme/"
 # POSH_THEME="$HOME/.config/oh-my-posh/$THEME.json"
 # KITTY_THEME="$HOME/.config/kitty/themes/$THEME.conf"
 # WALLPAPER="$HOME/Pictures/Wallpapers/$THEME.jpg"
+# __________ GENERAL __________
+echo "Modify GENERAL_THEME_DIR"
+ln -sf "$GENERAL_THEME_DIR""$THEME".json "$GENERAL_THEME_DIR"current.json
 
 # __________ HYPRLAND __________
-# echo "Modify HYPR_THEME"
+echo "Modify HYPR_THEME"
 ln -sf "$HYPR_THEME_DIR""$THEME".conf "$HYPR_THEME_DIR"current.conf
 
 # __________ ROFI __________
-# echo "Modify ROFI_THEME"
+echo "Modify ROFI_THEME"
 ln -sf "$ROFI_THEME_DIR""$THEME".rasi "$ROFI_THEME_DIR"theme-ln.rasi
-#
+
+# __________	QUICKSHELL __________
+echo "Modify QUICKSHELL"
+ln -sf "$GENERAL_THEME_DIR"current.json "$QUICKSHELL_THEME_DIR"current.json
+quickshell ipc call colores recargar
+
 # # __________ DARK/LIGHT MODE __________
 if [[ $MODE =~ dark ]]; then
 	echo "Dark Mode"

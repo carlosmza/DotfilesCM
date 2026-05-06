@@ -35,20 +35,20 @@ return {
       --   default = { "lsp", "path", "buffer" },
       -- },
 			-- sources = {
-			-- 	-- per_filetype = {
-			-- 	-- 	qml = { "quickshell", "lsp", "path", "snippets", "buffer" },
-			-- 	-- },
+			-- 	per_filetype = {
+			-- 		qml = { "quickshell", "lsp", "path", "snippets", "buffer" },
+			-- 	},
 			-- 	providers = {
-			-- 		-- quickshell = {
-			-- 		-- 	name = "Quickshell",
-			-- 		-- 	module = "quickshell-completions.blink",
-			-- 		-- 	score_offset = 90,
+			-- 		 quickshell = {
+			-- 		 	name = "Quickshell",
+			-- 		 	module = "quickshell-completions.blink",
+			-- 		 	score_offset = 90,
 			-- 		},
-					-- snippets = {
-					-- 	opts = {
-					-- 		-- search_paths = { require("quickshell-completions").get_snippet_path() },
-					-- 	},
-					-- },
+			-- 		-- snippets = {
+			-- 		-- 	opts = {
+			-- 		-- 		-- search_paths = { require("quickshell-completions").get_snippet_path() },
+			-- 		-- 	},
+			-- 		-- },
 			-- 	},
 			-- },
     })
@@ -63,13 +63,9 @@ return {
     vim.lsp.config.pyright = {
         capabilities = capabilities
     }
-    -- vim.lsp.config.qmlls = {
-    --     capabilities = capabilities
-    -- }
-    -- local lspconfig = require("lspconfig")
-    -- lspconfig.clangd.setup({ capabilities = capabilities })
-    -- lspconfig.lua_ls.setup({ capabilities = capabilities })
-    -- lspconfig.pyright.setup({ capabilities = capabilities })
+    vim.lsp.config.qmlls = {
+        capabilities = capabilities
+    }
   end
 }
 

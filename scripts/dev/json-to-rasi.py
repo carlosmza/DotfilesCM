@@ -1,41 +1,46 @@
 #!/usr/bin/env python3
 """
-Genera theme.rasi enriquecido para Rofi a partir de scheme.json.
-Incluye propiedades adicionales: selección, urgencia, activo, resaltado y fondo de ventana.
+Genera theme.rasi para Rofi a partir de un archivo JSON con paleta base16.
+Estructura esperada:
+{
+  "palette": {
+    "base00": "#...",
+    "base01": "#...",
+    ...
+    "base0F": "#..."
+  }
+}
+
 Uso:
-    ./generate_rofi_theme.py scheme.json
-    ./generate_rofi_theme.py scheme.json -o output.rasi
-    cat scheme.json | ./generate_rofi_theme.py
+    ./json-to-rasi.py entrada.json
+    ./json-to-rasi.py entrada.json -o output.rasi
+    cat entrada.json | ./json-to-rasi.py
 """
 
 import sys
 import json
 import argparse
 
-# Mapeo base de propiedades esenciales
-BASE_ROFI_MAP = {
-    "bg": "background",
-    "bg-alt": "surfaceVariant",
-    "fg": "onBackground",
-    "fg-alt": "onSurfaceVariant",
-    "accent": "primary",
-}
-
-# Propiedades extendidas (se añadirán después de las básicas)
-EXTRA_ROFI_MAP = {
-    "selected-normal-bg": "primaryContainer",
-    "selected-normal-fg": "onPrimaryContainer",
-    "urgent-bg": "error",
-    "urgent-fg": "onError",
-    "active-bg": "secondaryContainer",
-    "active-fg": "onSecondaryContainer",
-    "highlight": "error",        # texto resaltado al buscar
-    "window-bg": "background",     # fondo del diálogo (antes transparente)
+# Mapeo de variables Rofi a claves de la paleta base16
+ROFI_BASE16_MAP = {
+    "bg": "base00",
+    "bg-alt": "base01",
+    "fg": "base05",
+    "fg-alt": "base04",
+    "accent": "base0D",
+    "selected-normal-bg": "base0D",
+    "selected-normal-fg": "base00",
+    "urgent-bg": "base08",
+    "urgent-fg": "base00",
+    "active-bg": "base02",
+    "active-fg": "base05",
+    "highlight": "base09",
+    "window-bg": "base00",
 }
 
 def main():
-    parser = argparse.ArgumentParser(description="Convierte scheme.json a theme.rasi (completo)")
-    parser.add_argument("input", nargs="?", help="Archivo scheme.json (stdin si se omite)")
+    parser = argparse.ArgumentParser(description="Convierte JSON base16 a theme.rasi")
+    parser.add_argument("input", nargs="?", help="Archivo JSON (stdin si se omite)")
     parser.add_argument("-o", "--output", default="theme.rasi", help="Archivo de salida (por defecto: theme.rasi)")
     args = parser.parse_args()
 
@@ -49,46 +54,32 @@ def main():
             sys.exit(1)
         data = json.load(sys.stdin)
 
-    colours = data.get("colours", {})
-    if not colours:
-        print("Error: el JSON no contiene la clave 'colours'.", file=sys.stderr)
+    # Verificar que existe "palette"
+    palette = data.get("palette")
+    if not palette:
+        print("Error: el JSON no contiene la clave 'palette'.", file=sys.stderr)
         sys.exit(1)
 
-    # Verificar claves necesarias (las de ambos mapeos)
-    required_keys = set(BASE_ROFI_MAP.values()) | set(EXTRA_ROFI_MAP.values())
-    missing = [k for k in required_keys if k not in colours]
+    # Verificar que existen todas las claves base necesarias
+    required_base_keys = set(ROFI_BASE16_MAP.values())
+    missing = [k for k in required_base_keys if k not in palette]
     if missing:
-        print(f"Error: faltan las siguientes claves en el JSON: {', '.join(missing)}", file=sys.stderr)
+        print(f"Error: faltan las siguientes claves en la paleta: {', '.join(missing)}", file=sys.stderr)
         sys.exit(1)
 
-    # Construir líneas del tema
+    # Construir contenido del tema Rofi
     lines = ["* {"]
-
-    # Propiedades básicas
-    lines.append(f"    bg:               #{colours[BASE_ROFI_MAP['bg']]};")
-    lines.append(f"    bg-alt:           #{colours[BASE_ROFI_MAP['bg-alt']]};")
-    lines.append(f"    fg:               #{colours[BASE_ROFI_MAP['fg']]};")
-    lines.append(f"    fg-alt:           #{colours[BASE_ROFI_MAP['fg-alt']]};")
-    lines.append(f"    accent:           #{colours[BASE_ROFI_MAP['accent']]};")
-
-    # Propiedades extendidas
-    for rofi_var, json_key in EXTRA_ROFI_MAP.items():
-        if rofi_var == "window-bg":
-            # Para la ventana se usa el fondo principal (background)
-            lines.append(f"    {rofi_var}:       #{colours[json_key]};")
-        else:
-            lines.append(f"    {rofi_var}:       #{colours[json_key]};")
-
-    # Transparencia y referencia a fg (se mantienen)
+    for rofi_var, base_key in ROFI_BASE16_MAP.items():
+        hex_color = palette[base_key].lstrip("#")
+        lines.append(f"    {rofi_var}:       #{hex_color};")
     lines.append("    background-color: transparent;")
     lines.append("    text-color:       @fg;")
-
     lines.append("}")
 
     with open(args.output, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    print(f"Archivo '{args.output}' generado correctamente con propiedades extendidas.")
+    print(f"Archivo '{args.output}' generado correctamente.")
 
 if __name__ == "__main__":
     main()

@@ -29,17 +29,17 @@ def main():
             sys.exit(1)
         data = json.load(sys.stdin)
 
-    # Extraer el diccionario de colores
-    colours = data.get("colours", {})
-    if not colours:
-        print("Error: el JSON no contiene la clave 'colours'.", file=sys.stderr)
+    # Extraer el diccionario de palette
+    palette = data.get("palette", {})
+    if not palette:
+        print("Error: el JSON no contiene la clave 'palette'.", file=sys.stderr)
         sys.exit(1)
 
     # Escribir theme.conf
     with open(args.output, "w", encoding="utf-8") as out:
-        for key, value in colours.items():
-            # Formato: $nombre = valor (sin #, tal cual el hex)
-            out.write(f"${key} = {value}\n")
+        for key, value in palette.items():
+            # Formato: $nombre = valor (eliminando el # inicial)
+            out.write(f"${key} = {value[1:]}\n")
 
     print(f"Archivo '{args.output}' generado correctamente.")
 

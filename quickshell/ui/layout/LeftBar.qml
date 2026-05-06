@@ -1,8 +1,9 @@
 import Quickshell
 import Quickshell.Io
-import QtQuick
+import QtQuick 2.15
 import QtQuick.Layouts
-import "components"
+import "../components"
+import qs.config.theme
 
 PanelWindow {
     id: root
@@ -13,7 +14,7 @@ PanelWindow {
         bottom: true
     }
     implicitWidth: 40
-    color: "#000000" // Un tono oscuro tipo Tokyo Night
+    color: Colors.palette.base00
 
     // Layout principal: Organiza los bloques verticalmente
     Item {

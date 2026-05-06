@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.config.theme
 
 Item {
     id: root
@@ -26,7 +27,8 @@ Item {
         if (level <= 99 & status === "Charging") return "blue"
         if (status === "Charging") return "#00ff00" // verde para cargando
         if (level <= 20) return "#ff0000" // rojo para batería baja
-        return "white" // blanco para niveles normales
+
+        return Colors.palette.base03 // blanco para niveles normales
     }
 
     // 🔹 LECTURA de batería (datos)
@@ -59,6 +61,7 @@ Item {
         onTriggered: {
             batteryLevelProc.running = true
             batteryStatusProc.running = true
+            // console.log("Scheme:", Colors.name+"AA")
         }
     }
 

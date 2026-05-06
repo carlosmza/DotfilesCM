@@ -19,9 +19,9 @@ return {
         vim.lsp.config.pyright = {
             capabilities = capabilities
         }
-        -- vim.lsp.config.qmlls = {
-        --     capabilities = capabilities
-        -- }
+        vim.lsp.config.qmlls = {
+            capabilities = capabilities
+        }
 
         
         -- lspconfig.clangd.setup({ capabilities = capabilities })

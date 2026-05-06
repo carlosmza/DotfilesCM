@@ -3,6 +3,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Controls
+import qs.config.theme
 
 Item {
     id: root
@@ -18,14 +19,15 @@ Item {
     implicitHeight: 200
 
     function truncateText(text, maxLength) {
+        // console.log("name:", Colors.name)
         return text.length > maxLength ? text.substring(0, maxLength) + "..." : text
     }
 
 
     Text {
         id: titleText
-        color: "white"
-        font.pixelSize: 14
+        color: Colors.palette.base06
+        font.pixelSize: 16
         font.bold: true
         anchors.centerIn: parent
         anchors.top: parent.bottom

@@ -23,7 +23,7 @@ ShellRoot {
 
         stdout: SplitParser {
             onRead: data => {
-                console.log("cambio:", data)
+                // console.log("cambio:", data)
                 osdItem.mostrar = true
                 hideTimer.restart()
                 brightnessReader.running = true
@@ -46,7 +46,7 @@ ShellRoot {
 
         stdout: SplitParser {
             onRead: data => {
-                console.log("line:", data)
+                // console.log("line:", data)
                 const val = parseInt(data)
                 // Validación básica para ignorar líneas vacías
                 if (!isNaN(val)) {

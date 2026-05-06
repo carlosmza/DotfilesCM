@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
+import "./modules/fonts"
 
 ShellRoot {
 	//--Color#--
@@ -21,11 +22,11 @@ ShellRoot {
 	
     // --- Fonts ---
 	//    FontLoader { id: font_anurati;  source: Qt.resolvedUrl("Anurati.otf")  }
-	// FontLoader { id: font_beyno; source: Qt.resolvedUrl("BEYNO.otf") }
+	FontLoader { id: font_beyno; source: Qt.resolvedUrl("fonts/BEYNO.otf") }
 	// FontLoader { id: font_azedo;  source: Qt.resolvedUrl("Azedo-Bold.otf")  }
 	// FontLoader { id: font_serif;  source: Qt.resolvedUrl("InstrumentSerif-Regular.ttf")  }
 	//
-	// FontLoader { id: font_poppins;  source: Qt.resolvedUrl("Poppins.ttf")  }
+	FontLoader { id: font_poppins;  source: Qt.resolvedUrl("fonts/Poppins.ttf")  }
 	// FontLoader { id: font_varela;  source: Qt.resolvedUrl("VarelaRound-Regular.ttf") }
 	// FontLoader { id: font_lato;  source: Qt.resolvedUrl("Lato-Italic.ttf")  }
     

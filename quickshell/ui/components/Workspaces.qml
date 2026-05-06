@@ -3,6 +3,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
+import qs.config.theme
 
 Item {
     id: root
@@ -29,8 +30,8 @@ Item {
                 Text {
                     property bool isActive: Hyprland.focusedWorkspace?.id === (index + 1)
                     text: index + 1
-                    color: isActive? '#ff63a4' : '#67719b'
-                    font { pixelSize: 14; bold: true }
+                    color: isActive? Colors.palette.base0D : Colors.palette.base07
+                    font { pixelSize: 16; bold: true }
                     horizontalAlignment: Text.AlignHCenter
                 }
             }

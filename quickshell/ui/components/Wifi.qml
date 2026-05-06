@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.config.theme
 
 Item {
     id: root
@@ -63,7 +64,7 @@ Item {
         if (p <= 85) return icons[4]
         return icons[5]
     }
-    property string icon_color: root.connected ? (root.signal <= 20 ? "#ff5555" : "white") : "#666666"
+    property string icon_color: root.connected ? (root.signal <= 20 ? Colors.palette.base08 : Colors.palette.base06) : Colors.palette.base03
 
     Text {
         id: wifiIcon

@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.config.theme
 
 Item {
     id: root
@@ -17,7 +18,7 @@ Item {
       Text {
         id: hoursText
         text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[0] : "00"
-        color: "white"
+        color: Colors.palette.base06
         font { pixelSize: 16; bold: true }
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
@@ -26,7 +27,7 @@ Item {
       Text {
         id: minutesText
         text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[1] : "00"
-        color: "white"
+        color: Colors.palette.base06
         font { pixelSize: 16; bold: true }
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter

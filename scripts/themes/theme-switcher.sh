@@ -3,7 +3,7 @@ ls "$HOME/.config/system-themes/themes/" > /$HOME/.config/system-themes/themes.l
 THEME_LIST="$HOME/.config/system-themes/themes.list"
 LAYOUT="$HOME/.config/rofi/layouts/list-spotlight.rasi"
 # TEMP=$(rofi -dmenu < "$THEME_LIST" -p "Themes" -theme "$LAYOUT")
-TEMP=$(rofi -dmenu < "$THEME_LIST" -p "Themes")
+TEMP=$(rofi -dmenu < "$THEME_LIST" -p "Themes" -theme "$LAYOUT")
 [ -z "$TEMP" ] && exit 0
 THEME="${TEMP%.*}" 
 
