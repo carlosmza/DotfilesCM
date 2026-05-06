@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
+import qs.config.theme
 
 ShellRoot {
     id: root
@@ -69,7 +70,7 @@ ShellRoot {
             id: osdItem
             property bool mostrar: false
             anchors.fill: parent
-            color: "black"
+            color: Colors.palette.base01
             radius: 6
             opacity: mostrar ? 1.0 : 0.0
             visible: opacity > 0
@@ -92,7 +93,7 @@ ShellRoot {
             Text {
                 anchors.centerIn: parent
                 text: "Brightness: " + root.brightnessValue + "%"
-                color: "white"
+                color: Colors.palette.base05
                 font.pixelSize: 18
             }
         }
