@@ -13,6 +13,7 @@ ShellRoot {
     LeftBar {}
     ClockWidget {}
     BrightnessPopup {}
+    VolumePopup {}
     // Popup {}
     // DevReadJson {}
     // DevBox {}

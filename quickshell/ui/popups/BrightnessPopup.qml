@@ -24,7 +24,6 @@ ShellRoot {
 
         stdout: SplitParser {
             onRead: data => {
-                // console.log("cambio:", data)
                 osdItem.mostrar = true
                 hideTimer.restart()
                 brightnessReader.running = true
@@ -84,7 +83,7 @@ ShellRoot {
 
             Timer {
                 id: hideTimer
-                interval: 3000
+                interval: 1200
                 repeat: false
                 // running: true
                 onTriggered: osdItem.mostrar = false
@@ -93,7 +92,7 @@ ShellRoot {
             Text {
                 anchors.centerIn: parent
                 text: "Brightness: " + root.brightnessValue + "%"
-                color: Colors.palette.base05
+                color: Colors.palette.base06
                 font.pixelSize: 18
             }
         }

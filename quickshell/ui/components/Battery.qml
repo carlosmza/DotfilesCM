@@ -28,7 +28,7 @@ Item {
         if (status === "Charging") return "#00ff00" // verde para cargando
         if (level <= 20) return "#ff0000" // rojo para batería baja
 
-        return Colors.palette.base03 // blanco para niveles normales
+        return Colors.palette.base06 // blanco para niveles normales
     }
 
     // 🔹 LECTURA de batería (datos)
