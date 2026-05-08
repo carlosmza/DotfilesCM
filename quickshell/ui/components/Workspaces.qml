@@ -9,8 +9,8 @@ Item {
     id: root
     property int count: 6
 
-    implicitWidth: 30
-    implicitHeight: 50
+    implicitWidth: 31
+    implicitHeight: 20
 
     Loader {
         anchors.fill: parent
@@ -36,7 +36,6 @@ Item {
                 }
             }
 
-            Item { Layout.fillHeight: true }
         }
     }
 }

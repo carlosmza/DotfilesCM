@@ -11,7 +11,7 @@ Item {
     property string status: "Unknown"
 
     // 🔹 tamaño implícito (IMPORTANTE)
-    implicitWidth: 30
+    implicitWidth: 31
     implicitHeight: 100
 
     // 🔹 ICONO derivado (lógica separada)
@@ -25,8 +25,8 @@ Item {
 
     property string icon_color: {
         if (level <= 99 & status === "Charging") return "blue"
-        if (status === "Charging") return "#00ff00" // verde para cargando
-        if (level <= 20) return "#ff0000" // rojo para batería baja
+        else if (status === "Charging") return "#00ff00" // verde para cargando
+        else if (level <= 20) return "#ff0000" // rojo para batería baja
 
         return Colors.palette.base06 // blanco para niveles normales
     }
@@ -60,15 +60,12 @@ Item {
 
         onTriggered: {
             batteryLevelProc.running = true
-            batteryStatusProc.running = true
-            // console.log("Scheme:", Colors.name+"AA")
         }
     }
 
     // 🔹 UI (presentación)
     Text {
         anchors.centerIn: parent
-        // text: root.icon + " " + root.level + "%"
         text: root.icon
         color: root.icon_color
         font.pixelSize: 18
