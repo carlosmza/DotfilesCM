@@ -4,6 +4,7 @@ import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Controls
 import qs.config.theme
+import qs.config.fonts
 
 Item {
     id: root
@@ -17,6 +18,8 @@ Item {
     // sensible implicit size so parents can lay this out
     implicitWidth: 24
     implicitHeight: 200
+    
+    property string font: Fonts.varelaRound
 
     function truncateText(text, maxLength) {
         // console.log("name:", Colors.name)
@@ -27,8 +30,11 @@ Item {
     Text {
         id: titleText
         color: Colors.palette.base06
-        font.pixelSize: 16
-        font.bold: true
+        font {
+            pixelSize: 18
+            bold: true
+            family: root.font
+        }
         anchors.centerIn: parent
         anchors.top: parent.bottom
         anchors.topMargin: 10

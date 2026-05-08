@@ -1,35 +1,12 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
-import "./modules/fonts"
+import qs.config.fonts
 
 ShellRoot {
 	//--Color#--
 	property color textColor: "#ffffff"
 
-	//--Font--
-    property string activeTopFont: font_beyno .name
-    
-	///////////////////////////////////////////////////
-    // font_anurati font_beyno font_azedo font_serif //
-	///////////////////////////////////////////////////
-	
-    property string activeDownFont: font_poppins .name
-
-	////////////////////////////////////////
-	// font_poppins font_varela font_lato //
-	////////////////////////////////////////
-	
-    // --- Fonts ---
-	//    FontLoader { id: font_anurati;  source: Qt.resolvedUrl("Anurati.otf")  }
-	FontLoader { id: font_beyno; source: Qt.resolvedUrl("fonts/BEYNO.otf") }
-	// FontLoader { id: font_azedo;  source: Qt.resolvedUrl("Azedo-Bold.otf")  }
-	// FontLoader { id: font_serif;  source: Qt.resolvedUrl("InstrumentSerif-Regular.ttf")  }
-	//
-	FontLoader { id: font_poppins;  source: Qt.resolvedUrl("fonts/Poppins.ttf")  }
-	// FontLoader { id: font_varela;  source: Qt.resolvedUrl("VarelaRound-Regular.ttf") }
-	// FontLoader { id: font_lato;  source: Qt.resolvedUrl("Lato-Italic.ttf")  }
-    
 	//--Size--
 	property int sizeTop:  90
 	property int sizeCenter: 20
@@ -85,13 +62,13 @@ ShellRoot {
                     x: 2; y: 2
                     text: clock_day.text
                     font: clock_day.font
-                    color: "#55000000"
+                    color: "#550000"
                 }
                 // Main text
                 Text {
                     id: clock_day
                     text: Qt.formatDate(clock.date, "dddd").toUpperCase()
-                    font.family: activeTopFont
+                    font.family: Fonts.activeTopFont
                     font.pixelSize: sizeTop
                     color: textColor
                     font.letterSpacing: spaceBetweenTopText
@@ -110,13 +87,13 @@ ShellRoot {
                     x: 1; y: 1
                     text: clock_date.text
                     font: clock_date.font
-                    color: "#55000000"
+                    color: "#550000"
                 }
                 // Main text
                 Text {
                     id: clock_date
                     text: Qt.formatDate(clock.date, "dd MMM yyyy").toUpperCase()
-                    font.family: activeDownFont
+                    font.family: Fonts.activeDownFont
                     font.pixelSize: sizeCenter
                     color: textColor
                     font.letterSpacing: spaceBetweenDownText
@@ -134,13 +111,13 @@ ShellRoot {
                     x: 1; y: 1
                     text: clock_time.text
                     font: clock_time.font
-                    color: "#55000000"
+                    color: "#550000"
                 }
                 // Main text
                 Text {
                     id: clock_time
                     text: "- " + Qt.formatTime(clock.date, "hh:mm") + " -"
-                    font.family: activeDownFont
+                    font.family: Fonts.activeDownFont
                     font.pixelSize: sizeDown
                     color: textColor
                     font.letterSpacing: spaceBetweenDownText

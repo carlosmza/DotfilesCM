@@ -2,10 +2,12 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import qs.config.theme
+import qs.config.fonts
 
 Item {
     id: root
     property string timeStr: "00:00"
+    property string font: Fonts.varelaRound
     implicitWidth: 40
     implicitHeight: 300
 
@@ -19,7 +21,11 @@ Item {
         id: hoursText
         text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[0] : "00"
         color: Colors.palette.base06
-        font { pixelSize: 16; bold: true }
+        font {
+            pixelSize: 17
+            bold: true
+            family: root.font
+        }
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
       }
@@ -28,7 +34,11 @@ Item {
         id: minutesText
         text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[1] : "00"
         color: Colors.palette.base06
-        font { pixelSize: 16; bold: true }
+        font {
+            pixelSize: 17
+            bold: true
+            family: root.font
+        }
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
       }

@@ -1,0 +1,2 @@
+module qs.config.fonts
+singleton Fonts 1.0 Fonts.qml

@@ -12,6 +12,8 @@ Item {
     implicitWidth: 31
     implicitHeight: 20
 
+    property string font: Fonts.varelaRound
+
     Loader {
         anchors.fill: parent
         anchors.margins: 5
@@ -31,7 +33,11 @@ Item {
                     property bool isActive: Hyprland.focusedWorkspace?.id === (index + 1)
                     text: index + 1
                     color: isActive? Colors.palette.base0D : Colors.palette.base07
-                    font { pixelSize: 16; bold: true }
+                    font {
+                        pixelSize: 17
+                        bold: true
+                        family: root.font
+                    }
                     horizontalAlignment: Text.AlignHCenter
                 }
             }
