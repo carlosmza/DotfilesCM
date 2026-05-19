@@ -5,7 +5,8 @@ THEME="$1"
 echo "$THEME"
 
 MODE=$(jq -r .variant $HOME/.config/system-themes/themes/"$THEME".json)
-HYPR_THEME_DIR="$HOME/.config/hypr/themes/"
+# HYPR_THEME_DIR="$HOME/.config/hypr/themes/"
+HYPR_LUA_THEME_DIR="$HOME/.config/hypr/lua/themes/"
 ROFI_THEME_DIR="$HOME/.config/rofi/themes/"
 GENERAL_THEME_DIR="$HOME/.config/system-themes/themes/"
 QUICKSHELL_THEME_DIR="$HOME/.config/quickshell/config/theme/"
@@ -17,8 +18,12 @@ echo "Modify GENERAL_THEME_DIR"
 ln -sf "$GENERAL_THEME_DIR""$THEME".json "$GENERAL_THEME_DIR"current.json
 
 # __________ HYPRLAND __________
-echo "Modify HYPR_THEME"
-ln -sf "$HYPR_THEME_DIR""$THEME".conf "$HYPR_THEME_DIR"current.conf
+# echo "Modify HYPR_THEME"
+# ln -sf "$HYPR_THEME_DIR""$THEME".conf "$HYPR_THEME_DIR"current.conf
+
+# __________ HYPRLAND LUA __________
+echo "Modify HYPR_LUA_THEME"
+ln -sf "$HYPR_LUA_THEME_DIR""$THEME".lua "$HYPR_LUA_THEME_DIR"current.lua
 
 # __________ ROFI __________
 echo "Modify ROFI_THEME"
