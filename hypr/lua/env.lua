@@ -1,0 +1,4 @@
+-- Enviroment — DotfilesCM
+-- hl.env("XCURSOR_SIZE", "24")
+-- hl.env("XCURSOR_THEME", var.cursorTheme)
+-- hl.env("XCURSOR_SIZE", tostring(var.cursorSize))
