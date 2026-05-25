@@ -1,4 +1,3 @@
-// modules/fonts/Fonts.qml
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -18,8 +17,8 @@ Singleton {
 
     // Exposición de nombres de fuente como propiedades de solo lectura
     // Puedes elegir una activa por defecto, por ejemplo BEYNO
-    readonly property string activeTopFont: azedoBold.name
-    readonly property string activeDownFont: azedoBold.name
+    readonly property string activeTopFont: font_azedo.name
+    readonly property string activeDownFont: font_azedo.name
 
     readonly property string anurati:          font_anurati.name
     readonly property string azedoBold:        font_azedo.name

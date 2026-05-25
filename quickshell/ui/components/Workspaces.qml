@@ -1,48 +1,123 @@
-import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
+
 import qs.config.theme
+import qs.config.fonts
 
 Item {
     id: root
-    property int count: 6
 
-    implicitWidth: 31
-    implicitHeight: 20
+    implicitWidth: 45
+    implicitHeight: 50
 
     property string font: Fonts.varelaRound
+    property bool specialFocused: false
+
+    Connections {
+        target: Hyprland
+        function onRawEvent(event) {
+            // console.log("name", event.name)
+            if (event.name === "activespecial") {
+                root.specialFocused = !root.specialFocused
+                // console.log("status:", specialFocused)
+            }
+        }
+    }
 
     Loader {
         anchors.fill: parent
-        anchors.margins: 5
         sourceComponent: verticalComp
     }
 
     Component {
         id: verticalComp
+
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 5
             spacing: 10
 
             Repeater {
-                model: root.count
-                Text {
-                    property bool isActive: Hyprland.focusedWorkspace?.id === (index + 1)
-                    text: index + 1
-                    color: isActive? Colors.palette.base0D : Colors.palette.base07
-                    font {
-                        pixelSize: 17
-                        bold: true
-                        family: root.font
+                model: Hyprland.workspaces
+
+                delegate: Rectangle {
+                    id: workspaceDot
+
+                    property bool isSpecial: modelData.id < 0
+                    property bool isFocused: isSpecial ? root.specialFocused : modelData.focused
+                    property bool isActive: {
+                        if (isSpecial)
+                            return root.specialFocused
+                        return modelData.active
                     }
-                    horizontalAlignment: Text.AlignHCenter
+                    width: 28
+                    height: 28
+                    radius: width / 3
+
+                    color: {
+                        if (isFocused)
+                            return isSpecial ? 
+                                Colors.palette.base0D : Colors.palette.base0D
+
+                        if (mouseArea.containsMouse)
+                            return Colors.palette.base03
+
+                        return Colors.palette.base01
+                    }
+                    border.width: isActive ? 2 : 0
+                    border.color: modelData.focused  ?  Colors.palette.base0D : Colors.palette.base00
+
+                    Layout.alignment: Qt.AlignHCenter
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 150
+                        }
+                    }
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 120
+                        }
+                    }
+
+                    scale: mouseArea.containsMouse ? 1.15 : 1.0
+
+                    Text {
+                        anchors.centerIn: parent
+
+                        text: isSpecial ? "" : modelData.id
+
+
+                        color: {
+                            if (modelData.focused)
+                                return Colors.palette.base00
+                            if (root.specialFocused)
+                                return Colors.palette.base00
+                            return Colors.palette.base07
+                        }
+                        font {
+                            pixelSize: 16
+                            bold: true
+                            family: root.font
+                        }
+                    }
+
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            modelData.activate()
+                        }
+                    }
                 }
             }
-
         }
     }
 }
-

@@ -8,22 +8,47 @@ import "./ui/popups/"
 import "./ui/widgets/"
 import "./ui/components/"
 import "./dev/"
+import "./services/"
 
 ShellRoot {
     LeftBar {}
     ClockWidget {}
     BrightnessPopup {}
     VolumePopup {}
-    // Popup {}
-    // DevReadJson {}
-    // DevBox {}
+    ThemeSelector {
+        id: themeSelector
+    }
     IpcHandler {
-        target: "colores" // Nombre único para identificar este handler
-
-        // Función que se llamará desde el script
+        target: "colores"
         function recargar(): void {
-            // Reload suave: intenta reusar las ventanas existentes
             Quickshell.reload(false)
         }
+    }
+    IpcHandler {
+        target: "theme"
+        function toggle(): void {
+            themeSelector.visible = !themeSelector.visible
+        }
+        function show(): void {
+            themeSelector.visible = true
+        }
+        function hide(): void {
+            themeSelector.visible = false
+        }
+    }
+    IpcHandler {
+        target: "wallpapers"
+        function toggle(): void {
+            wallpaperSelector.visible = !wallpaperSelector.visible
+        }
+        function show(): void {
+            wallpaperSelector.visible = true
+        }
+        function hide(): void {
+            wallpaperSelector.visible = false
+        }
+    }
+    WallpaperSelector {
+        id: wallpaperSelector
     }
 }
