@@ -1,1 +1,1 @@
-rose-pine-dawn.lua
+/home/carlosm/.config/hypr/lua/themes/rose-pine-dawn.lua

@@ -14,6 +14,8 @@ hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("hyprshot -m region -o /home/carlosm/
 
 -- Theme and display
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/themes/theme-switcher.sh"))
+hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("quickshell ipc call theme toggle"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell ipc call wallpapers toggle"))
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/display-switcher.sh"))
 
 -- Power
