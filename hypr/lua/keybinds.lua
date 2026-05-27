@@ -13,19 +13,26 @@ hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(var.pdfViewer))
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("hyprshot -m region -o /home/carlosm/Pictures/Screenshots/ -f \"Screenshot-From-$(date +%Y-%m-%d_%H-%M-%S).png\""))
 
 -- Theme and display
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/themes/theme-switcher.sh"))
-hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("quickshell ipc call theme toggle"))
+-- hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/themes/theme-switcher.sh"))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("quickshell ipc call theme toggle"))
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell ipc call wallpapers toggle"))
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/display-switcher.sh"))
+
+-- Lock screen
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("quickshell ipc call lock toggle"))
 
 -- Power
 hl.bind("XF86PowerOff", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/power-menu.sh"))
 
 -- Utilities
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/argos-client.sh"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/traduction-es-en.sh"))
-hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/dictionary-en-en.sh"))
+-- hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/argos-client.sh"))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("/home/carlosm/noqs.sh"))
+-- hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/traduction-es-en.sh"))
+-- hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/dictionary-en-en.sh"))
 hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/2lyrics-pdf.py"))
+hl.bind(mainMod .. " +  D", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/translate.py"))
+hl.bind(mainMod .. " +  D", hl.dsp.exec_cmd("quickshell ipc call dictionary toggle"))
+hl.bind(mainMod .. " +  E", hl.dsp.exec_cmd("quickshell ipc call translate toggle"))
 
 -- Scratchpad
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))

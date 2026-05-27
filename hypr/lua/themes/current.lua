@@ -1,1 +1,1 @@
-/home/carlosm/.config/hypr/lua/themes/rose-pine-dawn.lua
+/home/carlosm/.config/hypr/lua/themes/0x96f.lua
