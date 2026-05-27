@@ -2,32 +2,33 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import qs.config.theme
+import qs.config.fonts
 
 PanelWindow {
     id: root
-    visible: false
-    color: "black"
     anchors {
         top: true
-        left: true
         right: true
         bottom: true
     }
-    aboveWindows: true
 
-    // Keys.onReturnPressed: {
-    //     if (selectedIndex >= 0 && selectedIndex < themes.length) {
-    //         root.applyTheme(themes[selectedIndex])
-    //         root.visible = false
-    //     }
-    // }
+    margins {
+        left: 10
+        top: 10
+        bottom: 10
+        right: 10
+    }
+
+    implicitWidth: 240
+    color: "transparent"
+    exclusiveZone: -1
+    visible: false
 
     property var themes: []
     property int selectedIndex: -1
+    property string font: Fonts.varelaRound
 
-    Component.onCompleted: {
-        loadThemes()
-    }
+    Component.onCompleted: loadThemes()
 
     onSelectedIndexChanged: {
         themeList.currentIndex = selectedIndex
@@ -35,22 +36,25 @@ PanelWindow {
     }
 
     function loadThemes() {
-        procList.command = ["bash", "-c", "ls /home/carlosm/.config/system-themes/themes/*.json 2>/dev/null | xargs -n1 basename | grep -v '^current\\.json$'"]
+        procList.command = ["bash", "-c", "for f in /home/carlosm/.config/system-themes/themes/*.json; do name=$(basename \"$f\" .json); [ \"$name\" = \"current\" ] && continue; c0=$(jq -r '.palette.base00' \"$f\"); cD=$(jq -r '.palette.base0D' \"$f\"); echo \"$name|$c0|$cD\"; done"]
         procList.running = true
     }
 
     function parseThemes(output) {
         var lines = output.trim().split("\n")
-        var files = []
+        var items = []
         for (var i = 0; i < lines.length; i++) {
-            var f = lines[i].trim()
-            if (f.endsWith(".json") && f !== "current.json") {
-                var name = f.replace(".json", "")
-                files.push(name)
+            var parts = lines[i].trim().split("|")
+            if (parts.length >= 3) {
+                items.push({
+                    name: parts[0],
+                    base00: parts[1],
+                    base0D: parts[2]
+                })
             }
         }
-        files.sort()
-        themes = files
+        items.sort(function(a, b) { return a.name < b.name ? -1 : 1 })
+        themes = items
     }
 
     Process {
@@ -73,116 +77,125 @@ PanelWindow {
         command: ["bash"]
     }
 
-    // Rectangle {
-    //     anchors.fill: parent
-    //     color: "transparent"
-    //
-    //     MouseArea {
-    //         anchors.fill: parent
-    //         onClicked: root.visible = false
-    //     }
-    // }
-
     Rectangle {
-        id: container
-        width: 220
-        height: 320
-        radius: 16
         color: Colors.palette.base00
-        border.color: Colors.palette.base0D
-        border.width: 2
-        anchors.centerIn: parent
+        anchors.fill: parent
+        radius: 20
+        clip: false
 
-        Column {
-            anchors.fill: parent
-            anchors.margins: 12
-
-            Text {
-                text: "Themes"
-                color: Colors.palette.base05
-                font.pixelSize: 18
-                font.weight: Font.Bold
-                horizontalAlignment: Text.AlignHCenter
-                width: parent.width
+        Text {
+            text: "Themes"
+            color: Colors.palette.base05
+            font.pixelSize: 16
+            font.weight: Font.Bold
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.horizontalCenter
+                topMargin: 12
             }
+        }
 
-            ListView {
-                id: themeList
-                width: parent.width
-                height: parent.height - 40
-                clip: true
-                model: themes
-                currentIndex: selectedIndex
+        ListView {
+            id: themeList
+            anchors {
+                top: parent.top
+                topMargin: 40
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                margins: 8
+            }
+            spacing: 6
+            clip: true
+            model: themes
+            currentIndex: selectedIndex
 
-                delegate: Rectangle {
-                    width: parent.width
-                    height: 32
-                    radius: 6
-                     // Color de fondo según estado: hover, seleccionado o normal
-                    color: {
-                        if (itemMouse.containsMouse)
-                            return Colors.palette.base03          // color al pasar el cursor
-                        else if (index === selectedIndex)
-                            return Colors.palette.base0D          // color cuando está seleccionado
-                        else
-                            return Colors.palette.base02          // color normal
+            delegate: Rectangle {
+                width: themeList.width - 16
+                height: 44
+                radius: 10
+                color: {
+                    if (mouseArea.containsMouse)
+                        return Colors.palette.base03
+                    if (index === selectedIndex)
+                        return Colors.palette.base0D
+                    return Colors.palette.base02
+                }
+
+                Row {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        leftMargin: 8
+                        rightMargin: 8
                     }
+                    spacing: 10
 
-                    Row {
+                    Rectangle {
+                        width: 28
+                        height: 28
+                        radius: 14
+                        clip: true
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        anchors.leftMargin: 8
-                        spacing: 8
 
-                        // Círculo con dos mitades de color
                         Rectangle {
-                            width: 24; height: 24
-                            radius: 12
-                            color: "transparent"
-                            clip: true
-                            anchors.verticalCenter: parent.verticalCenter
-
-                            Rectangle {
-                                width: 12; height: 24
-                                anchors.left: parent.left
-                                color: modelData.variant || "#888888"   // fallback si falta
-                            }
-                            Rectangle {
-                                width: 12; height: 24
-                                anchors.right: parent.right
-                                color: modelData.base0D || "#888888"
-                            }
+                            width: parent.width / 2
+                            height: parent.height
+                            color: modelData.base00
                         }
 
-                        Text {
-                            // text: modelData.name
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.pixelSize: 13
-                            color: "white"
-                            // color: (itemMouse.containsMouse || index === selectedIndex)
-                            //        ? Colors.palette.base00 : Colors.palette.base05
+                        Rectangle {
+                            width: parent.width / 2
+                            height: parent.height
+                            x: parent.width / 2
+                            color: modelData.base0D
+                        }
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "transparent"
+                            border.color: {
+                                if (mouseArea.containsMouse || index === selectedIndex)
+                                    return Colors.palette.base00
+                                return Colors.palette.base03
+                            }
+                            border.width: 1
                         }
                     }
-                    // Text {
-                    //     text: modelData
-                    //             // Color del texto: claro sobre fondo oscuro, oscuro sobre fondo claro
-                    //     color: (itemMouse.containsMouse || index === selectedIndex)
-                    //            ? Colors.palette.base00 : Colors.palette.base05
-                    //     font.pixelSize: 13
-                    //     anchors.centerIn: parent
-                    // }
 
-                    MouseArea {
-                        id: itemMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: {
-                            selectedIndex = index
-                            root.applyTheme(modelData)
-                            root.visible = false
+                    Text {
+                        text: modelData.name
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: {
+                            if (mouseArea.containsMouse || index === selectedIndex)
+                                return Colors.palette.base00
+                            return Colors.palette.base05
                         }
+                        font {
+                            pixelSize: 13
+                            family: root.font
+                        }
+                        elide: Text.ElideRight
                     }
                 }
+
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        selectedIndex = index
+                        root.applyTheme(modelData.name)
+                        root.visible = false
+                    }
+                }
+
+                Behavior on scale {
+                    NumberAnimation { duration: 100 }
+                }
+                scale: mouseArea.containsMouse ? 1.06 : 1.0
             }
         }
     }

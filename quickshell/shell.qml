@@ -7,6 +7,7 @@ import "./ui/layout/"
 import "./ui/popups/"
 import "./ui/widgets/"
 import "./ui/components/"
+import "./ui/lock/"
 import "./dev/"
 import "./services/"
 
@@ -15,9 +16,12 @@ ShellRoot {
     ClockWidget {}
     BrightnessPopup {}
     VolumePopup {}
-    ThemeSelector {
-        id: themeSelector
-    }
+    Dictionary { id: dictionary }
+    ThemeSelector { id: themeSelector }
+    WallpaperSelector { id: wallpaperSelector }
+    Translate { id: translate }
+    // LockScreen { id: lockScreen }
+    
     IpcHandler {
         target: "colores"
         function recargar(): void {
@@ -48,7 +52,42 @@ ShellRoot {
             wallpaperSelector.visible = false
         }
     }
-    WallpaperSelector {
-        id: wallpaperSelector
+    IpcHandler {
+        target: "dictionary"
+        function toggle(): void {
+            dictionary.visible = !dictionary.visible
+        }
+        function show(): void {
+            dictionary.visible = true
+        }
+        function hide(): void {
+            dictionary.visible = false
+        }
+    }
+    IpcHandler {
+        target: "translate"
+        function toggle(): void {
+            translate.visible = !translate.visible
+        }
+        function show(): void {
+            translate.visible = true
+        }
+        function hide(): void {
+            translate.visible = false
+        }
+    }
+    IpcHandler {
+        target: "lock"
+        function toggle(): void {
+            if (!lockScreen.visible) {
+                lockScreen.lock()
+            }
+        }
+        function lock(): void {
+            lockScreen.lock()
+        }
+        function unlock(): void {
+            // Only password auth can unlock
+        }
     }
 }
