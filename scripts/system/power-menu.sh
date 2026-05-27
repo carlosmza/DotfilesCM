@@ -20,6 +20,7 @@ fi
 case "$chosen" in
     "$op_shutdown") /usr/bin/shutdown now ;;
     "$op_reboot") /usr/bin/reboot ;;
-    "$op_lock") hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit ;;
+    # "$op_lock") hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit ;;
+		# "op_lock") /home/carlosm/noqs.sh ;;
     "$op_suspend") /usr/bin/systemctl suspend ;;
 esac
