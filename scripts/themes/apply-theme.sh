@@ -1,73 +1,109 @@
 #!/usr/bin/env bash
 
-THEME="$1"
-[[ -z "$THEME" ]] && exit 1
-echo "$THEME"
+# Explicación de Flags: 
+# -e: Termina el script si un comando falla.
+# -u: Lanza un error si se intenta usar una variable no declarada.
+# -o pipefail: Captura errores dentro de pipelines (|).
+set -euo pipefail
 
-MODE=$(jq -r .variant $HOME/.config/system-themes/themes/"$THEME".json)
-# HYPR_THEME_DIR="$HOME/.config/hypr/themes/"
-HYPR_LUA_THEME_DIR="$HOME/.config/hypr/lua/themes/"
-ROFI_THEME_DIR="$HOME/.config/rofi/themes/"
-GENERAL_THEME_DIR="$HOME/.config/system-themes/themes/"
-QUICKSHELL_THEME_DIR="$HOME/.config/quickshell/config/theme/"
-# POSH_THEME="$HOME/.config/oh-my-posh/$THEME.json"
-# KITTY_THEME="$HOME/.config/kitty/themes/$THEME.conf"
-# WALLPAPER="$HOME/Pictures/Wallpapers/$THEME.jpg"
-# __________ GENERAL __________
-echo "Modify GENERAL_THEME_DIR"
-ln -sf "$GENERAL_THEME_DIR""$THEME".json "$GENERAL_THEME_DIR"current.json
+echo "=== $(date '+%Y-%m-%d %H:%M:%S') ==="
 
-# __________ HYPRLAND __________
-# echo "Modify HYPR_THEME"
-# ln -sf "$HYPR_THEME_DIR""$THEME".conf "$HYPR_THEME_DIR"current.conf
+# 1. Verificación del argumento obligatorio
+THEME="${1:-}" # Asigna cadena vacía si no se pasa el parámetro $1 para evitar error de 'set -u'
+if [[ -z "$THEME" ]]; then
+    echo "ERROR: No se especificó ningún tema como argumento." >&2
+    exit 1
+fi
+echo "Aplicando tema: $THEME"
 
-# __________ HYPRLAND LUA __________
-echo "Modify HYPR_LUA_THEME"
-ln -sf "$HYPR_LUA_THEME_DIR""$THEME".lua "$HYPR_LUA_THEME_DIR"current.lua
+# 2. Verificación de Dependencias Críticas
+# Estructura: Comprobamos si las herramientas base están disponibles en el PATH
+for cmd in jq hyprctl lua; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo "ERROR: La dependencia requerida '$cmd' no está instalada." >&2
+        exit 1
+    fi
+done
 
-# __________ ROFI __________
-echo "Modify ROFI_THEME"
-ln -sf "$ROFI_THEME_DIR""$THEME".rasi "$ROFI_THEME_DIR"theme-ln.rasi
-
-# __________	QUICKSHELL __________
-echo "Modify QUICKSHELL"
-ln -sf "$GENERAL_THEME_DIR"current.json "$QUICKSHELL_THEME_DIR"current.json
-quickshell ipc call colores recargar
-
-# # __________ DARK/LIGHT MODE __________
-if [[ $MODE =~ dark ]]; then
-	echo "Dark Mode"
-	gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-else
-	echo "Light Mode"
-	gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+# 3. Verificación del Archivo de Origen
+THEME_SOURCE="$HOME/.config/system-themes/themes/${THEME}.json"
+if [[ ! -f "$THEME_SOURCE" ]]; then
+    echo "ERROR: El archivo de tema no existe en: $THEME_SOURCE" >&2
+    exit 1
 fi
 
-# Esto ya es manejado por otro script
-# Wallpaper
-# if [[ -f "$WALLPAPER" ]]; then
-#     swww img "$WALLPAPER" $PRESET
-# fi
+THEME_SYSTEM="$HOME/.config/system-themes/themes/current.json"
 
+# Extraer variante con jq (seguro gracias a pipefail)
+MODE=$(jq -r '.variant // "dark"' "$THEME_SOURCE") # '// "dark"' provee un fallback si la llave no existe
 
-# Oh My Posh
-# if [[ -f "$POSH_THEME" ]]; then
-#     ln -sf "$POSH_THEME" ~/.config/oh-my-posh/current.json
-# fi
-#
-# # Kitty
-# if [[ -f "$KITTY_THEME" ]]; then
-#     ln -sf "$KITTY_THEME" ~/.config/kitty/themes/theme-ln.conf
-# 		# echo "asignando socket"
-# 		# SOCKET="unix:@mykitty"
-# 		SOCKET="unix:/tmp/kitty.sock"
-# 		# echo "socket asignado"
-# 		# kitty @ --to "$SOCKET" set-colors -a -c "$THEME_FILE" 2>/dev/null \
-# 		# || kitty @ set-colors -a -c "$THEME_FILE"
-#     # kitty @ set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
-#     kitty @ --to "$SOCKET" set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
-# 		# kitty @ --to unix:/tmp/kitty.sock set-colors -a -c ~/.config/kitty/themes/theme-ln.conf
-# 		echo "Kitty theme:" "$KITTY_THEME"
-# fi
+# __________ GENERAL __________
+echo "Modificando tema global"
+ln -sf "$THEME_SOURCE" "$THEME_SYSTEM"
 
-exec fish
+# __________ HYPRLAND LUA __________
+echo "Recargando Hyprland y ejecutando script de Lua..."
+hyprctl reload || echo "Aviso: hyprctl reload falló (¿estás fuera de una sesión de Hyprland?)" >&2
+lua "$HOME/.config/hypr/lua/scripts/read_theme.lua"
+
+# __________ ZELLIJ __________
+echo "Modificando tema de Zellij..."
+ZELLIJ_THEME_FILE="$HOME/.config/zellij/themes/current.kdl"
+if "$HOME/.config/scripts/themes/json-to-kdl.py" "$THEME_SYSTEM" --output "$ZELLIJ_THEME_FILE"; then
+    chmod +x "$ZELLIJ_THEME_FILE"
+    echo >> "$HOME/.config/zellij/config.kdl"
+else
+    echo "Aviso: No se pudo generar el archivo KDL para Zellij." >&2
+fi
+
+# __________ ROFI __________
+echo "Modificando tema de Rofi..."
+"$HOME/.config/scripts/themes/json-to-rasi.py" "$THEME_SYSTEM" -o \
+    "$HOME/.config/rofi/themes/current.rasi"
+
+# __________ QUICKSHELL __________
+echo "Notificando a Quickshell..."
+# Usamos '|| true' para que el script no muera si quickshell ipc no responde en ese instante
+quickshell ipc call colores recargar || echo "Aviso: No se pudo comunicar con Quickshell IPC." >&2
+
+# __________ DARK/LIGHT MODE __________
+if [[ "$MODE" =~ dark ]]; then
+    echo "Modo detectado: Oscuro"
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+else
+    echo "Modo detectado: Claro"
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+fi
+
+# __________ KITTY __________
+echo "Modificando tema de Kitty..."
+KITTY_CONF="$HOME/.config/kitty/current.conf"
+EXPECTED_NAME=$(jq -r '.name // empty' "$THEME_SYSTEM")
+
+if [[ -n "$EXPECTED_NAME" ]]; then
+    VERIFIED=false
+    for attempt in 1 2 3 4; do
+        if "$HOME/.config/scripts/themes/json-to-kitty.py" "$THEME_SYSTEM" --output "$KITTY_CONF"; then
+            READ_NAME=$(head -1 "$KITTY_CONF" 2>/dev/null | sed 's/^# name: //')
+            if [[ "$READ_NAME" == "$EXPECTED_NAME" ]]; then
+                echo "  ✓ Verificado con éxito (intento $attempt)"
+                VERIFIED=true
+                break
+            fi
+        fi
+        echo "  ⚠ Desajuste de nombre o fallo en script, reintentando (intento $attempt)..."
+        sleep 0.2
+    done
+
+    if [ "$VERIFIED" = true ]; then
+        "$HOME/.config/scripts/system/reload-kitty.sh"
+    else
+        echo "ERROR: No se pudo verificar la consistencia del tema de Kitty tras 4 intentos." >&2
+    fi
+else
+    echo "Aviso: El JSON del tema no contiene una propiedad '.name' válida." >&2
+fi
+
+# Mantenemos tu lógica para terminales interactivas
+[[ -t 0 ]] && exec fish
+exit 0

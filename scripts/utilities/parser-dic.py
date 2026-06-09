@@ -1,74 +1,45 @@
 #!/usr/bin/env python3
 import sys
 import argparse
-import re
 
-DICT_NAMES = {
-    "English - Spanish",
-    "WordNet",
-    "dictd_www.dict.org_gcide",
-    "quick_english-spanish",
-    "Collins Cobuild 5",
-    "Oxford Advanced Learner's Dictionary",
-    "Free On-Line Dictionary of Computing",
-}
-
-
-def parse_sdcv_output(text: str, _dict_name: str = "") -> str:
+def parse_sdcv_output(text: str, dict_name: str) -> str:
+    """Limpia la salida según el diccionario indicado."""
     lines = text.splitlines()
-    result = []
+    clean_lines = []
 
-    for line in lines:
-        stripped = line.strip()
-        if not stripped:
-            continue
-
-        # Collins: skip * * * separators
-        if stripped == "* * *":
-            continue
-
-        # Remove "Found N items..." prefix (may share the line with content)
-        found_match = re.match(
-            r'^(Found \d+ items?,?\s+similar to[^.]*\.)\s*', stripped
-        )
-        if found_match:
-            rest = stripped[found_match.end():]
-            if not rest:
+    if dict_name == "collins":
+        for line in lines:
+            # Eliminar los separadores "* * *"
+            if line.strip() == "* * *":
                 continue
-            stripped = rest
+            # Si la línea contiene "\-->", extraer solo el texto después del último "\-->"
+            if "\\-->" in line:
+                line = line.split("\\-->")[-1]
+            clean_lines.append(line)
+        return "\n".join(clean_lines)
 
-        # Unify \--> and --> separators into \-->
-        normalized = re.sub(r'\\?-->', '\\-->', stripped)
-
-        if "\\-->" in normalized:
-            parts = normalized.split("\\-->")
-            kept = []
-            for part in parts:
-                p = part.strip()
-                if not p or p in DICT_NAMES:
-                    continue
-                kept.append(p)
-            if not kept:
+    if dict_name == "english-spanish":
+        line_main = ""
+        for i, line in enumerate(lines):
+            if i == 0:
                 continue
-            line = " ".join(kept)
-        else:
-            line = stripped
+            if "-->" in line:
+                line = line.split("-->")[-1]
 
-        line = re.sub(r'\s+(\d+(?::\s*|\s+))', r'\n\1', line)
-        result.append(line)
+            clean_lines.append(line)
+        return "\n".join(clean_lines)
 
-    return "\n".join(result).strip()
-
-
+    else:
+        return "Return 1"
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Limpia la salida de sdcv + html2text para diferentes diccionarios."
     )
     parser.add_argument(
         "--diccionario",
-        choices=sorted(DICT_NAMES),
-        default="Collins Cobuild 5",
-        help="Nombre del diccionario usado (determina las reglas de limpieza).",
+        choices=["english-spanish", "collins", "wordnet", "oxford-advanced"],
+        default="collins",
+        help="Nombre del diccionario usado (determina las reglas de limpieza)."
     )
     args = parser.parse_args()
 

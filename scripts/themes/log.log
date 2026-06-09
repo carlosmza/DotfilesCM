@@ -1,0 +1,19 @@
+0x96f
+Modify GENERAL_THEME_DIR
+Modify HYPR_LUA_THEME
+ok
+Modify Zellij Theme
+Tema Zellij generado exitosamente: /home/carlosm/.config/zellij/themes/current.kdl
+Modify ROFI_THEME
+Modify QUICKSHELL
+Dark Mode
+Modify KITTY_THEME
+Tema Kitty generado: /home/carlosm/.config/kitty/current.conf
+  ✓ verified (attempt 1)
+🔄 Recargando 1 instancia(s) de kitty...
+  ✅ Instancia PID 1765 recargada correctamente
+
+📊 Resumen: 1/1 instancias recargadas exitosamente
+]7;file://archlinux/home/carlosm/.config/scripts/themes]0;~/.c/s/themes[m[?2004h[?2031h[>4;1m=]133;A;click_events=1\[0J[38;2;172;176;190m [0m[38;2;30;102;245mcarlosm@archlinux [0m[38;2;234;118;203m~/..../themes [0m[38;2;114;135;253m main [0m[38;2;172;176;190m[0m ]133;B[K[44Ch[45C[90mead ~/.config/kitty/current.conf[39m[45C[91mh[90mead ~/.config/kitty/current.conf[39m[45C[91mo[39m[K[46C[90mmectl [39m[46C[91ml[39m[K[47C[91ma[39m[48C[?2004l[?2031l[>4;0m>[?2004h[?2031h[>4;1m=[?2004l[?2031l[>4;0m>
+[m]133;C;cmdline_url=hola]0;hola ~/.c/s/themes[m]133;D;127[?25h[2m⏎[m                                                                                  ⏎ [K]7;file://archlinux/home/carlosm/.config/scripts/themes]0;~/.c/s/themes[m[?2004h[?2031h[>4;1m=]133;A;click_events=1[0J[38;2;172;176;190m [0m[38;2;30;102;245mcarlosm@archlinux [0m[38;2;234;118;203m~/..../themes [0m[38;2;114;135;253m main [0m[38;2;172;176;190m[0m ]133;B[K[44C[?2004l[?2031l[>4;0m>
+[m[m
