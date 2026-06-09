@@ -104,6 +104,11 @@ else
     echo "Aviso: El JSON del tema no contiene una propiedad '.name' válida." >&2
 fi
 
+# __________ Oh-my-posh __________
+echo "Modificando tema Oh-my-posh..."
+"$HOME/.config/scripts/themes/json-to-prompt.py" "$THEME_SYSTEM" "$HOME/.config/oh-my-posh/current.json"
+pkill -USR1 fish || true
+
 # Mantenemos tu lógica para terminales interactivas
 [[ -t 0 ]] && exec fish
 exit 0

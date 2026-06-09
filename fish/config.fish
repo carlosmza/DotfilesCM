@@ -23,3 +23,10 @@ alias ls="eza --color=always --icons=always --group-directories-first"
 alias la="eza --color=always --icons=always --group-directories-first -a --long --header --git"
 alias tree="eza --color=always --icons=always --group-directories-first --tree"
 alias y="yazi"
+
+function reload_prompt --on-signal USR1
+    source (oh-my-posh init fish \
+        --config ~/.config/oh-my-posh/current.json | psub)
+
+    commandline -f repaint
+end
