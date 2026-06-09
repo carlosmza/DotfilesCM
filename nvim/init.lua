@@ -1,10 +1,11 @@
+require("vim._core.ui2").enable({})
 require ("config.lazy")
 require ("config.keymaps")
 require ("config.options")
 vim.g.suda_smart_edit = 1  -- Detecta automáticamente si necesita sudo
 -- Colores predefinidos
-local light_scheme = "catppuccin-latte"   -- cámbialo a tu gusto
-local dark_scheme = "noirbuddy"  -- cámbialo a tu gusto
+local light_scheme = "rose-pine-dawn"   -- cámbialo a tu gusto
+local dark_scheme = "gruvbox"  -- cámbialo a tu gusto
 local json_path = "/home/carlosm/.config/system-themes/themes/current.json"
 
 -- Función que lee el valor "variant" con jq y aplica el tema

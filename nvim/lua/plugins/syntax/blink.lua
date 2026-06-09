@@ -7,11 +7,12 @@ return {
   lazy = "VeryLazy",
   opts = {
       signature = { enabled = true },
-  },
-  completion = {
-      ghost_text = { enabled = true },
-      documentation = { auto_show = true },
-      --menu = { auto_show = false},
+			cmd = { enabled = true},
+			completion = {
+				ghost_text = { enabled = true },
+				documentation = { auto_show = true },
+				menu = { auto_show = false, border = "single"},
+		}
   },
 
   config = function()
@@ -25,32 +26,19 @@ return {
           ['<C-k>'] = { 'select_prev', 'fallback' },
           ['<C-j>'] = { 'select_next', 'fallback' },
           ['<Tab>'] = { 'select_next', 'fallback' },
+          ['<S-Tab>'] = { 'select_prev', 'fallback' },
           ['<C-e>'] = { 'show', 'show_documentation', 'hide_documentation' },
           ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
           ['<C-U>'] = { 'scroll_documentation_down', 'fallback' },
           -- show with a list of providers
           ['<C-space>'] = { function(cmp) cmp.show({ providers = { 'snippets' } }) end },
       },
-      -- sources = {
-      --   default = { "lsp", "path", "buffer" },
-      -- },
-			-- sources = {
-			-- 	per_filetype = {
-			-- 		qml = { "quickshell", "lsp", "path", "snippets", "buffer" },
-			-- 	},
-			-- 	providers = {
-			-- 		 quickshell = {
-			-- 		 	name = "Quickshell",
-			-- 		 	module = "quickshell-completions.blink",
-			-- 		 	score_offset = 90,
-			-- 		},
-			-- 		-- snippets = {
-			-- 		-- 	opts = {
-			-- 		-- 		-- search_paths = { require("quickshell-completions").get_snippet_path() },
-			-- 		-- 	},
-			-- 		-- },
-			-- 	},
-			-- },
+      sources = {
+        default = { "lsp", "path", "buffer" },
+      },
+			fuzzy = {
+				implementation = "prefer_rust_with_warning"	
+			}
     })
 
     -- Integración con LSP
@@ -66,6 +54,9 @@ return {
     vim.lsp.config.qmlls = {
         capabilities = capabilities
     }
+		vim.lsp.config.emmylua_ls = {
+				capabilities = capabilities
+		}
   end
 }
 

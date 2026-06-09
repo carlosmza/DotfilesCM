@@ -23,14 +23,11 @@ vim.opt.smartcase = true
 vim.opt.swapfile = false -- Es clave para los molestos .swp
 vim.opt.backup = false
 vim.opt.undofile = true
--- Comment this line
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
-vim.opt.scrolloff = 4
+vim.opt.scrolloff = 10
 --vim.opt.signcolumn = "yes"
 --vim.opt.colorcolumn = "80"
 
 -- vim.opt.pumheight = 12
 vim.opt.updatetime = 50
 vim.opt.clipboard = "unnamedplus"
-vim.cmd.colorscheme( "kanagawa-wave")
 

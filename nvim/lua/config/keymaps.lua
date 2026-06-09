@@ -3,18 +3,18 @@ kmap("n", "gdx", ":belowright split | lua vim.lsp.buf.definition()<CR>", {desc='
 kmap("n", "gdv", ":vsplit | lua vim.lsp.buf.definition()<CR>",{desc='vertical definition'})
 kmap("n", "gdt", ":tab split | lua vim.lsp.buf.definition()<CR>",{desc='tab definition'})
 
--- Centrar el cursor
--- kmap("n","j","jzz",{ noremap = true})
--- kmap("n","k","kzz",{ noremap = true})
--- kmap("n","l","lzz",{ noremap = true})
--- kmap("n","h","hzz",{ noremap = true})
--- kmap('n', "<C-u>", "<C-u>zz")
--- kmap('n', "<C-d>", "<C-d>zz")
--- kmap('n', "<C-f>", "<C-f>zz")
--- kmap('n', "<C-b>", "<C-b>zz")
--- kmap('n', "n", "nzzzv")
--- kmap('n', "N", "Nzzzv")
---
+--Centrar el cursor
+kmap("n","j","jzz",{ noremap = true})
+kmap("n","k","kzz",{ noremap = true})
+kmap("n","l","lzz",{ noremap = true})
+kmap("n","h","hzz",{ noremap = true})
+kmap('n', "<C-u>", "<C-u>zz")
+kmap('n', "<C-d>", "<C-d>zz")
+kmap('n', "<C-f>", "<C-f>zz")
+kmap('n', "<C-b>", "<C-b>zz")
+kmap('n', "n", "nzzzv")
+kmap('n', "N", "Nzzzv")
+
 -- Move lines
 kmap('v', 'K', ":m '<-2<CR>gv=gv")
 kmap('v', 'J', ":m '>+1<CR>gv=gv")
@@ -23,8 +23,8 @@ kmap('v', 'J', ":m '>+1<CR>gv=gv")
 kmap('n', '<leader>yp', ":let @+=expand('%:.')<cr>", { desc = 'Copy relative path' })
 
 -- Increse / Decrease width
-kmap('n', '<C-<>', "<C-w><", { desc = 'Decrease window width'})
-kmap('n', '<C->>', "<C-w>>", { desc = 'Increse window width'}) -- No funciona, conflicto con ident backward (Normal mode)
+-- kmap('n', '<C-<>', "<C-w><", { desc = 'Decrease window width'})
+-- kmap('n', '<C->>', "<C-w>>", { desc = 'Increse window width'}) -- No funciona, conflicto con ident backward (Normal mode)
 -- Go to Normal Mode
 kmap("i", "jk", "<Esc>", { silent = true})
 kmap("i", "kk", "<Esc>", { silent = true })
@@ -42,13 +42,13 @@ kmap("n", "<leader>S", "<cmd>set nospell!<CR>", { desc = "Spell"})
 kmap("n", "<leader>w", "<cmd>w<CR>", { desc = "Save"})
 
 -- Quit Buffer
-kmap("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit"})
+-- kmap("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit"})
 
 -- Save Buffer and Exit
 kmap("n", "<leader>W", "<cmd>wq<CR>", { desc = "Save"})
 
 -- Quit Buffer and Exit
-kmap("n", "<leader>Q", "<cmd>q!<CR>", { desc = "Quit"})
+-- kmap("n", "<leader>Q", "<cmd>q!<CR>", { desc = "Quit"})
 
 -- Yank all Text
 kmap("n", "<leader>Y", "<cmd>%y<CR>", { desc = "Yank All Text"})
@@ -66,7 +66,7 @@ kmap("n", "<C-k>", "<C-w>k", { desc = "Go to up window"})
 -- Go to down window
 kmap("n", "<C-j>", "<C-w>j", { desc = "Go to down window"})
 -- Indent backward
--- kmap("n", "<", "<<", { desc = "Indent backward (Normal mode)"})
+kmap("n", "<", "<<", { desc = "Indent backward (Normal mode)"})
 
 -- Indent forward
 kmap("n", ">", ">>", { desc = "Indent forward(Normal mode)"})
@@ -92,33 +92,10 @@ kmap("t", "<C-h>", "<C-\\<C-N><C-h>", { desc = "General | Go to left window(Term
 -- Go to right window (Terminal)
 kmap("t", "<C-l>", "<C-\\><C-N><C-l>", { desc = "General | Go to right window(Terminal)", silent = true })
 
--- Save current session
-kmap("n", "<leader>Qs", function()
-  require("persistence").save()
-  print("Sesión guardada manualmente ✅")
-end, { desc = "Guardar sesión manualmente" })
-
--- Session list
-kmap("n", "<leader>QL", function()
-  require("persistence").load()
-end, { desc = "Listar sesiones guardadas" })
-
--- Load last session
-kmap("n", "<leader>Qls", function()
-  require("persistence").load({ last = true })
-end, { desc = "Cargar última sesión" })
-
--- Delete all sessions
-kmap("n", "<leader>Qd", function()
-  vim.fn.delete(vim.fn.stdpath("state") .. "/sessions", "rf")
-  vim.fn.mkdir(vim.fn.stdpath("state") .. "/sessions", "p")
-  print("Sesiones eliminadas 🧹")
-end, { desc = "Eliminar todas las sesiones" })
-
 -- Buffers
 kmap("n", "<leader>l", "<cmd>BufferLineCycleNext<CR>", { desc = "Next Buffer" })
 kmap("n", "<leader>h", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous Buffer" })
-kmap("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Close Buffer" })
+kmap("n", "<leader>q", "<cmd>bdelete<CR>", { desc = "Close Buffer" })
 kmap("n", "<leader>b1", "<cmd>BufferLineGoToBuffer 1<CR>", { desc = "Go to Buffer [1]" })
 kmap("n", "<leader>b2", "<cmd>BufferLineGoToBuffer 2<CR>", { desc = "Go to Buffer [2]" })
 kmap("n", "<leader>b3", "<cmd>BufferLineGoToBuffer 3<CR>", { desc = "Go to Buffer [3]" })
@@ -166,3 +143,23 @@ end, { desc = 'Remove search highlighting', expr = true, silent = true })
 
 -- Colorizer
 kmap("n", "<leader>c", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colors"})
+
+-- Fzf - Zoxide
+local fzf = require('fzf-lua')
+local function zoxide_fzf()
+  fzf.fzf_exec("zoxide query -l", {
+    actions = {
+      ["default"] = function(selected)
+        if selected and selected[1] then
+          -- 1. Cambiamos el directorio de trabajo
+          vim.cmd("cd " .. selected[1])
+          
+          print("CWD: " .. selected[1])
+        end
+      end,
+    },
+    winopts = { title = " Zoxide " }
+  })
+end
+
+vim.keymap.set("n", "<leader>z", zoxide_fzf, { desc = "Zoxide mediante FZF (Alpha Dashboard)" })

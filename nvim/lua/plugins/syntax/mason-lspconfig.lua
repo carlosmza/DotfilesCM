@@ -22,6 +22,9 @@ return {
         vim.lsp.config.qmlls = {
             capabilities = capabilities
         }
+        vim.lsp.config.emmylua_ls = {
+            capabilities = capabilities
+				}
 
         
         -- lspconfig.clangd.setup({ capabilities = capabilities })
