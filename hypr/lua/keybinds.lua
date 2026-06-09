@@ -3,8 +3,13 @@
 local var = require("lua.variables")
 local mainMod = var.mainMod
 
+local function toggle_scratchpad(app)
+    hl.dispatch(hl.dsp.workspace.toggle_special(app))
+end
+
+
 -- Apps
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("bash -c '/home/carlosm/.config/scripts/system/kitty-launch.sh 2> /tmp/kitty-debug.log'"))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(var.terminal))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(var.menu))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(var.fileExplorer))
@@ -37,6 +42,10 @@ hl.bind(mainMod .. " +  E", hl.dsp.exec_cmd("quickshell ipc call translate toggl
 -- Scratchpad
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+-- Youtube Music CLI
+hl.bind(mainMod .. " + M", function()
+    hl.dispatch(hl.dsp.workspace.toggle_special("ytm"))
+end)
 
 -- Focus movement
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
@@ -72,3 +81,14 @@ hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = tr
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+
+-- hl.bind(mainMod .. " + M", hl.dsp.workspace.toggle_special("ytm"))
+-- hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(var.terminal .. " ytm"))
+--
+-- local function toggle_scratchpad(name)
+--     hl.dispatch(hl.dsp.workspace.toggle_special(name))
+-- end
+--
+-- -- 3. Keybind para lanzar el scratchpad
+-- hl.bind(mainMod .. " + G", function () toggle_scratchpad("wifi")end)
+--

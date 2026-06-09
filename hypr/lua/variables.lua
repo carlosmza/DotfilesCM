@@ -1,13 +1,15 @@
 -- User-facing variables — DotfilesCM
 -- Loaded by other modules via require("lua.variables")
 
-local theme = require("lua.themes.current")
+local theme = require("lua.scripts.read_theme")
 local palette = theme.palette
 
 local var = {}
 
 -- Apps
-var.terminal = "foot"
+-- var.terminal = "foot"
+-- var.terminal = "/home/carlosm/.config/scripts/system/kitty-launch.sh"
+var.terminal = "kitty"
 var.browser = "zen-browser"
 var.fileExplorer = "nautilus"
 var.pdfViewer = "okular"
@@ -25,9 +27,9 @@ var.blurPasses = 2
 var.blurXray = false
 
 -- Shadow
-var.shadowEnabled = false
-var.shadowRange = 10
-var.shadowRenderPower = 10
+var.shadowEnabled = true
+var.shadowRange = 2
+var.shadowRenderPower = 1
 var.shadowColor = "rgba(" .. palette.base00 .. "7F)"
 var.shadowInactiveColor = "rgba(" .. palette.base01 .. "7F)"
 
@@ -35,12 +37,15 @@ var.shadowInactiveColor = "rgba(" .. palette.base01 .. "7F)"
 var.windowActiveOpacity = 0.98
 var.windowInactiveOpacity = 0.95
 var.windowRounding = 10
-var.windowRoundingPower = 4
-var.windowBorderSize = 2
+var.windowRoundingPower = 10
+var.windowBorderSize = 3
 var.activeWindowBorderColour = "rgba(" .. palette.base0D .. "FF)"
 var.inactiveWindowBorderColour = "rgba(" .. palette.base02 .. "7F)"
-var.windowGapsIn = {5, 5, 5, 5}
-var.windowGapsOut = {5, 5, 5, 5}
+-- var.windowGapsIn = {10,10,10,10}
+var.windowGapsIn = 10
+-- var.windowGapsOut = {40, 40, 40, 40}
+var.windowGapsOut = 20
+-- var.windowGapsOut = {5, 5, 5, 5}
 
 -- Misc
 var.volumeStep = 5
