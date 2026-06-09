@@ -30,32 +30,76 @@ PanelWindow {
         radius: 15
         clip: false   // ¡importante para que los popups se vean!
 
-        Workspaces {
+        // ── Workspaces ──
+        Item {
+            id: workspaces
             anchors {
-                top: parent.top
                 horizontalCenter: parent.horizontalCenter
+                top: parent.top
+                topMargin: 20
+            }
+            Workspaces {
+                anchors.centerIn: parent
             }
         }
 
-        Window {
+        // ── Window ──
+        Item {
+            id: windows
             anchors {
-                centerIn: parent
-            }
-        }
-        // ── Clock (sin popup) ──
-        Clock {
-            anchors {
-                bottom: parent.bottom
                 horizontalCenter: parent.horizontalCenter
+                top: parent.top
+                topMargin: 300
+            }
+            implicitWidth: 32
+            implicitHeight: 32
+            Window {
+                anchors.centerIn: parent
             }
         }
+
+        // ── Clock (sin popup) ──
+        Item {
+            id: clock
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: 500
+            }
+            implicitWidth: 32
+            implicitHeight: 32
+            Clock {
+                anchors.centerIn: parent
+            }
+        }
+
+        // ── Screenshot con popup ──
+        Item {
+            id: screenshotTrigger
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: 140
+            }
+            implicitWidth: 32
+            implicitHeight: 32
+
+            Screenshot {
+                anchors.centerIn: parent
+                onClicked: {
+                    screenshotPopup.visible = !screenshotPopup.visible
+                    screenshotReveal.open = screenshotPopup.visible
+                }
+            }
+        }
+
         // ── Battery con popup ──
         Item {
             id: batteryTrigger
             anchors {
                 bottom: parent.bottom
                 horizontalCenter: parent.horizontalCenter
-                margins: 50
+                bottomMargin: 100
             }
             implicitWidth: 32
             implicitHeight: 32
@@ -82,23 +126,39 @@ PanelWindow {
             }
         }
 
+        // ── Bluetooth con popup ──
+        Item {
+            id: btTrigger
+            anchors {
+                bottom: parent.bottom
+                horizontalCenter: parent.horizontalCenter
+                bottomMargin: 80
+            }
+            implicitWidth: 32
+            implicitHeight: 32
+
+            Bluetooth {
+                anchors.centerIn: parent
+                onClicked: {
+                    btPopup.visible = !btPopup.visible
+                    btReveal.open = btPopup.visible
+                }
+            }
+        }
+
         // ── Wifi con popup ──
         Item {
             id: wifiTrigger
             anchors {
                 bottom: parent.bottom
                 horizontalCenter: parent.horizontalCenter
-                margins: 28
+                bottomMargin: 40
             }
             implicitWidth: 32
             implicitHeight: 32
 
             Wifi {
-                anchors {
-                    bottom: parent.bottom
-                    horizontalCenter: parent.horizontalCenter
-                    // margins: 28
-                }
+                anchors.centerIn: parent
             }
 
             MouseArea {
@@ -117,8 +177,6 @@ PanelWindow {
                 onTriggered: wifiPopup.visible = false
             }
         }
-
-        // … similar pattern …
     }
 
     // ───────────────────────
@@ -173,5 +231,51 @@ PanelWindow {
         }
     }
 
-    // … más PopupWindows para Battery, etc.
+    PopupWindow {
+        id: btPopup
+        visible: false
+        implicitWidth: 250
+        implicitHeight: 300
+        color: "transparent"
+
+        anchor {
+            window: root
+            rect.x: 40
+            rect.y: 1050
+        }
+
+        AnimatedReveal {
+            id: btReveal
+            anchors.fill: parent
+            open: false
+
+            BluetoothMenu {
+                anchors.fill: parent
+            }
+        }
+    }
+
+    PopupWindow {
+        id: screenshotPopup
+        visible: false
+        implicitWidth: 180
+        implicitHeight: 120
+        color: "transparent"
+
+        anchor {
+            window: root
+            rect.x: 40
+            rect.y: 900
+        }
+
+        AnimatedReveal {
+            id: screenshotReveal
+            anchors.fill: parent
+            open: false
+
+            ScreenshotMenu {
+                anchors.fill: parent
+            }
+        }
+    }
 }

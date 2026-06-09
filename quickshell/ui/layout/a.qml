@@ -13,18 +13,15 @@ Item {
     implicitHeight: 50
 
     property string font: Fonts.varelaRound
-    property string activeSpecialName: ""
+    property bool specialFocused: false
     property var icons: [ "", "", "" ]
 
     Connections {
         target: Hyprland
         function onRawEvent(event) {
             if (event.name === "activespecial") {
-                // event.data puede venir como "WORKSPACE_NAME" o "WORKSPACE_NAME,MONITOR"
-                // Extraemos solo el nombre del workspace para comparar
-                var data = event.data || ""
-                var sepIdx = data.indexOf(",")
-                root.activeSpecialName = sepIdx !== -1 ? data.substring(0, sepIdx) : data
+                root.specialFocused = !root.specialFocused
+                console.log("data:", event.data)
             }
         }
     }
@@ -49,14 +46,12 @@ Item {
                     id: workspaceDot
 
                     property bool isSpecial: modelData.id < 0
-                    // Coincide si los nombres son iguales, o si modelData.name trae
-                    // además el monitor como sufijo (e.g. "special:scratch,HDMI-A-1").
-                    property bool nameMatches: isSpecial && root.activeSpecialName.length > 0 && (
-                        root.activeSpecialName === modelData.name
-                        || modelData.name.indexOf(root.activeSpecialName + ",") === 0
-                    )
-                    property bool isFocused: isSpecial ? nameMatches : modelData.focused
-                    property bool isActive: isSpecial ? nameMatches : modelData.active
+                    property bool isFocused: isSpecial ? root.specialFocused : modelData.focused
+                    property bool isActive: {
+                        if (isSpecial)
+                            return root.specialFocused
+                        return modelData.active
+                    }
                     width: 28
                     height: 28
                     radius: width / 3
@@ -72,7 +67,7 @@ Item {
                         return Colors.palette.base01
                     }
                     border.width: isActive ? 2 : 0
-                    border.color: isFocused ? Colors.palette.base0D : Colors.palette.base00
+                    border.color: modelData.focused  ?  Colors.palette.base0D : Colors.palette.base00
 
                     Layout.alignment: Qt.AlignHCenter
 
@@ -90,13 +85,28 @@ Item {
 
                     scale: mouseArea.containsMouse ? 1.15 : 1.0
 
+
                     Text {
                         anchors.centerIn: parent
 
-                        text: isSpecial ? "" : modelData.id
+                        text: {
+                            if (modelData.id === -97) return ""
+                            if (modelData.id === -98) return ""
+                            if (modelData.id < 4 && modelData.id > 0) return root.icons[modelData.id -1]
+                            // return isSpecial ? "" : modelData.id
+                            return modelData.id
+                        }
 
+                        // visible: isSpecial || modelData.id === 2 || modelData.id === 3 || modelData.id > 3
+                        visible: true
 
-                        color: isFocused ? Colors.palette.base00 : Colors.palette.base0F
+                        color: {
+                            if (modelData.focused)
+                                return Colors.palette.base00
+                            if (root.specialFocused)
+                                return Colors.palette.base00
+                            return Colors.palette.base0F
+                        }
                         font {
                             pixelSize: 16
                             bold: true

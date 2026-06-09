@@ -36,7 +36,14 @@ PanelWindow {
     }
 
     function loadThemes() {
-        procList.command = ["bash", "-c", "for f in /home/carlosm/.config/system-themes/themes/*.json; do name=$(basename \"$f\" .json); [ \"$name\" = \"current\" ] && continue; c0=$(jq -r '.palette.base00' \"$f\"); cD=$(jq -r '.palette.base0D' \"$f\"); echo \"$name|$c0|$cD\"; done"]
+        procList.command = ["bash", "-c", 
+        "for f in /home/carlosm/.config/system-themes/themes/*.json; do
+            name=$(basename \"$f\" .json);
+            [ \"$name\" = \"current\" ] || [ \"$name\" = \"guide-base16\" ] || [ \"$name\" = \"a\" ] && continue;
+            c0=$(jq -r '.palette.base00' \"$f\");
+            cD=$(jq -r '.palette.base0D' \"$f\");
+            echo \"$name|$c0|$cD\";
+        done"]
         procList.running = true
     }
 
@@ -67,10 +74,13 @@ PanelWindow {
         }
     }
 
-    function applyTheme(name) {
-        proc.command = ["/home/carlosm/.config/scripts/themes/apply-theme.sh", name]
-        proc.running = true
-    }
+function applyTheme(name) {
+    proc.command = [
+        "bash", "-c",
+        `/home/carlosm/.config/scripts/themes/apply-theme.sh "${name}" >> /tmp/apply-theme.log 2>&1`
+    ]
+    proc.running = true
+}
 
     Process {
         id: proc

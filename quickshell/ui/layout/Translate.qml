@@ -10,14 +10,16 @@ PanelWindow {
     anchors {
         top: true
         right: true
+        left: true
     }
 
     margins {
+        left: 1000
         top: 10
-        right: 10
+        right: 15
     }
 
-    implicitWidth: 500
+    implicitHeight: 300
     color: "transparent"
     exclusiveZone: -1
     visible: false
@@ -27,33 +29,6 @@ PanelWindow {
     property string output: ""
     property bool loading: false
     property string errorMsg: ""
-
-    implicitHeight: Math.max(100, Math.min(
-        120
-        + (root.input !== "" ? hiddenInput.contentHeight : 0)
-        + (root.output !== "" ? hiddenOutput.contentHeight : 0)
-    , 600))
-
-    Text {
-        id: hiddenInput
-        visible: false
-        font.family: root.font
-        font.pixelSize: 16
-        font.weight: Font.Bold
-        text: root.input
-        width: root.implicitWidth - 32
-        wrapMode: Text.WordWrap
-    }
-
-    Text {
-        id: hiddenOutput
-        visible: false
-        font.family: "monospace"
-        font.pixelSize: 13
-        text: root.output
-        width: root.implicitWidth - 32
-        wrapMode: Text.WordWrap
-    }
 
     onVisibleChanged: {
         if (visible) {
@@ -65,7 +40,6 @@ PanelWindow {
         if (loading) return
         loading = true
         errorMsg = ""
-        input = ""
         output = ""
         procSelection.running = true
         procTranslate.running = true
@@ -77,10 +51,7 @@ PanelWindow {
         stdout: StdioCollector {
             onStreamFinished: {
                 root.loading = false
-                // var text = this.text.remplace (/\n/g,'a')
-                // var text = this.text.trim()
-                var text = this.text.replace(/\n/g, " ").trim().slice(0, 500)
-
+                var text = this.text.trim()
                 if (text === "") {
                     root.errorMsg = "No word selection.\nSelect a word and try again."
                 } else {
@@ -132,57 +103,9 @@ PanelWindow {
                 color: Colors.palette.base03
             }
 
-            // Scrollable content area
             Item {
                 width: parent.width
-                height: parent.height - 50 // header + separator + spacings
-
-                Flickable {
-                    id: flick
-                    anchors.fill: parent
-                    clip: true
-                    contentWidth: width
-                    contentHeight: contentColumn.height
-                    visible: !root.loading && (root.input !== "" || root.output !== "")
-
-                    Column {
-                        id: contentColumn
-                        width: parent.width
-                        spacing: 8
-
-                        Text {
-                            id: inputText
-                            text: root.input
-                            color: Colors.palette.base0D
-                            font.pixelSize: 15
-                            font.weight: Font.Bold
-                            font.family: root.font
-                            width: parent.width
-                            wrapMode: Text.WordWrap
-                        }
-
-                        Rectangle {
-                            width: parent.width
-                            height: 1
-                            visible: root.output !== ""
-                            color: Colors.palette.base03
-                        }
-
-                        Text {
-                            id: outputText
-                            text: root.output
-                            color: Colors.palette.base05
-                            font.pixelSize: 13
-                            font.family: "monospace"
-                            width: parent.width
-                            wrapMode: Text.WordWrap
-                            textFormat: Text.PlainText
-                            lineHeight: 1.4
-                            bottomPadding: 8
-                            padding: 4
-                        }
-                    }
-                }
+                height: parent.height - 60
 
                 BusyIndicator {
                     anchors.centerIn: parent
@@ -202,7 +125,44 @@ PanelWindow {
                     wrapMode: Text.WordWrap
                 }
 
-                // Custom scrollbar
+                Flickable {
+                    id: flick
+                    visible: !root.loading && root.output !== ""
+                    anchors.fill: parent
+                    clip: true
+                    contentHeight: outputText.height
+                    contentWidth: width
+
+                    Text {
+                        id: inputText
+                        text: root.input + "\n"
+                        color: Colors.palette.base05
+                        font.pixelSize: 15
+                        font.family: "monospace"
+                        width: flick.width
+                        wrapMode: Text.WordWrap
+                        textFormat: Text.PlainText
+                        // leftPadding: 4
+                        // rightPadding: 4
+                        // bottomPadding: 8
+                        // lineHeight: 1.5
+                    }
+                    Text {
+                        id: outputText
+                        text: root.output
+                        color: Colors.palette.base05
+                        font.pixelSize: 15
+                        font.family: "monospace"
+                        width: flick.width
+                        wrapMode: Text.WordWrap
+                        textFormat: Text.PlainText
+                        // leftPadding: 4
+                        // rightPadding: 4
+                        // bottomPadding: 8
+                        // lineHeight: 1.5
+                    }
+                }
+
                 Rectangle {
                     anchors {
                         right: parent.right
@@ -217,7 +177,7 @@ PanelWindow {
                     Rectangle {
                         y: (flick.visibleArea.yPosition / (1 - flick.visibleArea.heightRatio)) * (parent.height - height)
                         width: parent.width
-                        height: Math.max(20, flick.visibleArea.heightRatio * parent.height)
+                        height: flick.visibleArea.heightRatio * parent.height
                         radius: 3
                         color: Colors.palette.base04
                     }

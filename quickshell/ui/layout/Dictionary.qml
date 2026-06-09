@@ -8,17 +8,19 @@ import qs.config.fonts
 PanelWindow {
     id: root
     anchors {
-        // top: true
+        top: true
         right: true
-        // bottom: true
+        bottom: true
     }
 
     margins {
         left: 10
+        top: 200
+        bottom: 400
+        right: 15
     }
 
     implicitWidth: 400
-    implicitHeight: 400
     color: "transparent"
     exclusiveZone: -1
     visible: false

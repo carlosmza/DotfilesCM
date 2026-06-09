@@ -29,8 +29,7 @@ Singleton {
         property string base0F: "#cecacd"
     }
     FileView {
-        path: "/home/carlosm/.config/quickshell/config/theme/current.json"
-        // path: "/home/carlosm/test.json"
+        path: "/home/carlosm/.config/system-themes/themes/current.json"
         watchChanges: true
         onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
