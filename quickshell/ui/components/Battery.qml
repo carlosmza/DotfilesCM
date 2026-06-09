@@ -11,7 +11,7 @@ Item {
     readonly property bool status: !UPower.onBattery
 
     implicitWidth: 31
-    implicitHeight: 100
+    implicitHeight: 50
 
     property string icon: {
         var icons = ["󰂃","󰁺","󰁻","󰁼","󰁽","󰁾","󰁿","󰂀","󰂁","󰂂","󰁹"]

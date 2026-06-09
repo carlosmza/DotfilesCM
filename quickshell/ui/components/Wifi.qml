@@ -45,7 +45,7 @@ Item {
 
     Timer {
         id: refreshTimer
-        interval: 5000
+        interval: 1000
         running: true
         repeat: true
         onTriggered: {
@@ -53,7 +53,6 @@ Item {
         }
     }
     // Icons (nerdfont) for signal intervals. Adjust glyphs if your font differs.
-    // property var icons: ["󰤯", "󰤰", "󰤱", "󰤲", "󰤳"]
     property var icons: ["󰤭", "󰤯", "󰤟", "󰤢", "󰤥", "󰤨"]
     property string icon: {
         if (!root.connected) return icons[0]
@@ -70,7 +69,7 @@ Item {
         id: wifiIcon
         text: root.icon
         color: root.icon_color
-        font.pixelSize: 18
+        font.pixelSize: 20
         horizontalAlignment: Text.AlignHCenter
     }
 }

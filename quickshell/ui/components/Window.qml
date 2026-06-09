@@ -31,7 +31,7 @@ Item {
         id: titleText
         color: Colors.palette.base06
         font {
-            pixelSize: 18
+            pixelSize: 20
             bold: true
             family: root.font
         }

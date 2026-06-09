@@ -23,7 +23,7 @@ Item {
         text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[0] : "00"
         color: Colors.palette.base06
         font {
-            pixelSize: 17
+            pixelSize: 20
             bold: true
             family: root.font
         }
@@ -36,7 +36,7 @@ Item {
         text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[1] : "00"
         color: Colors.palette.base06
         font {
-            pixelSize: 17
+            pixelSize: 21
             bold: true
             family: root.font
         }

@@ -9,7 +9,7 @@ import qs.config.fonts
 Item {
     id: root
 
-    implicitWidth: 45
+    implicitWidth: 50
     implicitHeight: 50
 
     property string font: Fonts.varelaRound
@@ -93,8 +93,7 @@ Item {
                     Text {
                         anchors.centerIn: parent
 
-                        text: isSpecial ? "" : modelData.id
-
+                        text: (modelData.id < 4 && modelData.id > 0) ? icons[modelData.id - 1] : isSpecial ? "S" : modelData.id
 
                         color: isFocused ? Colors.palette.base00 : Colors.palette.base0F
                         font {

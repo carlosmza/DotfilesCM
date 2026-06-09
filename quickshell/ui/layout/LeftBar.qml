@@ -9,6 +9,7 @@ import qs.config.theme
 
 PanelWindow {
     id: root
+    property int size: 32
     anchors {
         top: true
         left: true
@@ -27,63 +28,58 @@ PanelWindow {
     Rectangle {
         color: Colors.palette.base00
         anchors.fill: parent
-        radius: 15
+        radius: 0
         clip: false   // ¡importante para que los popups se vean!
 
-        // ── Workspaces ──
         Item {
             id: workspaces
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: parent.top
-                topMargin: 20
+                topMargin: 40
             }
             Workspaces {
                 anchors.centerIn: parent
             }
         }
 
-        // ── Window ──
         Item {
             id: windows
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: parent.top
-                topMargin: 300
+                topMargin: 450
             }
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: root.size
+            implicitHeight: root.size
             Window {
                 anchors.centerIn: parent
             }
         }
 
-        // ── Clock (sin popup) ──
         Item {
             id: clock
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
-                bottomMargin: 500
+                bottomMargin: 300
             }
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: root.size
+            implicitHeight: root.size
             Clock {
                 anchors.centerIn: parent
             }
         }
 
-        // ── Screenshot con popup ──
         Item {
             id: screenshotTrigger
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
-                bottomMargin: 140
+                bottomMargin: 135
             }
-            implicitWidth: 32
-            implicitHeight: 32
-
+            implicitWidth: root.size
+            implicitHeight: root.size
             Screenshot {
                 anchors.centerIn: parent
                 onClicked: {
@@ -93,7 +89,6 @@ PanelWindow {
             }
         }
 
-        // ── Battery con popup ──
         Item {
             id: batteryTrigger
             anchors {
@@ -101,14 +96,12 @@ PanelWindow {
                 horizontalCenter: parent.horizontalCenter
                 bottomMargin: 100
             }
-            implicitWidth: 32
-            implicitHeight: 32
-
+            implicitWidth: root.size
+            implicitHeight: root.size
             Battery {
                 id: batteryIcon
                 anchors.centerIn: parent
             }
-
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
@@ -118,7 +111,6 @@ PanelWindow {
                     hideBatteryTimer.start()
                 }
             }
-
             Timer {
                 id: hideBatteryTimer
                 interval: 500
@@ -126,16 +118,15 @@ PanelWindow {
             }
         }
 
-        // ── Bluetooth con popup ──
         Item {
             id: btTrigger
             anchors {
                 bottom: parent.bottom
                 horizontalCenter: parent.horizontalCenter
-                bottomMargin: 80
+                bottomMargin: 70
             }
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: root.size
+            implicitHeight: root.size
 
             Bluetooth {
                 anchors.centerIn: parent
@@ -146,7 +137,6 @@ PanelWindow {
             }
         }
 
-        // ── Wifi con popup ──
         Item {
             id: wifiTrigger
             anchors {
@@ -154,8 +144,8 @@ PanelWindow {
                 horizontalCenter: parent.horizontalCenter
                 bottomMargin: 40
             }
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: root.size
+            implicitHeight: root.size
 
             Wifi {
                 anchors.centerIn: parent
