@@ -9,7 +9,7 @@ PORT = 5005
 FROM_CODE = "en"
 TO_CODE = "es"
 
-IDLE_TIMEOUT = 900
+IDLE_TIMEOUT = 600 # 900 = 15 min
 
 translator_module = None
 

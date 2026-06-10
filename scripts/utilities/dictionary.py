@@ -19,23 +19,23 @@ HTML2TEXT_ARGS = [
 # def get_available_dicts():
 #     result = subprocess.run(["sdcv", "-l"], capture_output=True, text=True)
 #     dicts = []
-#     for line in result.stdout.strip().splitlines():
-#         # print(line)
-#         line = line.strip()
-#         if not line or line.startswith("Dictionary's name") or line.startswith("dictd_www.dict.org_gcide") or line.startswith("Free On-Line Dictionary of Computing"):
-#             continue
-#         name = line.rsplit(None, 1)[0].strip()
-#         dicts.append(name)
-#     return dicts
+    # for line in result.stdout.strip().splitlines():
+    #     # print(line)
+    #     line = line.strip()
+    #     if not line or line.startswith("Dictionary's name") or line.startswith("dictd_www.dict.org_gcide") or line.startswith("Free On-Line Dictionary of Computing"):
+    #         continue
+    #     name = line.rsplit(None, 1)[0].strip()
+    #     dicts.append(name)
+    # return dicts
+DICT_MAP = {
+    "quick_english-spanish": "english-spanish",
+    "WordNet": "wordnet"
+    # "Collins Cobuild 5": "collins",
+    # "Oxford Advanced Learner's Dictionary": "oxford-advanced",
+}
+
 def get_available_dicts():
-    dicts = [
-                 "quick_english-spanish",
-                 "WordNet"
-                 # "English - Spanish"
-                 # "Free On-Line Dictionary of Computing",
-                 # "Oxford Advanced Learner's Dictionary"
-             ]
-    return dicts
+    return ["quick_english-spanish", "WordNet"]
 
 
 
@@ -65,10 +65,11 @@ def query_dict(word, dict_name):
         if not raw or not raw.strip():
             return None
 
+        parser_name = DICT_MAP.get(dict_name, dict_name)
         parser = subprocess.run(
             [sys.executable,
              os.path.join(SCRIPT_DIR, "parser-dic.py"),
-             "--diccionario", dict_name],
+             "--diccionario", parser_name],
             input=raw,
             capture_output=True,
             text=True,

@@ -26,35 +26,60 @@ PanelWindow {
     visible: false
 
     property string font: Fonts.varelaRound
+    property string input: ""
     property string output: ""
     property bool loading: false
     property string errorMsg: ""
 
     onVisibleChanged: {
         if (visible) {
-            runTranslation()
+            runLookup()
         }
     }
 
-    function runTranslation() {
+    function runLookup() {
         if (loading) return
         loading = true
         errorMsg = ""
+        input = ""
         output = ""
-        procTranslate.running = true
+        procSelection.running = true
     }
 
     Process {
-        id: procTranslate
-        command: ["bash", "-c", "/home/carlosm/.config/scripts/utilities/dictionary.py 2>/dev/null || true"]
+        id: procSelection
+        command: ["bash", "-c", "wl-paste -p"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                var text = this.text.trim()
+                if (text === "") {
+                    root.errorMsg = "No word selection.\nSelect a word and try again."
+                    root.loading = false
+                } else {
+                    root.input = text
+                    procDefinition.command = ["bash", "-c",
+                        "/home/carlosm/.config/scripts/utilities/dictionary.py " +
+                        "'" + text.replace(/'/g, "'\\''") + "' 2>/dev/null || true"]
+                    procDefinition.running = true
+                }
+            }
+        }
+    }
+
+    Process {
+        id: procDefinition
+        command: ["bash", "-c", "echo no word"]
         stdout: StdioCollector {
             onStreamFinished: {
                 root.loading = false
                 var text = this.text.trim()
                 if (text === "") {
-                    root.errorMsg = "No translation found.\nSelect a word and try again."
+                    if (root.errorMsg === "") {
+                        root.errorMsg = "No definition found.\nSelect a word and try again."
+                    }
                 } else {
                     root.output = text
+                    root.errorMsg = ""
                 }
             }
         }
@@ -113,15 +138,29 @@ PanelWindow {
                     visible: !root.loading && root.output !== ""
                     anchors.fill: parent
                     clip: true
-                    contentHeight: outputText.height
+                    contentHeight: inputText.y + inputText.height + outputText.height
                     contentWidth: width
 
+                    Text {
+                        id: inputText
+                        text: (root.input !== "" ? root.input + "\n" : "")
+                        color: Colors.palette.base08
+                        font.pixelSize: 15
+                        font.family: "monospace"
+                        width: flick.width
+                        wrapMode: Text.WordWrap
+                        textFormat: Text.PlainText
+                        leftPadding: 4
+                        rightPadding: 4
+                        bottomPadding: 4
+                    }
                     Text {
                         id: outputText
                         text: root.output
                         color: Colors.palette.base05
                         font.pixelSize: 15
                         font.family: "monospace"
+                        y: inputText.height
                         width: flick.width
                         wrapMode: Text.WordWrap
                         textFormat: Text.PlainText

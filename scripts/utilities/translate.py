@@ -33,7 +33,7 @@ def main():
         print("No text in primary selection.", file=sys.stderr)
         sys.exit(1)
 
-    text = text.replace("\n", " ").strip()[:500]
+    text = text.replace("\n", "").strip()[:500]
     if not text:
         print("Empty text.", file=sys.stderr)
         sys.exit(1)
