@@ -1,29 +1,64 @@
-# ~/.local/bin/argos_daemon.py
+#!/usr/bin/env python3
+# No perder mas tiempo intentando optimizar esto, ctranslate2 por default consume mucha memoria
 
 import socket
-import argostranslate.translate
 
 HOST = "127.0.0.1"
 PORT = 5005
 
-from_code = "en"
-to_code = "es"
+FROM_CODE = "en"
+TO_CODE = "es"
+
+IDLE_TIMEOUT = 900
+
+translator_module = None
+
 
 def translate(text):
-    return argostranslate.translate.translate(text, from_code, to_code)
+    global translator_module
+
+    if translator_module is None:
+        print("[argos] Cargando Argos Translate...")
+
+        import argostranslate.translate
+
+        translator_module = argostranslate.translate
+
+        print("[argos] Modelo cargado.")
+
+    return translator_module.translate(
+        text,
+        FROM_CODE,
+        TO_CODE
+    )
+
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
     s.bind((HOST, PORT))
     s.listen()
+    s.settimeout(IDLE_TIMEOUT)
 
-    print("Argos daemon running...")
+    print("[argos] Daemon iniciado.")
 
     while True:
-        conn, addr = s.accept()
+
+        try:
+            conn, addr = s.accept()
+
+        except socket.timeout:
+            print("[argos] Timeout alcanzado. Terminando.")
+            break
+
         with conn:
+
             data = conn.recv(4096).decode("utf-8")
+
             if not data:
                 continue
 
             result = translate(data)
+
             conn.sendall(result.encode("utf-8"))
