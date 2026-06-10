@@ -14,15 +14,19 @@ PanelWindow {
 
     margins {
         left: 10
-        top: 10
-        bottom: 10
+        top: 100
+        bottom: 100
         right: 10
     }
 
-    implicitWidth: 240
+    implicitWidth: 210
     color: "transparent"
     exclusiveZone: -1
     visible: false
+
+    onVisibleChanged: {
+        if (visible) themeContent.forceActiveFocus()
+    }
 
     property var themes: []
     property int selectedIndex: -1
@@ -88,40 +92,30 @@ function applyTheme(name) {
     }
 
     Rectangle {
+        id: themeContent
         color: Colors.palette.base00
         anchors.fill: parent
         radius: 20
         clip: false
-
-        Text {
-            text: "Themes"
-            color: Colors.palette.base05
-            font.pixelSize: 16
-            font.weight: Font.Bold
-            anchors {
-                top: parent.top
-                horizontalCenter: parent.horizontalCenter
-                topMargin: 12
-            }
-        }
+        focus: true
+        Keys.onEscapePressed: root.visible = false
 
         ListView {
             id: themeList
             anchors {
                 top: parent.top
-                topMargin: 40
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
                 margins: 8
             }
             spacing: 6
-            clip: true
+            clip: false
             model: themes
             currentIndex: selectedIndex
 
             delegate: Rectangle {
-                width: themeList.width - 16
+                width: themeList.width
                 height: 44
                 radius: 10
                 color: {
@@ -143,6 +137,7 @@ function applyTheme(name) {
                     spacing: 10
 
                     Rectangle {
+                        id: "squareColor"
                         width: 28
                         height: 28
                         radius: 14
@@ -150,12 +145,14 @@ function applyTheme(name) {
                         anchors.verticalCenter: parent.verticalCenter
 
                         Rectangle {
+                            id: "leftSquare"
                             width: parent.width / 2
                             height: parent.height
                             color: modelData.base00
                         }
 
                         Rectangle {
+                            id: "rightSquare"
                             width: parent.width / 2
                             height: parent.height
                             x: parent.width / 2
@@ -163,6 +160,7 @@ function applyTheme(name) {
                         }
 
                         Rectangle {
+                            id: "borderSquare"
                             anchors.fill: parent
                             color: "transparent"
                             border.color: {
@@ -183,7 +181,7 @@ function applyTheme(name) {
                             return Colors.palette.base05
                         }
                         font {
-                            pixelSize: 13
+                            pixelSize: 14
                             family: root.font
                         }
                         elide: Text.ElideRight

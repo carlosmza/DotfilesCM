@@ -7,24 +7,22 @@ import qs.config.fonts
 PanelWindow {
     id: root
     anchors {
-        top: true
-        right: true
         bottom: true
+        left: true
+        right: true
     }
 
     margins {
-        left: 10
-        top: 10
+        left: 40
         bottom: 10
-        right: 10
+        right: 40
     }
 
-    implicitWidth: 240
+    implicitHeight: 240
     color: "transparent"
     exclusiveZone: -1
     visible: false
 
-    //Keys.onEscapePressed: root.visible = false
 
     property var wallpapers: []
     property string font: Fonts.varelaRound
@@ -81,79 +79,64 @@ PanelWindow {
     }
 
     Rectangle {
-        color: Colors.palette.base00
+        id: wpContent
+        // color: Colors.palette.base00
+        color: "transparent"
         anchors.fill: parent
-        radius: 20
+        radius: 0
         clip: false
-
-        Text {
-            text: "Wallpapers"
-            color: Colors.palette.base05
-            font.pixelSize: 16
-            font.weight: Font.Bold
-            anchors {
-                top: parent.top
-                horizontalCenter: parent.horizontalCenter
-                topMargin: 12
-            }
-        }
+        focus: true
+        Keys.onEscapePressed: root.visible = false
 
         ListView {
             id: listView
             anchors {
                 top: parent.top
-                topMargin: 40
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
-                margins: 8
+                topMargin: 6
+                bottomMargin: 6
+                leftMargin: 8
+                rightMargin: 8
             }
-            spacing: 10
-            clip: true
+            orientation: ListView.Horizontal
+            spacing: 15
+            clip: false
             model: wallpapers
 
-            delegate: Rectangle {
-                width: listView.width - 16
-                height: 180
-                radius: 12
-                color: Colors.palette.base02
-                // anchors.horizontalCenter: parent.horizontalCenter
+            delegate: Item {
+                width: 320
+                height: listView.height
 
+                // Card
                 Rectangle {
-                    anchors.fill: parent
-                    anchors.margins: 4
-                    radius: 10
-                    clip: false
+                    id: card
+                    width: parent.width
+                    height: parent.height
+                    color: "transparent"
 
-                    Image {
+                    y: mouseArea.containsMouse ? -20 : 0
+                    Behavior on y { NumberAnimation { duration: 140 } }
+
+                    Rectangle {
                         anchors.fill: parent
-                        source: "file://" + root.thumbPath(modelData)
-                        fillMode: Image.PreserveAspectCrop
+                        anchors.margins: 0
+                        radius: 0
+                        clip: false
+
+                        Image {
+                            anchors.fill: parent
+                            source: "file://" + root.thumbPath(modelData)
+                            fillMode: Image.PreserveAspectCrop
+                        }
                     }
-                }
 
-                Rectangle {
-                    anchors.fill: parent
-                    radius: 10
-                    color: mouseArea.containsMouse ? "#33ffffff" : "transparent"
-                }
-
-                Rectangle {
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        bottom: parent.bottom
-                    }
-                    height: 20
-                    radius: 12
-                    color: Colors.palette.base05
-
-                    Text {
-                        text: modelData.replace(/^thumb-/, "").replace(/\.[^.]+$/, "")
-                        color: Colors.palette.base01
-                        font.family: root.font
-                        font.pixelSize: 14
-                        anchors.centerIn: parent
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 10
+                        // (ARGB)
+                        color: mouseArea.containsMouse ? "#10ffffff" : "transparent"
                     }
                 }
 
@@ -166,9 +149,9 @@ PanelWindow {
                 }
 
                 Behavior on scale {
-                    NumberAnimation { duration: 100 }
+                    NumberAnimation { duration: 140 }
                 }
-                scale: mouseArea.containsMouse ? 1.06 : 1.0
+                scale: mouseArea.containsMouse ? 1.04 : 1.0
             }
         }
     }

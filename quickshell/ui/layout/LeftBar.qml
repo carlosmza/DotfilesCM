@@ -72,7 +72,7 @@ PanelWindow {
         }
 
         Item {
-            id: screenshotTrigger
+            id: toolsTrigger
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
@@ -80,11 +80,11 @@ PanelWindow {
             }
             implicitWidth: root.size
             implicitHeight: root.size
-            Screenshot {
+            Tools {
                 anchors.centerIn: parent
                 onClicked: {
-                    screenshotPopup.visible = !screenshotPopup.visible
-                    screenshotReveal.open = screenshotPopup.visible
+                    toolsPopup.visible = !toolsPopup.visible
+                    toolsReveal.open = toolsPopup.visible
                 }
             }
         }
@@ -246,10 +246,10 @@ PanelWindow {
     }
 
     PopupWindow {
-        id: screenshotPopup
+        id: toolsPopup
         visible: false
-        implicitWidth: 180
-        implicitHeight: 120
+        implicitWidth: 200
+        implicitHeight: 250
         color: "transparent"
 
         anchor {
@@ -258,13 +258,22 @@ PanelWindow {
             rect.y: 900
         }
 
+        onVisibleChanged: {
+            if (visible) toolsContent.forceActiveFocus()
+        }
+
         AnimatedReveal {
-            id: screenshotReveal
+            id: toolsReveal
             anchors.fill: parent
             open: false
 
-            ScreenshotMenu {
+            ToolsMenu {
+                id: toolsContent
                 anchors.fill: parent
+                onCloseRequested: {
+                    toolsPopup.visible = false
+                    toolsReveal.open = false
+                }
             }
         }
     }
