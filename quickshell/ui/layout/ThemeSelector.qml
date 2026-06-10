@@ -41,12 +41,15 @@ PanelWindow {
 
     function loadThemes() {
         procList.command = ["bash", "-c", 
-        "for f in /home/carlosm/.config/system-themes/themes/*.json; do
+        "bl=/home/carlosm/.config/system-themes/black-list
+        for f in /home/carlosm/.config/system-themes/themes/*.json; do
             name=$(basename \"$f\" .json);
             [ \"$name\" = \"current\" ] || [ \"$name\" = \"guide-base16\" ] || [ \"$name\" = \"a\" ] && continue;
+            [ -f \"$bl\" ] && grep -qx \"$name\" \"$bl\" && continue;
             c0=$(jq -r '.palette.base00' \"$f\");
             cD=$(jq -r '.palette.base0D' \"$f\");
-            echo \"$name|$c0|$cD\";
+            cF=$(jq -r '.palette.base0F' \"$f\");
+            echo \"$name|$c0|$cD|$cF\";
         done"]
         procList.running = true
     }
@@ -56,11 +59,12 @@ PanelWindow {
         var items = []
         for (var i = 0; i < lines.length; i++) {
             var parts = lines[i].trim().split("|")
-            if (parts.length >= 3) {
+            if (parts.length >= 4) {
                 items.push({
                     name: parts[0],
                     base00: parts[1],
-                    base0D: parts[2]
+                    base0D: parts[2],
+                    base0F: parts[3]
                 })
             }
         }
@@ -140,7 +144,7 @@ function applyTheme(name) {
                         id: "squareColor"
                         width: 28
                         height: 28
-                        radius: 14
+                        radius: 0
                         clip: true
                         anchors.verticalCenter: parent.verticalCenter
 
@@ -152,11 +156,20 @@ function applyTheme(name) {
                         }
 
                         Rectangle {
-                            id: "rightSquare"
+                            id: "rightTopSquare"
+                            width: parent.width / 2
+                            height: parent.height / 2
+                            x: parent.width / 2
+                            color: modelData.base0D
+                        }
+
+                        Rectangle {
+                            id: "rightBottomSquare"
                             width: parent.width / 2
                             height: parent.height
                             x: parent.width / 2
-                            color: modelData.base0D
+                            y: parent.height / 2
+                            color: modelData.base0F
                         }
 
                         Rectangle {

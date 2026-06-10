@@ -63,8 +63,9 @@ Item {
 
                     color: {
                         if (isFocused)
-                            return isSpecial ? 
-                                Colors.palette.base0D : Colors.palette.base0D
+                            return Colors.palette.base0D
+                            // return isSpecial ? 
+                            //     Colors.palette.base0D : Colors.palette.base0D
 
                         if (mouseArea.containsMouse)
                             return Colors.palette.base03
