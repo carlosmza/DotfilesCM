@@ -37,8 +37,14 @@ def build_omp_theme(base16: dict) -> dict:
                     {
                         "type": "text",
                         "style": "plain",
+                        "foreground": "#95b659",
+                        "template": "{{ .Env.OMP_PYTHON_PROJECT }}"
+                    },
+                    {
+                        "type": "text",
+                        "style": "plain",
                         "foreground": palette["base0D"],
-                        "template": "❯"
+                        "template": " ❯"
                     }
                 ]
             }

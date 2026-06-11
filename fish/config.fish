@@ -9,13 +9,13 @@ set -gx EDITOR nvim
 
 # opencode
 fish_add_path /home/carlosm/.opencode/bin
-if status is-interactive
-    if not set -q ZELLIJ
-        if test "$TERM" = "foot"
-            exec zellij
-        end
-    end
-end
+# if status is-interactive
+#     if not set -q ZELLIJ
+#         if test "$TERM" = "foot"
+#             exec zellij
+#         end
+#     end
+# end
 # Inicializar Atuin para el historial interactivo
 atuin init fish | source
 # Reemplazos de ls con eza (con colores e iconos)
@@ -29,4 +29,23 @@ function reload_prompt --on-signal USR1
         --config ~/.config/oh-my-posh/current.json | psub)
 
     commandline -f repaint
+end
+
+function update_python_project --on-variable PWD
+    set -e OMP_PYTHON_PROJECT
+
+    set dir $PWD
+
+    while true
+        if test -d "$dir/.venv"
+            set -gx OMP_PYTHON_PROJECT ""
+            return
+        end
+
+        if test "$dir" = "/"
+            return
+        end
+
+        set dir (path dirname "$dir")
+    end
 end
