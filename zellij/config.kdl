@@ -155,7 +155,7 @@ keybinds clear-defaults=true {
         // Es importante definirlo aca
         shared {
             bind "Alt y" {
-                LaunchOrFocusPlugin "file:/home/carlos/.config/zellij/plugins/zellij_forgot.wasm" {
+                LaunchOrFocusPlugin "file:/home/carlosm/.config/zellij/plugins/zellij_forgot.wasm" {
                   //"MODES" "NORMAL LOCKED RESIZE PANE MOVE TAB SCROLL SEARCH SESSION PROMPT"
                   "mode NORMAL"                 "Esc  ò   (Inicial del modo actual)"
                   "mode LOCKED"                 "Alt+a"
@@ -296,6 +296,7 @@ plugins {
 load_plugins {
    //"file:/path/to/my-plugin.wasm"
   // "https://example.com/my-plugin.wasm"
+  "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
 }
 
 session_serialization true
@@ -386,7 +387,7 @@ show_startup_tips false
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
- theme "sakura"
+ theme "everforest"
 
 // The name of the default layout to load on startup
 // Default: "default"
@@ -463,7 +464,7 @@ show_startup_tips false
 // The folder in which Zellij will look for themes
 // (Requires restart)
 //
- //theme_dir "~/.config/zellij/themes/"
+ theme_dir "/home/carlosm/.config/zellij/themes/"
 
 // Enable or disable the rendering of styled and colored underlines (undercurl).
 // May need to be disabled for certain unsupported terminals
@@ -576,3 +577,120 @@ show_startup_tips false
 web_client {
     font "monospace"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
