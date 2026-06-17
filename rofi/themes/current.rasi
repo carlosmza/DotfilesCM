@@ -1,0 +1,17 @@
+* {
+    bg:       #1b1918;
+    bg-alt:       #2c2421;
+    fg:       #a8a19f;
+    fg-alt:       #9c9491;
+    accent:       #407ee7;
+    selected-normal-bg:       #407ee7;
+    selected-normal-fg:       #1b1918;
+    urgent-bg:       #f22c40;
+    urgent-fg:       #1b1918;
+    active-bg:       #68615e;
+    active-fg:       #a8a19f;
+    highlight:       #df5320;
+    window-bg:       #1b1918;
+    background-color: transparent;
+    text-color:       @fg;
+}
