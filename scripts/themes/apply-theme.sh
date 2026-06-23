@@ -46,15 +46,16 @@ echo "Recargando Hyprland y ejecutando script de Lua..."
 hyprctl reload || echo "Aviso: hyprctl reload falló (¿estás fuera de una sesión de Hyprland?)" >&2
 lua "$HOME/.config/hypr/lua/scripts/read_theme.lua"
 
+# Zellij en desuso
 # __________ ZELLIJ __________
-echo "Modificando tema de Zellij..."
-ZELLIJ_THEME_FILE="$HOME/.config/zellij/themes/current.kdl"
-if "$HOME/.config/scripts/themes/json-to-kdl.py" "$THEME_SYSTEM" --output "$ZELLIJ_THEME_FILE"; then
-    chmod +x "$ZELLIJ_THEME_FILE"
-    echo >> "$HOME/.config/zellij/config.kdl"
-else
-    echo "Aviso: No se pudo generar el archivo KDL para Zellij." >&2
-fi
+# echo "Modificando tema de Zellij..."
+# ZELLIJ_THEME_FILE="$HOME/.config/zellij/themes/current.kdl"
+# if "$HOME/.config/scripts/themes/json-to-kdl.py" "$THEME_SYSTEM" --output "$ZELLIJ_THEME_FILE"; then
+#     chmod +x "$ZELLIJ_THEME_FILE"
+#     echo >> "$HOME/.config/zellij/config.kdl"
+# else
+#     echo "Aviso: No se pudo generar el archivo KDL para Zellij." >&2
+# fi
 
 # __________ ROFI __________
 echo "Modificando tema de Rofi..."
