@@ -7,8 +7,6 @@ local palette = theme.palette
 local var = {}
 
 -- Apps
--- var.terminal = "foot"
--- var.terminal = "/home/carlosm/.config/scripts/system/kitty-launch.sh"
 var.terminal = "kitty"
 var.browser = "brave"
 var.fileExplorer = "nautilus"
