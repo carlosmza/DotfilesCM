@@ -14,6 +14,7 @@ require("lua.rules")
 require("lua.gestures")
 require("lua.execs")
 require("lua.keybinds")
+require("lua.permissions")
 -- =============================================================================
 -- Monitors
 -- =============================================================================
