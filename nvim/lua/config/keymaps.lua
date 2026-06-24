@@ -1,4 +1,6 @@
 local kmap = vim.keymap.set
+
+-- LSP definition
 kmap("n", "gdx", ":belowright split | lua vim.lsp.buf.definition()<CR>", {desc='below definition'})
 kmap("n", "gdv", ":vsplit | lua vim.lsp.buf.definition()<CR>",{desc='vertical definition'})
 kmap("n", "gdt", ":tab split | lua vim.lsp.buf.definition()<CR>",{desc='tab definition'})
@@ -19,16 +21,12 @@ kmap('n', "N", "Nzzzv")
 kmap('v', 'K', ":m '<-2<CR>gv=gv")
 kmap('v', 'J', ":m '>+1<CR>gv=gv")
 
--- Copy file path
-kmap('n', '<leader>yp', ":let @+=expand('%:.')<cr>", { desc = 'Copy relative path' })
 
--- Increse / Decrease width
--- kmap('n', '<C-<>', "<C-w><", { desc = 'Decrease window width'})
--- kmap('n', '<C->>', "<C-w>>", { desc = 'Increse window width'}) -- No funciona, conflicto con ident backward (Normal mode)
 -- Go to Normal Mode
 kmap("i", "jk", "<Esc>", { silent = true})
 kmap("i", "kk", "<Esc>", { silent = true })
 kmap("i", "<C-c>", "<Esc>", { silent = true })
+
 -- Desactiva el carácter raro de los audífonos
 kmap("i", "", "<nop>", { silent = true})
 
@@ -41,18 +39,8 @@ kmap("n", "<leader>S", "<cmd>set nospell!<CR>", { desc = "Spell"})
 -- Save Buffer
 kmap("n", "<leader>w", "<cmd>w<CR>", { desc = "Save"})
 
--- Quit Buffer
--- kmap("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit"})
-
--- Save Buffer and Exit
-kmap("n", "<leader>W", "<cmd>wq<CR>", { desc = "Save"})
-
--- Quit Buffer and Exit
--- kmap("n", "<leader>Q", "<cmd>q!<CR>", { desc = "Quit"})
-
 -- Yank all Text
 kmap("n", "<leader>Y", "<cmd>%y<CR>", { desc = "Yank All Text"})
-
 
 -- Go to left window
 kmap("n", "<C-h>", "<C-w>h", { desc = "Go to left window"})
@@ -123,26 +111,19 @@ kmap("n", "<leader>pp", "<cmd>Lazy profile<CR>", { desc = "Lazy | Profile", sile
 kmap("n", "<leader>pu", "<cmd>Lazy update<CR>", { desc = "Lazy | Update", silent = true })
 
 -- Yazi
--- kmap("n", "<leader>y", "<cmd>Yazi cwd <CR>", { desc = "Open the File Manager (cwd) "})
--- Oil
---vim.keymap.set("n", "-", ":Oil<CR>", { desc = "Open parent directory" })
---vim.keymap.set( "n", "<leader>m", ":Oil --float<CR>", { desc = "Open Oil (floating)" })
+kmap({"n", "v"}, "<leader>-", "<cmd>Yazi<CR>", { desc = "Open the File Manager"})
 
--- Fyler
--- kmap("n", "<leader>-", "<cmd>Fyler<CR>", { desc = "Open the File Manager (cwd) "})
-kmap("n", "<leader>e", "<cmd>Fyler kind=split_left_most<CR>", { desc = "Open Fyler left"})
-kmap("n", "<leader>E", "<cmd>Fyler kind=split_left<CR>", { desc = "Fyler left (relative)"})
+-- Colorizer
+kmap("n", "<leader>c", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colors"})
 
 -- Remove search highlighting
-vim.keymap.set({ 'n', 'v', 'i' }, '<Esc>', function()
+kmap({ 'n', 'v', 'i' }, '<Esc>', function()
     if vim.v.hlsearch == 1 then
         vim.cmd 'nohlsearch | redraw!'
     end
     return '<Esc>'
 end, { desc = 'Remove search highlighting', expr = true, silent = true })
 
--- Colorizer
-kmap("n", "<leader>c", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colors"})
 
 -- Fzf - Zoxide
 local fzf = require('fzf-lua')
@@ -161,5 +142,18 @@ local function zoxide_fzf()
     winopts = { title = " Zoxide " }
   })
 end
+kmap("n", "<leader>z", zoxide_fzf, { desc = "Zoxide mediante FZF" })
+-- -- Copy file path
+-- kmap('n', '<leader>yp', ":let @+=expand('%:.')<cr>", { desc = 'Copy relative path' })
 
-vim.keymap.set("n", "<leader>z", zoxide_fzf, { desc = "Zoxide mediante FZF (Alpha Dashboard)" })
+-- Increse / Decrease width
+-- kmap('n', '<C-<>', "<C-w><", { desc = 'Decrease window width'})
+-- Oil
+--vim.keymap.set("n", "-", ":Oil<CR>", { desc = "Open parent directory" })
+--vim.keymap.set( "n", "<leader>m", ":Oil --float<CR>", { desc = "Open Oil (floating)" })
+-- kmap('n', '<C->>', "<C-w>>", { desc = 'Increse window width'}) -- No funciona, conflicto con ident backward (Normal mode)
+
+-- Fyler
+-- kmap("n", "<leader>-", "<cmd>Fyler<CR>", { desc = "Open the File Manager (cwd) "})
+-- kmap("n", "<leader>e", "<cmd>Fyler kind=split_left_most<CR>", { desc = "Open Fyler left"})
+-- kmap("n", "<leader>E", "<cmd>Fyler kind=split_left<CR>", { desc = "Fyler left (relative)"})
