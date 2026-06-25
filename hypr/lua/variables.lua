@@ -8,7 +8,7 @@ local var = {}
 
 -- Apps
 var.terminal = "kitty"
-var.browser = "brave"
+var.browser = "zen-browser"
 var.fileExplorer = "nautilus"
 var.pdfViewer = "okular"
 var.menu = "rofi -show drun -theme ~/.config/rofi/layouts/list-apps.rasi"
