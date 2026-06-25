@@ -1,4 +1,4 @@
-require("bufferline").setup{}
+-- require("bufferline").setup{}
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
@@ -23,7 +23,7 @@ vim.opt.smartcase = true
 vim.opt.swapfile = false -- Es clave para los molestos .swp
 vim.opt.backup = false
 vim.opt.undofile = true
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 5
 --vim.opt.signcolumn = "yes"
 --vim.opt.colorcolumn = "80"
 

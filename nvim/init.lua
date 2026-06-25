@@ -22,17 +22,5 @@ local function aplicar_tema()
   end
 end
 
--- Activar el watcher con fwatch
-local fwatch = require("fwatch")
-fwatch.watch(json_path, {
-  on_event = function()
-    -- vim.schedule asegura que la llamada a system y al cmd no choquen con el event loop
-    vim.schedule(aplicar_tema)
-  end,
-  on_error = function(err)
-    vim.notify("Error en fwatch: " .. err, vim.log.levels.ERROR)
-  end,
-})
-
 -- Aplicar el tema ya que inicialmente el archivo puede tener un valor
 aplicar_tema()
