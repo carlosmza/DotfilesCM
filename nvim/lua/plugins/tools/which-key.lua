@@ -3,11 +3,6 @@ return {
     event = "VeryLazy",
     enabled = true,
     opts = {
-      -- plugins = {
-      --   spelling = {
-      --     enabled = true,
-      --   },
-      -- },
       icons = {
           breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
           separator = "➜", -- symbol used between a key and it's label
@@ -27,7 +22,19 @@ return {
 	    require("which-key").add {
             {
                 { "<leader>f", group = "find", icon = "󰮗"},
+                { "<leader>s", group = "search", icon = "󰬴"},
                 { "<leader>b", group = "buffers", icon = ""},
+                { "<leader>t", group = "toggles", icon = ""},
+								{ "<leader>n", group = "notifications", icon ="󰍩"},
+                { "<leader>Y", icon ="󰆏"},
+								{ "<leader>d", icon ="󰨝"},
+                { "<leader>z", icon =""},
+                { "<leader>-", icon =""},
+                { "<leader>e", icon =""},
+                { "<leader>l", icon =""},
+                { "<leader>h", icon =""},
+                { "<leader>r", icon ="󰑕"},
+                { "<leader>w", icon =""},
             },
 
     }

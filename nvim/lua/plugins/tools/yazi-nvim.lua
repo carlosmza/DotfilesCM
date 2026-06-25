@@ -6,33 +6,18 @@ return {
   dependencies = {
     { "nvim-lua/plenary.nvim", lazy = true },
   },
-  keys = {
-    -- 👇 in this section, choose your own keymappings!
-    -- {
-    --   "<leader>-",
-    --   mode = { "n", "v" },
-    --   "<cmd>Yazi<cr>",
-    --   desc = "Open yazi at the current file",
-    -- },
-    {
-      -- Open in the current working directory
-      "<leader>cw",
-      "<cmd>Yazi cwd<cr>",
-      desc = "Open the file manager in nvim's working directory",
-    },
-    {
-      "<c-up>",
-      "<cmd>Yazi toggle<cr>",
-      desc = "Resume the last yazi session",
-    },
-  },
   ---@type YaziConfig | {}
   opts = {
+		open_pdf_user_command = 'pdftoppm -png -r 150 %s /tmp/yazi-pdf',
     -- if you want to open yazi instead of netrw, see below for more info
     open_for_directories = false,
+		use_ya_for_events_reading = true, -- Utiliza el binario 'ya' auxiliar de Yazi para mitigar bloqueos de eventos
+		set_keymaps = false, -- Evita conflictos si manejas tus mapas por separado
     keymaps = {
       show_help = "<f1>",
     },
+    -- Esta opción es crucial para que no choque con buffers de imágenes flotantes
+    floating_window_scaling_factor = 0.8,
   },
   -- 👇 if you use `open_for_directories=true`, this is recommended
   init = function()
