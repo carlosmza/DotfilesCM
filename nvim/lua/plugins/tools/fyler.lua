@@ -1,5 +1,6 @@
 return {
-	 "A7Lavinraj/fyler.nvim",
+	"A7Lavinraj/fyler.nvim",
+	enabled = false,
   dependencies = { "nvim-mini/mini.icons" },
   branch = "stable",  -- Use stable branch for production
   opts = {
