@@ -29,6 +29,7 @@ end, { desc = "Search diagnostics buffer" })
 -- kmap('n', "N", "Nzzzv")
 ----------- </cursor> -----------
 
+
 ----------- <toggle> -----------
 -- Wrap
 kmap("n", "<leader>tu", "<cmd>set wrap!<CR>", { desc = "Toggle wrap"})
@@ -288,6 +289,10 @@ kmap("n", "<leader>s-", function()
   snacks.scratch.select()
 end, { desc = "Scratch: Select notes" })
 ----------- </extra> -----------
+
+----------- <paste> -----------
+
+----------- </paste> -----------
 
 ----------- <disable> -----------
 -- --- KEYMAPS PARA SNACKS.SCOPE (Navegación Inteligente) ---
