@@ -6,7 +6,8 @@
 # -o pipefail: Captura errores dentro de pipelines (|).
 set -euo pipefail
 
-echo "=== $(date '+%Y-%m-%d %H:%M:%S') ==="
+echo " "
+echo "__________ $(date '+%Y-%m-%d %H:%M:%S') __________"
 
 # 1. Verificación del argumento obligatorio
 THEME="${1:-}" # Asigna cadena vacía si no se pasa el parámetro $1 para evitar error de 'set -u'
@@ -14,7 +15,7 @@ if [[ -z "$THEME" ]]; then
     echo "ERROR: No se especificó ningún tema como argumento." >&2
     exit 1
 fi
-echo "Aplicando tema: $THEME"
+echo "[1] Tema obtenido: $THEME"
 
 # 2. Verificación de Dependencias Críticas
 # Estructura: Comprobamos si las herramientas base están disponibles en el PATH
@@ -38,11 +39,11 @@ THEME_SYSTEM="$HOME/.config/system-themes/themes/current.json"
 MODE=$(jq -r '.variant // "dark"' "$THEME_SOURCE") # '// "dark"' provee un fallback si la llave no existe
 
 # __________ GENERAL __________
-echo "Modificando tema global"
+echo "[2] Symlink system-themes"
 ln -sf "$THEME_SOURCE" "$THEME_SYSTEM"
 
 # __________ HYPRLAND LUA __________
-echo "Recargando Hyprland y ejecutando script de Lua..."
+echo "[3] Recargando Hyprland"
 hyprctl reload || echo "Aviso: hyprctl reload falló (¿estás fuera de una sesión de Hyprland?)" >&2
 lua "$HOME/.config/hypr/lua/scripts/read_theme.lua"
 
@@ -58,26 +59,26 @@ lua "$HOME/.config/hypr/lua/scripts/read_theme.lua"
 # fi
 
 # __________ ROFI __________
-echo "Modificando tema de Rofi..."
+echo "[4] Modificando Rofi"
 "$HOME/.config/scripts/themes/json-to-rasi.py" "$THEME_SYSTEM" -o \
     "$HOME/.config/rofi/themes/current.rasi"
 
 # __________ QUICKSHELL __________
-echo "Notificando a Quickshell..."
+echo "[5] Notificando Quickshell"
 # Usamos '|| true' para que el script no muera si quickshell ipc no responde en ese instante
 quickshell ipc call colores recargar || echo "Aviso: No se pudo comunicar con Quickshell IPC." >&2
 
 # __________ DARK/LIGHT MODE __________
 if [[ "$MODE" =~ dark ]]; then
-    echo "Modo detectado: Oscuro"
+    echo "[6] Modo detectado: Dark"
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 else
-    echo "Modo detectado: Claro"
+    echo "[6] Modo detectado: Light"
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
 fi
 
 # __________ KITTY __________
-echo "Modificando tema de Kitty..."
+echo "[7] Modificando Kitty"
 KITTY_CONF="$HOME/.config/kitty/current.conf"
 EXPECTED_NAME=$(jq -r '.name // empty' "$THEME_SYSTEM")
 
@@ -105,11 +106,22 @@ else
     echo "Aviso: El JSON del tema no contiene una propiedad '.name' válida." >&2
 fi
 
+# __________ Yazi __________
+echo "[8] Modificando Yazi"
+"$HOME/.config/scripts/themes/yazi-theme-toggle.py" "$THEME"
+
+# __________ Nvim __________
+echo "[9] Notificando Nvim"
+echo "$THEME" > "$HOME/.config/nvim/.colorscheme"
+
 # __________ Oh-my-posh __________
-echo "Modificando tema Oh-my-posh..."
+echo "[10] Modificando Oh-my-posh"
 "$HOME/.config/scripts/themes/json-to-prompt.py" "$THEME_SYSTEM" "$HOME/.config/oh-my-posh/current.json"
 pkill -USR1 fish || true
 
+
+echo "______ finish ______"
 # Mantenemos tu lógica para terminales interactivas
 [[ -t 0 ]] && exec fish
 exit 0
+
