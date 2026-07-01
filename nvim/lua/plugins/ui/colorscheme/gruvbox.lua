@@ -1,1 +1,4 @@
-return { "ellisonleao/gruvbox.nvim", event = "VeryLazy", priority = 1000 }
+return {
+	"ellisonleao/gruvbox.nvim",
+	lazy = true
+}

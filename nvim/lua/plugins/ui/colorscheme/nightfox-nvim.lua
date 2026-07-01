@@ -2,5 +2,6 @@
 -- Installed via store.nvim
 
 return {
-    "EdenEast/nightfox.nvim"
+    "EdenEast/nightfox.nvim",
+		lazy = true
 }
