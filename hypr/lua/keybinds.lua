@@ -7,7 +7,6 @@ local function toggle_scratchpad(app)
     hl.dispatch(hl.dsp.workspace.toggle_special(app))
 end
 
-
 -- Apps
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(var.terminal))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
@@ -16,6 +15,7 @@ hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(var.fileExplorer))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(var.browser))
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(var.pdfViewer))
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("hyprshot -m region -o /home/carlosm/Pictures/Screenshots/ -f \"Screenshot-From-$(date +%Y-%m-%d_%H-%M-%S).png\""))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p 'History:' -theme ~/.config/rofi/menus/clipboard.rasi | cliphist decode | wl-copy"))
 
 -- Theme and display
 -- hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/themes/theme-switcher.sh"))
@@ -24,7 +24,7 @@ hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell ipc call wallpapers toggl
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/display-switcher.sh"))
 
 -- Lock screen
-hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("quickshell ipc call lock toggle"))
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("hyprlock"))
 
 -- Power
 hl.bind("XF86PowerOff", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/power-menu.sh"))
@@ -43,9 +43,9 @@ hl.bind(mainMod .. " +  E", hl.dsp.exec_cmd("quickshell ipc call translate toggl
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 -- Youtube Music CLI
-hl.bind(mainMod .. " + M", function()
-    hl.dispatch(hl.dsp.workspace.toggle_special("ytm"))
-end)
+-- hl.bind(mainMod .. " + M", function()
+--     hl.dispatch(hl.dsp.workspace.toggle_special("ytm"))
+-- end)
 
 -- Focus movement
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
