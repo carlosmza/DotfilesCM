@@ -7,30 +7,34 @@ import qs.config.fonts
 PanelWindow {
     id: root
     anchors {
-        top: true
         right: true
-        bottom: true
     }
 
     margins {
         left: 10
-        top: 100
-        bottom: 100
         right: 10
     }
 
-    implicitWidth: 210
+    implicitWidth: 230
+    implicitHeight: Math.min(Math.max(themes.length * 50 + 8, 200), 600)
     color: "transparent"
     exclusiveZone: -1
     visible: false
+    focusable: true
 
     onVisibleChanged: {
-        if (visible) themeContent.forceActiveFocus()
+        if (visible) {
+            root.applying = false
+            if (themes.length === 0) loadThemes()
+            themeContent.forceActiveFocus()
+        }
     }
 
     property var themes: []
     property int selectedIndex: -1
     property string font: Fonts.varelaRound
+    property int fontSize: 14
+    property bool applying: false
 
     Component.onCompleted: loadThemes()
 
@@ -40,12 +44,10 @@ PanelWindow {
     }
 
     function loadThemes() {
-        procList.command = ["bash", "-c", 
-        "bl=/home/carlosm/.config/system-themes/black-list
-        for f in /home/carlosm/.config/system-themes/themes/*.json; do
+        procList.command = ["bash", "-c",
+        "for f in /home/carlosm/.config/system-themes/themes/*.json; do
             name=$(basename \"$f\" .json);
-            [ \"$name\" = \"current\" ] || [ \"$name\" = \"guide-base16\" ] || [ \"$name\" = \"a\" ] && continue;
-            [ -f \"$bl\" ] && grep -qx \"$name\" \"$bl\" && continue;
+            [ \"$name\" = \"current\" ] && continue;
             c0=$(jq -r '.palette.base00' \"$f\");
             cD=$(jq -r '.palette.base0D' \"$f\");
             cF=$(jq -r '.palette.base0F' \"$f\");
@@ -82,17 +84,25 @@ PanelWindow {
         }
     }
 
-function applyTheme(name) {
-    proc.command = [
-        "bash", "-c",
-        `/home/carlosm/.config/scripts/themes/apply-theme.sh "${name}" >> /tmp/apply-theme.log 2>&1`
-    ]
-    proc.running = true
-}
+    function applyTheme(name) {
+        if (root.applying) return
+        root.applying = true
+        proc.command = [
+            "bash", "-c",
+            `/home/carlosm/.config/scripts/themes/apply-theme.sh "${name}" >> /tmp/apply-theme.log 2>&1`
+        ]
+        proc.running = true
+    }
 
     Process {
         id: proc
         command: ["bash"]
+        onRunningChanged: {
+            if (!running && root.applying) {
+                root.applying = false
+                root.visible = false
+            }
+        }
     }
 
     Rectangle {
@@ -102,7 +112,33 @@ function applyTheme(name) {
         radius: 20
         clip: false
         focus: true
-        Keys.onEscapePressed: root.visible = false
+        Keys.onPressed: (event) => {
+            if (event.key === Qt.Key_Escape) {
+                if (root.applying) return
+                root.visible = false
+                event.accepted = true
+            } else if (event.key === Qt.Key_Up) {
+                if (selectedIndex > 0)
+                    selectedIndex--
+                else
+                    selectedIndex = themes.length - 1   // ciclo hacia el final
+                event.accepted = true
+            } else if (event.key === Qt.Key_Down) {
+                if (selectedIndex < themes.length - 1)
+                    selectedIndex++
+                else
+                    selectedIndex = 0                   // ciclo hacia el inicio
+                event.accepted = true
+            } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                if (!root.applying && selectedIndex >= 0 && selectedIndex < themes.length) {
+                    root.applyTheme(themes[selectedIndex].name)
+                }
+                event.accepted = true
+            } else if (event.key === Qt.Key_F5) {
+                loadThemes()
+                event.accepted = true
+            }
+        }
 
         ListView {
             id: themeList
@@ -117,11 +153,14 @@ function applyTheme(name) {
             clip: false
             model: themes
             currentIndex: selectedIndex
+            interactive: !root.applying
 
             delegate: Rectangle {
                 width: themeList.width
                 height: 44
                 radius: 10
+                enabled: !root.applying
+                opacity: enabled ? 1.0 : 0.5
                 color: {
                     if (mouseArea.containsMouse)
                         return Colors.palette.base03
@@ -141,7 +180,7 @@ function applyTheme(name) {
                     spacing: 10
 
                     Rectangle {
-                        id: "squareColor"
+                        id: squareColor
                         width: 28
                         height: 28
                         radius: 0
@@ -149,14 +188,14 @@ function applyTheme(name) {
                         anchors.verticalCenter: parent.verticalCenter
 
                         Rectangle {
-                            id: "leftSquare"
+                            id: leftSquare
                             width: parent.width / 2
                             height: parent.height
                             color: modelData.base00
                         }
 
                         Rectangle {
-                            id: "rightTopSquare"
+                            id: rightTopSquare
                             width: parent.width / 2
                             height: parent.height / 2
                             x: parent.width / 2
@@ -164,7 +203,7 @@ function applyTheme(name) {
                         }
 
                         Rectangle {
-                            id: "rightBottomSquare"
+                            id: rightBottomSquare
                             width: parent.width / 2
                             height: parent.height
                             x: parent.width / 2
@@ -173,7 +212,7 @@ function applyTheme(name) {
                         }
 
                         Rectangle {
-                            id: "borderSquare"
+                            id: borderSquare
                             anchors.fill: parent
                             color: "transparent"
                             border.color: {
@@ -194,7 +233,7 @@ function applyTheme(name) {
                             return Colors.palette.base05
                         }
                         font {
-                            pixelSize: 14
+                            pixelSize: root.fontSize
                             family: root.font
                         }
                         elide: Text.ElideRight
@@ -207,9 +246,9 @@ function applyTheme(name) {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
+                        if (root.applying) return
                         selectedIndex = index
                         root.applyTheme(modelData.name)
-                        root.visible = false
                     }
                 }
 
@@ -217,6 +256,36 @@ function applyTheme(name) {
                     NumberAnimation { duration: 100 }
                 }
                 scale: mouseArea.containsMouse ? 1.06 : 1.0
+            }
+        }
+
+        Text {
+            anchors.centerIn: parent
+            text: "No themes found\nPress F5 to reload"
+            color: Colors.palette.base03
+            horizontalAlignment: Text.AlignHCenter
+            visible: themes.length === 0 && !root.applying
+            font {
+                pixelSize: root.fontSize
+                family: root.font
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: 20
+            color: Qt.rgba(0, 0, 0, 0.5)
+            visible: root.applying
+            z: 100
+
+            Text {
+                anchors.centerIn: parent
+                text: "Applying\u2026"
+                color: Colors.palette.base05
+                font {
+                    pixelSize: root.fontSize + 2
+                    family: root.font
+                }
             }
         }
     }
