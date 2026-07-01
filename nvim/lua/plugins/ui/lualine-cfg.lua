@@ -2,8 +2,7 @@ return {
   -- Lualine
   {"nvim-lualine/lualine.nvim",
 --  dependencies = {"nvim-tree/nvim-web-icons"},
-	lazy = false,
-	priority = 1000,
+	priority = 900,
     config = function()
         require("lualine").setup{
 		options = {
