@@ -1,5 +1,6 @@
 return {
   'MagicDuck/grug-far.nvim',
+	cmd = { "GrugFar" }, -- Neovim no sabe nada de grug-far hasta que ejecutas :GrugFar
   -- El plugin pospone sus requires, por lo que es ligero por defecto
   config = function()
     require('grug-far').setup({
