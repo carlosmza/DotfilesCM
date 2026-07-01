@@ -14,3 +14,8 @@
 !/zellij
 !convenciones_commits.md
 !.gitignore
+
+/nvim/.colorscheme
+/nvim/lazy-lock.json
+/kitty/current.conf
+/rofi/themes/current.rasi
