@@ -30,4 +30,5 @@ vim.opt.scrolloff = 5
 -- vim.opt.pumheight = 12
 vim.opt.updatetime = 50
 vim.opt.clipboard = "unnamedplus"
-
+vim.opt.timeoutlen = 300
+vim.opt.ttimeoutlen = 10

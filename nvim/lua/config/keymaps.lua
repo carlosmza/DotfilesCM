@@ -156,8 +156,8 @@ kmap("t", "<C-l>", "<C-\\><C-N><C-l>", { desc = "General | Go to right window(Te
 ----------- </window> -----------
 
 ----------- <buffers> -----------
-kmap("n", "<leader>l", "<cmd>BufferLineCycleNext<CR>", { desc = "Next Buffer" })
-kmap("n", "<leader>h", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous Buffer" })
+kmap("n", "L", "<cmd>BufferLineCycleNext<CR>", { desc = "Next Buffer" })
+kmap("n", "H", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous Buffer" })
 kmap("n", "<leader>b1", "<cmd>BufferLineGoToBuffer 1<CR>", { desc = "Go to Buffer [1]" })
 kmap("n", "<leader>b2", "<cmd>BufferLineGoToBuffer 2<CR>", { desc = "Go to Buffer [2]" })
 kmap("n", "<leader>b3", "<cmd>BufferLineGoToBuffer 3<CR>", { desc = "Go to Buffer [3]" })
@@ -172,6 +172,12 @@ kmap("n", "<leader>w", "<cmd>w<CR>", { desc = "Save buffer"})
 kmap("n", "<leader>bd", function()
   snacks.bufdelete.delete()
 end, { desc = "Delete buffer" })
+
+require("cybu").setup()
+-- kmap("n", "H", "<Plug>(CybuPrev)")
+-- kmap("n", "L", "<Plug>(CybuNext)")
+kmap("n", "<C-Tab>", "<plug>(CybuLastusedNext)")
+kmap("n", "<C-S-Tab>", "<plug>(CybuLastusedPrev)")
 ----------- </buffers> -----------
 
 ----------- <find> -----------
@@ -236,7 +242,7 @@ kmap("n", "<leader>sr", function()
 end, { desc = "Search and Remplace" })----------- </search> -----------
 
 ----------- <yazi> -----------
-kmap({"n", "v"}, "<leader>-", "<cmd>Yazi<CR>", { desc = "Open Yazi"})
+kmap({"n", "v"}, "<leader>-", "<cmd>Yazi cwd<CR>", { desc = "Open Yazi"})
 ----------- </yazi> -----------
 
 ----------- <zoxide> -----------
@@ -265,9 +271,13 @@ kmap("n", "<leader>d", function()
   snacks.dashboard.open()
 end, { desc = "Open Dashboard" })
 
-kmap("n", "<leader>e", function()
+kmap("n", "<leader>E", function()
   snacks.explorer.open({ cwd = vim.fn.expand("%:p:h") })
-end, { desc = "Open file explorer" })
+end, { desc = "File explorer (BUFF)" })
+
+kmap("n", "<leader>e", function()
+  snacks.explorer.open({ cwd = vim.uv.cwd() })
+end, { desc = "File explorer (CWD)" })
 
 kmap("n", "<leader>nh", function()
   snacks.notifier.show_history()
