@@ -82,13 +82,16 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
--- hl.bind(mainMod .. " + M", hl.dsp.workspace.toggle_special("ytm"))
--- hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(var.terminal .. " ytm"))
---
--- local function toggle_scratchpad(name)
---     hl.dispatch(hl.dsp.workspace.toggle_special(name))
--- end
---
--- -- 3. Keybind para lanzar el scratchpad
--- hl.bind(mainMod .. " + G", function () toggle_scratchpad("wifi")end)
---
+hl.bind(mainMod .. " + R", function ()
+  -- Cambiar a flotante (toggle)
+  hl.dispatch(hl.dsp.window.float({ action = "toggle" }))
+
+  -- -- Redimensionar a 1400x900
+  hl.dispatch(hl.dsp.window.resize({
+    -- size = { 1400, 900 },   -- usa size = {w, h} como en la sintaxis nueva
+		x = -80,
+    y = 0,
+    relative = true
+    -- opcional: relative = false,
+  }))
+end)
