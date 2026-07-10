@@ -24,15 +24,15 @@ ShellRoot {
         // │           Widget position           │
         // ├─────────────────────────────────────┤
         // │  Active side (true/false)           │
-            anchors.top: true                  
+            anchors.top: false                  
             anchors.right: true                
             anchors.left: true                 
             anchors.bottom: true               
         //    Position     
             margins.top: 0                   
             margins.right: 0              
-            margins.left: 0                   
-            margins.bottom: 0                   
+            margins.left: 1300                   
+            margins.bottom: 50                   
         // └─────────────────────────────────────┘
  
  //─────────────────────────────────────────────────────────────────────────

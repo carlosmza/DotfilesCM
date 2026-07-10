@@ -14,8 +14,8 @@ import "./services/"
 ShellRoot {
     LeftBar {}
     ClockWidget {}
-    // BrightnessPopup {}
-    // VolumePopup {}
+    BrightnessPopup {}
+    VolumePopup {}
     Dictionary { id: dictionary }
     ThemeSelector { id: themeSelector }
     WallpaperSelector { id: wallpaperSelector }
