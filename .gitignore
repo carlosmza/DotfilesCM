@@ -19,3 +19,6 @@
 /nvim/lazy-lock.json
 /kitty/current.conf
 /rofi/themes/current.rasi
+/system-themes/themes-disabled/
+/yazi/theme.toml
+/zellij/themes/current.kdl
