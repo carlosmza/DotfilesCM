@@ -83,8 +83,8 @@ return {
         backdrop = 90,      -- Atenúa el fondo del editor detrás de la terminal (0-100)
         width = 0.5,        -- Ancho de la terminal flotante
         height = 0.5,       -- Alto de la terminal flotante
-        row = 0.4,          -- Desplazamiento vertical
-        col = 0.25,         -- Desplazamiento horizontal
+        row = 0.45,          -- Desplazamiento vertical
+        col = 0.48,         -- Desplazamiento horizontal
       },
     },
     terminal = { enabled = true },

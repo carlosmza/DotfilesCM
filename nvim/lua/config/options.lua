@@ -31,4 +31,4 @@ vim.opt.scrolloff = 5
 vim.opt.updatetime = 50
 vim.opt.clipboard = "unnamedplus"
 vim.opt.timeoutlen = 300
-vim.opt.ttimeoutlen = 10
+vim.opt.ttimeoutlen = 50

@@ -10,7 +10,7 @@ return {
         mode = "buffers", -- o "tabs"
         numbers = "ordinal", -- o "ordinal", "buffer_id", "both"
         diagnostics = "nvim_lsp",
-        separator_style = "padded_slant", -- "slant", "padded_slant", "thin", etc
+        separator_style = "thin", -- "slant", "padded_slant", "thin", etc
         show_close_icon = false,
         always_show_bufferline = true,
         offsets = {

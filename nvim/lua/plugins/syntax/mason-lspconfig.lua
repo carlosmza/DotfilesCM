@@ -21,8 +21,12 @@ return {
             capabilities = capabilities
         }
         vim.lsp.config.qmlls = {
-            capabilities = capabilities
+            cmd = { "qml-language-server" },
+            filetypes = { "qml" },
+            root_markers = { { "qmldir", "shell.qml" }, ".git" },
+            capabilities = capabilities,
         }
+        vim.lsp.enable("qmlls")
         vim.lsp.config.emmylua_ls = {
             capabilities = capabilities
 				}

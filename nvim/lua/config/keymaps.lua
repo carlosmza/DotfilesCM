@@ -44,6 +44,7 @@ snacks.toggle.animate():map("<leader>ta")
 snacks.toggle.dim():map("<leader>td")
 snacks.toggle.indent():map("<leader>ti")
 snacks.toggle.scroll():map("<leader>ts")
+snacks.toggle.words():map("<leader>tw")
 kmap({ "n", "t" }, "<leader>.", function()
   snacks.terminal.toggle()
 end, { desc = "Terminal toggle" })
@@ -243,6 +244,10 @@ end, { desc = "Search and Remplace" })----------- </search> -----------
 
 ----------- <yazi> -----------
 kmap({"n", "v"}, "<leader>-", "<cmd>Yazi cwd<CR>", { desc = "Open Yazi"})
+vim.keymap.set("n", "<leader>_", function()
+  local current_file = vim.fn.expand("%:p")
+  require("yazi").yazi({}, current_file)
+end, { desc = "Open Yazi (relative)" })
 ----------- </yazi> -----------
 
 ----------- <zoxide> -----------
@@ -300,9 +305,26 @@ kmap("n", "<leader>s-", function()
 end, { desc = "Scratch: Select notes" })
 ----------- </extra> -----------
 
------------ <paste> -----------
+----------- <copy-paste> -----------
+-- Kdeconnect
+local function blackhole_operator(key)
+    vim.keymap.set("n", key, '"_' .. key, {
+        noremap = true,
+        silent = true,
+    })
 
------------ </paste> -----------
+    vim.keymap.set("x", key, '"_' .. key, {
+        noremap = true,
+        silent = true,
+    })
+end
+
+blackhole_operator("d")
+blackhole_operator("D")
+blackhole_operator("c")
+blackhole_operator("C")
+
+----------- </copy-paste> -----------
 
 ----------- <disable> -----------
 -- --- KEYMAPS PARA SNACKS.SCOPE (Navegación Inteligente) ---
