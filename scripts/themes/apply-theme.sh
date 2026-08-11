@@ -47,38 +47,45 @@ echo "[3] Recargando Hyprland"
 hyprctl reload || echo "Aviso: hyprctl reload falló (¿estás fuera de una sesión de Hyprland?)" >&2
 lua "$HOME/.config/hypr/lua/scripts/read_theme.lua"
 
-# Zellij en desuso
 # __________ ZELLIJ __________
-# echo "Modificando tema de Zellij..."
-# ZELLIJ_THEME_FILE="$HOME/.config/zellij/themes/current.kdl"
-# if "$HOME/.config/scripts/themes/json-to-kdl.py" "$THEME_SYSTEM" --output "$ZELLIJ_THEME_FILE"; then
-#     chmod +x "$ZELLIJ_THEME_FILE"
-#     echo >> "$HOME/.config/zellij/config.kdl"
-# else
-#     echo "Aviso: No se pudo generar el archivo KDL para Zellij." >&2
-# fi
+echo "[4] Modificando Zellij"
+ZELLIJ_THEME_FILE="$HOME/.config/zellij/themes/current.kdl"
+if "$HOME/.config/scripts/themes/json-to-kdl.py" "$THEME_SYSTEM" --output "$ZELLIJ_THEME_FILE"; then
+    chmod +x "$ZELLIJ_THEME_FILE"
+else
+    echo "Aviso: No se pudo generar el archivo KDL para Zellij." >&2
+fi
+
+# __________ ZELLIJ LAYOUT __________
+echo "[5] Generando layout Zellij"
+ZELLIJ_LAYOUT_FILE="$HOME/.config/zellij/layouts/current.kdl"
+if "$HOME/.config/scripts/themes/json-to-layout.py" "$THEME_SYSTEM" --output "$ZELLIJ_LAYOUT_FILE"; then
+    chmod +x "$ZELLIJ_LAYOUT_FILE"
+else
+    echo "Aviso: No se pudo generar el layout para Zellij." >&2
+fi
 
 # __________ ROFI __________
-echo "[4] Modificando Rofi"
+echo "[6] Modificando Rofi"
 "$HOME/.config/scripts/themes/json-to-rasi.py" "$THEME_SYSTEM" -o \
     "$HOME/.config/rofi/themes/current.rasi"
 
 # __________ QUICKSHELL __________
-echo "[5] Notificando Quickshell"
+echo "[7] Notificando Quickshell"
 # Usamos '|| true' para que el script no muera si quickshell ipc no responde en ese instante
 quickshell ipc call colores recargar || echo "Aviso: No se pudo comunicar con Quickshell IPC." >&2
 
 # __________ DARK/LIGHT MODE __________
 if [[ "$MODE" =~ dark ]]; then
-    echo "[6] Modo detectado: Dark"
+    echo "[8] Modo detectado: Dark"
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 else
-    echo "[6] Modo detectado: Light"
+    echo "[8] Modo detectado: Light"
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
 fi
 
 # __________ KITTY __________
-echo "[7] Modificando Kitty"
+echo "[9] Modificando Kitty"
 KITTY_CONF="$HOME/.config/kitty/current.conf"
 EXPECTED_NAME=$(jq -r '.name // empty' "$THEME_SYSTEM")
 
@@ -107,15 +114,15 @@ else
 fi
 
 # __________ Yazi __________
-echo "[8] Modificando Yazi"
+echo "[10] Modificando Yazi"
 "$HOME/.config/scripts/themes/yazi-theme-toggle.py" "$THEME"
 
 # __________ Nvim __________
-echo "[9] Notificando Nvim"
+echo "[11] Notificando Nvim"
 echo "$THEME" > "$HOME/.config/nvim/.colorscheme"
 
 # __________ Oh-my-posh __________
-echo "[10] Modificando Oh-my-posh"
+echo "[12] Modificando Oh-my-posh"
 "$HOME/.config/scripts/themes/json-to-prompt.py" "$THEME_SYSTEM" "$HOME/.config/oh-my-posh/current.json"
 pkill -USR1 fish || true
 

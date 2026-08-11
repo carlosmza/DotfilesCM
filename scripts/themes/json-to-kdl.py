@@ -11,16 +11,16 @@ import sys
 
 FLAT_MAP = {
     "fg": "base05",
-    "bg": "base00",
+    "bg": "base02",
     "black": "base00",
     "white": "base05",
     "red": "base08",
-    "green": "base0b",
+    "green": "base0a", # not is green
     "yellow": "base0a",
     "blue": "base0d",
     "magenta": "base0e",
     "cyan": "base0c",
-    "orange": "base09",
+    "orange": "base0f", # not is orange 
 }
 
 

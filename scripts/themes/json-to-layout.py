@@ -26,6 +26,7 @@ COLOR_MAP = {
     "tab_normal": "base04",
     "tab_active": "base0d",
     "tab_rename": "base08",
+    "tab_separator": "base03",
 
     # Misc
     "border_format": "base03",
@@ -35,6 +36,8 @@ COLOR_MAP = {
 NOTIFICATION_FG = "base0d"
 NOTIFICATION_BG = "base00"
 TAB_RENAME_BG = "base00"
+TAB_ACTIVE_FG = "base00"
+TAB_ACTIVE_BG = "base0d"
 
 FG_PATTERN = r'fg=#([a-fA-F0-9]{6})'
 BG_PATTERN = r'bg=#([a-fA-F0-9]{6})'
@@ -108,6 +111,20 @@ def process_line(line, palette):
         line = replace_bg(
             line,
             palette[TAB_RENAME_BG]
+        )
+
+        return line
+
+    # Tab active requiere fg=base00 y bg=base0d
+    if stripped.startswith("tab_active"):
+        line = replace_fg(
+            line,
+            palette[TAB_ACTIVE_FG]
+        )
+
+        line = replace_bg(
+            line,
+            palette[TAB_ACTIVE_BG]
         )
 
         return line
