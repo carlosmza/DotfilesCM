@@ -1,8 +1,14 @@
 layout {
-   default_tab_template {
-       children
-       pane size=1 borderless=true {
-            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+    tab focus=true {
+        pane
+    }
+    // tab name="Opencode" {
+    //     pane
+    // }
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="file:/home/carlosm/.config/zellij/plugins/zjstatus.wasm" {
 
                 // Style mode
                 mode_normal        "#[fg=#83a598,bold] NORMAL "
@@ -20,8 +26,8 @@ layout {
                 mode_prompt          "#[fg=#fabd2f,bold] PROMPT "
 
                 // Notifications
-                notification_format_unread           "#[fg=#83a598,bg=#32302f,blink]  #[fg=#89B4FA,bg=#181825] {message} "
-                notification_format_no_notifications "#[fg=#83a598,bg=#32302f,dim]   "
+                notification_format_unread           "#[fg=#83a598,bg=#282828,blink]  #[fg=#89B4FA,bg=#181825] {message} "
+                notification_format_no_notifications "#[fg=#83a598,bg=#282828,dim]   "
                 notification_show_interval           "10"
 
                 // Format
@@ -36,13 +42,13 @@ layout {
                 border_position "top"
 
                 hide_frame_for_single_pane "false"
-                // hide_frame_for_single_pane "true"
 
 
                 // Tabs
                 tab_normal   "#[fg=#bdae93] {name} "
-                tab_active   "#[fg=#83a598,bold,italic] {name} "
-                tab_rename   "#[fg=#fb4934,bg=#32302f] {index} {name} {floating_indicator} "
+                tab_active   "#[fg=#282828,bg=#83a598,bold,italic] {name} "
+                tab_separator   "#[fg=#665c54] | "
+                tab_rename   "#[fg=#fb4934,bg=#282828] {index} {name} {floating_indicator} "
 
                 command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
                 command_git_branch_format      "#[fg=#83a598] {stdout} "
