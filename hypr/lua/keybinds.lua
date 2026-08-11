@@ -33,8 +33,9 @@ hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("/home/carlosm/noqs.sh"))
 hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/2lyrics-pdf.py"))
 hl.bind(mainMod .. " +  D", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/translate.py"))
 hl.bind(mainMod .. " +  D", hl.dsp.exec_cmd("quickshell ipc call dictionary toggle"))
-hl.bind(mainMod .. " +  E", hl.dsp.exec_cmd("quickshell ipc call translate toggle"))
-hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("quickshell ipc call translate-window toggle"))
+hl.bind(mainMod .. " +  E", hl.dsp.exec_cmd("systemctl --user start argos-daemon.service && quickshell ipc call translate toggle"))
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("systemctl --user start argos-daemon.service && quickshell ipc call translate-window toggle"))
+
 
 -- Scratchpad
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))

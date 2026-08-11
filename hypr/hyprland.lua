@@ -23,6 +23,7 @@ hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@100", position = "1920x0", s
 
 hl.workspace_rule({ workspace = "1", monitor = "eDP-1" })
 hl.workspace_rule({ workspace = "2", monitor = "HDMI-A-1" })
+
 hl.workspace_rule({
 	workspace = "special:ytm",
 	on_created_empty = "kitty ytm",

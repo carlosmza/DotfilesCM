@@ -16,6 +16,7 @@ Este documento sirve como referencia rápida para la estandarización de los men
 
 * feat:     Añadir una nueva característica o funcionalidad al sistema (Incremento MINOR).
 * fix:      Corregir un error (bug) en el código (Incremento PATCH).
+* inac:     Funcionalidades en desuso
 
 ## Tipos de Commits Secundarios (Mantenimiento y desarrollo)
 
