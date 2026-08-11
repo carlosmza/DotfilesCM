@@ -36,7 +36,7 @@ Item {
         text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[1] : "00"
         color: Colors.palette.base06
         font {
-            pixelSize: 21
+            pixelSize: 22
             bold: true
             family: root.font
         }

@@ -1,6 +1,6 @@
 import Quickshell
 import Quickshell.Io
-import QtQuick 2.15
+import QtQuick
 import qs.config.theme
 
 Item {
@@ -9,8 +9,6 @@ Item {
     implicitWidth: 32
     implicitHeight: 32
 
-    signal clicked()
-
     Text {
         anchors.centerIn: parent
         text: ""
@@ -18,9 +16,4 @@ Item {
         font.pixelSize: 20
     }
 
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
-    }
 }

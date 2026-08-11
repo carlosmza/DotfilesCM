@@ -1,81 +1,18 @@
-import Quickshell
-import Quickshell.Io
-import Quickshell.Wayland
 import QtQuick
+import Quickshell
+import Quickshell.Wayland
+import "../services"
 import qs.config.theme
 
 ShellRoot {
     id: root
 
-    property real brightnessValue: 0
-    property bool backlightAvailable: false
-    property int threshold: 80
-
-    // 🔍 Detecta el dispositivo de backlight al inicio
-    Process {
-        id: deviceDetector
-        running: true
-
-        command: [
-            "sh", "-c",
-            "d=$(ls /sys/class/backlight/ | head -1); [ -n \"$d\" ] && echo \"$d\" || echo \"N/A\""
-        ]
-
-        stdout: SplitParser {
-            onRead: data => {
-                const device = data.trim()
-                if (device !== "N/A" && device.length > 0) {
-                    root.backlightAvailable = true
-                    brightnessReader.running = true
-                    brightnessWatcher.running = true
-                }
-            }
+    Brightness {
+        id: svc
+        onValueChanged: {
+            osdItem.mostrar = true
+            hideTimer.restart()
         }
-    }
-
-    // 👁️ Watcher: se dispara cuando el brillo cambia
-    Process {
-        id: brightnessWatcher
-        running: false
-
-        command: [
-            "sh", "-c",
-            "d=$(ls /sys/class/backlight/ | head -1); exec inotifywait -m -e modify \"/sys/class/backlight/$d/brightness\" 2>/dev/null"
-        ]
-
-        stdout: SplitParser {
-            onRead: data => {
-                osdItem.mostrar = true
-                hideTimer.restart()
-                brightnessReader.running = true
-            }
-        }
-    }
-
-    // 📖 Lector: obtiene el valor actual del brillo
-    Process {
-        id: brightnessReader
-        running: false
-
-        command: [
-            "sh", "-c",
-            "d=$(ls /sys/class/backlight/ | head -1); [ -n \"$d\" ] && awk 'FNR==1 && NR==1{b=$1} FNR==1 && NR==2{print int(b*100/$1)}' \"/sys/class/backlight/$d/brightness\" \"/sys/class/backlight/$d/max_brightness\""
-        ]
-
-        stdout: SplitParser {
-            onRead: data => {
-                const val = parseInt(data)
-                if (!isNaN(val)) {
-                    root.brightnessValue = val
-                }
-            }
-        }
-    }
-
-    Component.onDestruction: {
-        brightnessWatcher.running = false
-        brightnessReader.running = false
-        deviceDetector.running = false
     }
 
     PanelWindow {
@@ -116,11 +53,11 @@ ShellRoot {
             Rectangle {
                 id: fgItem
                 anchors.fill: parent
-                anchors.rightMargin: Math.min(osdPanel.implicitWidth - root.brightnessValue * 3, 305)
+                anchors.rightMargin: Math.min(osdPanel.implicitWidth - svc.brightnessValue * 3, 305)
                 anchors.leftMargin: 5
                 anchors.topMargin: 5
                 anchors.bottomMargin: 5
-                color: backlightAvailable ? Colors.palette.base02 : Colors.palette.base01
+                color: svc.backlightAvailable ? Colors.palette.base02 : Colors.palette.base01
                 radius: 6
 
                 Behavior on anchors.rightMargin {
@@ -129,9 +66,9 @@ ShellRoot {
 
                 Text {
                     text: "󰃟"
-                    color: root.brightnessValue < root.threshold ? Colors.palette.base05 : Colors.palette.base06
+                    color: svc.brightnessValue < svc.threshold ? Colors.palette.base05 : Colors.palette.base06
                     font.pixelSize: 18
-                    x: root.brightnessValue < root.threshold ? osdPanel.implicitWidth - 50 : osdPanel.implicitWidth - 100
+                    x: svc.brightnessValue < svc.threshold ? osdPanel.implicitWidth - 50 : osdPanel.implicitWidth - 100
                     y: 5
                 }
             }
@@ -142,11 +79,11 @@ ShellRoot {
                 height: parent.height - 10
                 color: Colors.palette.base05
                 radius: 6
-                x: Math.max(root.brightnessValue * 3 - 2, 5)
+                x: Math.max(svc.brightnessValue * 3 - 2, 5)
                 y: 5
 
                 Behavior on x {
-                    NumberAnimation { duration: 200 }
+                    NumberAnimation { duration: 150 }
                 }
             }
         }

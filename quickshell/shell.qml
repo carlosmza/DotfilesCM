@@ -1,18 +1,17 @@
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import QtQuick 2.15
+import QtQuick
 import qs.config.theme
-import "./ui/layout/"
-import "./ui/popups/"
-import "./ui/widgets/"
-import "./ui/components/"
-import "./ui/lock/"
-import "./dev/"
+
+import "./modules/"
+import "./components/"
+// import "./.dev/"
 import "./services/"
 
 ShellRoot {
     LeftBar {}
+    SystemNotifications {}
     ClockWidget {}
     BrightnessPopup {}
     VolumePopup {}
@@ -20,6 +19,7 @@ ShellRoot {
     ThemeSelector { id: themeSelector }
     WallpaperSelector { id: wallpaperSelector }
     Translate { id: translate }
+    TranslateWindow { id: translateWindow }
     // LockScreen { id: lockScreen }
     
     IpcHandler {
@@ -74,6 +74,18 @@ ShellRoot {
         }
         function hide(): void {
             translate.visible = false
+        }
+    }
+    IpcHandler {
+        target: "translate-window"
+        function toggle(): void {
+            translateWindow.visible = !translateWindow.visible
+        }
+        function show(): void {
+            translateWindow.visible = true
+        }
+        function hide(): void {
+            translateWindow.visible = false
         }
     }
     IpcHandler {

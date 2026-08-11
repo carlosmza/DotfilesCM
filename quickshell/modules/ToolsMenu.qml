@@ -1,234 +1,105 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
-import QtQuick.Layouts
+import "../components"
 import qs.config.theme
-import qs.config.fonts
 
-Rectangle {
+MenuLayout {
     id: root
-    anchors.fill: parent
-    color: Colors.palette.base00
-    radius: 15
-    clip: true
-    focus: true
-    Keys.onEscapePressed: root.closeRequested()
+    title: ""
 
-    property string font: Fonts.varelaRound
+    property bool hypridleActive: true
 
-    signal closeRequested()
+    property var toolsItems: [
+        { icon: "", label: "Area", mode: "region" },
+        { icon: "", label: "Fullscreen", mode: "output" },
+        { icon: "", label: "Theme Selector", fn: "toggleThemeSelector" },
+        { icon: "", label: "Wallpaper Selector", fn: "toggleWallpaperSelector" },
+        { icon: hypridleActive ? "󱩎" : "󰹐", label: hypridleActive ? "Caffeine: ON" : "Caffeine: OFF", fn: "toggleHypridle" }
+    ]
+
+    Process { id: shotProc }
+    Process { id: toggleTheme }
+    Process { id: toggleWp }
+    Process {
+        id: hypridleCheck
+        command: ["systemctl", "--user", "is-active", "hypridle"]
+        running: true
+        onStdoutChanged: if (stdout.trim() === "inactive") root.hypridleActive = false;
+    }
+    Process { id: hypridleProc }
 
     function takeShot(mode) {
-        shotProc.command = ["bash", "-c", "hyprshot -m " + mode]
-        shotProc.running = true
-    }
+        const now = new Date();
+        const pad = (n) => n.toString().padStart(2, '0');
+        const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+        const filename = `Screenshot-From-${ts}.png`;
 
+        shotProc.command = ["hyprshot", "-m", mode, "-o", "/home/carlosm/Pictures/Screenshots", "-f", filename];
+        shotProc.running = true;
+        root.closeRequested();
+    }
     function toggleThemeSelector() {
         toggleTheme.command = ["quickshell", "ipc", "call", "theme", "toggle"]
         toggleTheme.running = true
+        root.closeRequested()
     }
 
     function toggleWallpaperSelector() {
         toggleWp.command = ["quickshell", "ipc", "call", "wallpapers", "toggle"]
         toggleWp.running = true
+        root.closeRequested()
     }
 
-    Process { id: shotProc; command: ["bash"] }
-    Process { id: toggleTheme; command: ["bash"] }
-    Process { id: toggleWp; command: ["bash"] }
+    function toggleHypridle() {
+        hypridleProc.command = ["systemctl", "--user", hypridleActive ? "stop" : "start", "hypridle"];
+        hypridleProc.running = true;
+        hypridleActive = !hypridleActive;
+        root.closeRequested();
+    }
 
-    ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 12
-        spacing: 6
+    Repeater {
+        model: root.toolsItems
 
-        // Header
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-
-            Text {
-                text: "Tools"
-                color: Colors.palette.base05
-                font.pixelSize: 15
-                font.weight: Font.Bold
-                font.family: root.font
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Colors.palette.base03
-        }
-
-        // Area
-        Rectangle {
-            Layout.fillWidth: true
-            height: 36
+        delegate: Rectangle {
+            border.color: Colors.palette.base01
+            border.width: 1
+            width: parent.width
+            color: ma.containsMouse ? Colors.palette.base02 : "transparent"
+            height: 32
             radius: 8
-            color: areaMa.containsMouse ? Colors.palette.base03 : Colors.palette.base02
 
-            RowLayout {
+            Behavior on color { ColorAnimation { duration: 150 } }
+
+            Row {
                 anchors.fill: parent
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10
                 spacing: 8
 
                 Text {
-                    text: ""
-                    color: Colors.palette.base0D
-                    font.pixelSize: 16
+                    text: modelData.icon
+                    color: Colors.palette.base05
+                    font.pixelSize: 14
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Text {
-                    text: "Area"
+                    text: modelData.label
                     color: Colors.palette.base05
                     font.pixelSize: 13
-                    font.family: root.font
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-
-                Item { Layout.fillWidth: true }
             }
 
             MouseArea {
-                id: areaMa
+                id: ma
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    root.takeShot("region")
-                    root.closeRequested()
-                }
-            }
-        }
-
-        // Fullscreen
-        Rectangle {
-            Layout.fillWidth: true
-            height: 36
-            radius: 8
-            color: fullMa.containsMouse ? Colors.palette.base03 : Colors.palette.base02
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                spacing: 8
-
-                Text {
-                    text: ""
-                    color: Colors.palette.base0D
-                    font.pixelSize: 16
-                }
-
-                Text {
-                    text: "Fullscreen"
-                    color: Colors.palette.base05
-                    font.pixelSize: 13
-                    font.family: root.font
-                }
-
-                Item { Layout.fillWidth: true }
-            }
-
-            MouseArea {
-                id: fullMa
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.takeShot("output")
-                    root.closeRequested()
-                }
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Colors.palette.base03
-            Layout.topMargin: 4
-        }
-
-        // Theme Selector
-        Rectangle {
-            Layout.fillWidth: true
-            height: 36
-            radius: 8
-            color: themeMa.containsMouse ? Colors.palette.base03 : Colors.palette.base02
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                spacing: 8
-
-                Text {
-                    text: ""
-                    color: Colors.palette.base0D
-                    font.pixelSize: 16
-                }
-
-                Text {
-                    text: "Theme Selector"
-                    color: Colors.palette.base05
-                    font.pixelSize: 13
-                    font.family: root.font
-                }
-
-                Item { Layout.fillWidth: true }
-            }
-
-            MouseArea {
-                id: themeMa
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.toggleThemeSelector()
-                    root.closeRequested()
-                }
-            }
-        }
-
-        // Wallpaper Selector
-        Rectangle {
-            Layout.fillWidth: true
-            height: 36
-            radius: 8
-            color: wpMa.containsMouse ? Colors.palette.base03 : Colors.palette.base02
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                spacing: 8
-
-                Text {
-                    text: ""
-                    color: Colors.palette.base0D
-                    font.pixelSize: 16
-                }
-
-                Text {
-                    text: "Wallpaper Selector"
-                    color: Colors.palette.base05
-                    font.pixelSize: 13
-                    font.family: root.font
-                }
-
-                Item { Layout.fillWidth: true }
-            }
-
-            MouseArea {
-                id: wpMa
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.toggleWallpaperSelector()
-                    root.closeRequested()
+                    if (modelData.fn) root[modelData.fn]();
+                    else root.takeShot(modelData.mode);
                 }
             }
         }

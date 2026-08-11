@@ -52,6 +52,7 @@ Item {
             nmcliProc.running = true
         }
     }
+    //
     // Icons (nerdfont) for signal intervals. Adjust glyphs if your font differs.
     property var icons: ["󰤭", "󰤯", "󰤟", "󰤢", "󰤥", "󰤨"]
     property string icon: {
@@ -70,6 +71,6 @@ Item {
         text: root.icon
         color: root.icon_color
         font.pixelSize: 20
-        horizontalAlignment: Text.AlignHCenter
+        anchors.centerIn: parent
     }
 }

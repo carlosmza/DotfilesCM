@@ -25,6 +25,7 @@ Rectangle {
     }
 
     color: Colors.palette.base01
+    border.color: "#7F" + Colors.palette.base04.slice(1) // Implementacion de alpha #AARRGGBB
     radius: 8
 
     opacity: showing ? 1.0 : 0.0
@@ -48,7 +49,7 @@ Rectangle {
         Text {
             text: root.icon
             color: Colors.palette.base0D
-            font.pixelSize: 24
+            font.pixelSize: 14
             font.family: Fonts.varelaRound
             visible: root.icon !== ""
         }
@@ -56,14 +57,14 @@ Rectangle {
         Text {
             text: root.label
             color: Colors.palette.base05
-            font.pixelSize: 16
+            font.pixelSize: 14
             font.family: Fonts.varelaRound
         }
 
         Text {
-            text: root.value >= 0 ? root.value + "%" : ""
+            text: root.value >= 0 ? root.value + " %" : ""
             color: Colors.palette.base06
-            font.pixelSize: 16
+            font.pixelSize: 12
             font.weight: Font.Bold
             font.family: Fonts.varelaRound
             visible: root.value >= 0

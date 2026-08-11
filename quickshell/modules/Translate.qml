@@ -26,6 +26,7 @@ PanelWindow {
     property string output: ""
     property bool loading: false
     property string errorMsg: ""
+    property bool _fromCliphist: false
 
     readonly property real _header: 16 + 20 + 8 + 1 + 8
     readonly property real _footer: 16
@@ -67,12 +68,32 @@ PanelWindow {
         command: ["bash", "-c", "wl-paste -p"]
         stdout: StdioCollector {
             onStreamFinished: {
+                var text = this.text.trim()
+                if (text !== "") {
+                    root._gotSelection = true
+                    root._fromCliphist = false
+                    root.input = text
+                } else {
+                    procCliphist.running = true
+                }
+                if (root._gotTranslation) root.loading = false
+            }
+        }
+    }
+
+    Process {
+        id: procCliphist
+        command: ["bash", "-c", "cliphist list | head -1 | cliphist decode"]
+        stdout: StdioCollector {
+            onStreamFinished: {
                 root._gotSelection = true
                 var text = this.text.trim()
-                if (text === "") {
-                    root.errorMsg = "No word selection.\nSelect a word and try again."
-                } else {
+                if (text !== "") {
+                    root._fromCliphist = true
                     root.input = text
+                    root.errorMsg = ""
+                } else if (root.errorMsg === "") {
+                    root.errorMsg = "No word selection.\nSelect a word and try again."
                 }
                 if (root._gotTranslation) root.loading = false
             }
@@ -170,7 +191,7 @@ PanelWindow {
 
                     Text {
                         id: inputText
-                        text: root.input + "\n"
+                        text: (root._fromCliphist ? "  " : "") + root.input + "\n"
                         color: Colors.palette.base07
                         font.pixelSize: 15
                         font.family: root.font

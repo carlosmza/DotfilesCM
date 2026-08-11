@@ -1,85 +1,137 @@
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.UPower
 import QtQuick
+import "../components"
 import qs.config.theme
 
-Rectangle {
-    anchors.fill: parent
-    color: Colors.palette.base00
-    radius: 12
-
-    Rectangle {
-        id: batteryBody
-        width: 50
-        height: 24
-        radius: 4
-        border.color: Colors.palette.base05
-        border.width: 2
-        anchors.centerIn: parent
-
-        Rectangle {
-            id: batteryLevel
-            anchors {
-                left: parent.left
-                top: parent.top
-                bottom: parent.bottom
-                margins: 3
-            }
-            width: parent.width * (percentage / 100)
-            radius: 2
-            color: levelColor
-        }
-
-        Rectangle {
-            id: batteryTip
-            width: 4
-            height: 10
-            radius: 1
-            anchors {
-                left: parent.right
-                top: parent.top
-                bottom: parent.bottom
-                topMargin: 5
-                bottomMargin: 5
-            }
-            color: Colors.palette.base05
-        }
-    }
-
-    Column {
-        anchors {
-            left: batteryBody.right
-            leftMargin: 12
-            verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            text: percentage + "%"
-            color: Colors.palette.base05
-            font.pixelSize: 14
-            font.weight: Font.DemiBold
-        }
-
-        Text {
-            text: statusText
-            color: Colors.palette.base03
-            font.pixelSize: 10
-        }
-    }
+MenuLayout {
+    id: root
+    title: ""
 
     readonly property real percentage: Math.max(0, Math.min(100, UPower.displayDevice?.percentage * 100 || 0))
-
     readonly property bool isCharging: UPower.onBattery === false
+    property string currentProfile: ""
 
-    readonly property string statusText: {
-        if (percentage >= 100) return "Full"
-        if (isCharging) return "Charging"
-        return "On Battery"
+    property var profiles: [
+        { name: "power-saver", label: "Power Saver", icon: "" },
+        { name: "balanced", label: "Balanced", icon: "" },
+        { name: "performance", label: "Performance", icon: "" }
+    ]
+
+    onVisibleChanged: {
+        if (visible) getProfileProc.running = true
     }
 
-    readonly property color levelColor: {
-        if (percentage >= 99 && isCharging) return Colors.palette.base0B
-        if (percentage <= 20) return Colors.palette.base08
-        return Colors.palette.base0D
+    Process {
+        id: getProfileProc
+        command: ["powerprofilesctl", "get"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.currentProfile = this.text.trim()
+            }
+        }
+    }
+
+    Process {
+        id: setProfileProc
+        onRunningChanged: {
+            if (!running && root.visible) getProfileProc.running = true
+        }
+    }
+
+    Row {
+        spacing: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        Text {
+            text: ""
+            color: Colors.palette.base05
+            font.pixelSize: 20
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Text {
+            text: Math.round(root.percentage) + "%"
+            color: Colors.palette.base05
+            font.pixelSize: 16
+            font.weight: Font.Bold
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: {
+            if (root.percentage >= 100) return "Full"
+            if (root.isCharging) return "Charging"
+            return "On Battery"
+        }
+        color: Colors.palette.base03
+        font.pixelSize: 13
+    }
+
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: Colors.palette.base03
+    }
+
+    Text {
+        text: "POWER PROFILE"
+        color: Colors.palette.base03
+        font.pixelSize: 11
+        font.weight: Font.Bold
+    }
+
+    Repeater {
+        model: root.profiles
+
+        delegate: Rectangle {
+            border.color: Colors.palette.base01
+            border.width: 1
+            width: parent.width
+            height: 32
+            radius: 8
+            color: modelData.name === root.currentProfile
+                ? Colors.palette.base02
+                : (ma.containsMouse ? Colors.palette.base01 : "transparent")
+
+            Behavior on color { ColorAnimation { duration: 150 } }
+
+            Row {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                spacing: 8
+
+                Text {
+                    text: modelData.icon
+                    color: Colors.palette.base05
+                    font.pixelSize: 14
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: modelData.label
+                    color: Colors.palette.base05
+                    font.pixelSize: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            MouseArea {
+                id: ma
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (modelData.name !== root.currentProfile) {
+                        setProfileProc.command = ["powerprofilesctl", "set", modelData.name]
+                        setProfileProc.running = true
+                    }
+                }
+            }
+        }
     }
 }

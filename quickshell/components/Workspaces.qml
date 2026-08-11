@@ -14,7 +14,14 @@ Item {
 
     property string font: Fonts.varelaRound
     property string activeSpecialName: ""
-    property var icons: [ "", "", "" ]
+    property var windowIconMap: { "ytm": "" }
+
+    function iconForName(name) {
+        if (!name) return ""
+        for (var key in root.windowIconMap)
+            if (name === key) return root.windowIconMap[key]
+        return ""
+    }
 
     Connections {
         target: Hyprland
@@ -57,6 +64,14 @@ Item {
                     )
                     property bool isFocused: isSpecial ? nameMatches : modelData.focused
                     property bool isActive: isSpecial ? nameMatches : modelData.active
+                    property string windowIcon: {
+                        var toplevels = modelData.toplevels.values || []
+                        for (var i = 0; i < toplevels.length; i++) {
+                            var icon = root.iconForName(toplevels[i].title)
+                            if (icon) return icon
+                        }
+                        return ""
+                    }
                     width: 28
                     height: 28
                     radius: width / 3
@@ -94,7 +109,10 @@ Item {
                     Text {
                         anchors.centerIn: parent
 
-                        text: (modelData.id < 4 && modelData.id > 0) ? icons[modelData.id - 1] : isSpecial ? "S" : modelData.id
+                        // text: (modelData.id < 4 && modelData.id > 0) ? icons[modelData.id - 1] : isSpecial ? "S" : modelData.id
+                        // text: isSpecial ? "" : modelData.id
+                        text: windowIcon ? windowIcon : isSpecial ? "" : modelData.id
+
 
                         color: isFocused ? Colors.palette.base00 : Colors.palette.base0F
                         font {

@@ -28,8 +28,12 @@ PanelWindow {
     onVisibleChanged: {
         if (visible) {
             root.applying = false
+            root._hoveredIndex = -1
+            root._timerFromHover = false
             if (wallpapers.length === 0) loadWallpapers()
             wpContent.forceActiveFocus()
+        } else {
+            applyTimer.stop()
         }
     }
 
@@ -39,6 +43,10 @@ PanelWindow {
     property int fontSize: 14
     property bool applying: false
     property int previousIndex: -1
+    property bool _stayOpen: false
+    property int _hoveredIndex: -1
+    property bool _timerFromHover: false
+    property bool _settingFromTimer: false
 
     Component.onCompleted: loadWallpapers()
 
@@ -46,11 +54,19 @@ PanelWindow {
         if (previousIndex < 0) {
             previousIndex = selectedIndex
             listView.currentIndex = selectedIndex
+            if (!root._settingFromTimer && visible) {
+                root._timerFromHover = false
+                applyTimer.restart()
+            }
             return
         }
         listView.currentIndex = selectedIndex
         scrollToSelected()
         previousIndex = selectedIndex
+        if (!root._settingFromTimer && visible) {
+            root._timerFromHover = false
+            applyTimer.restart()
+        }
     }
 
     function loadWallpapers() {
@@ -79,11 +95,12 @@ PanelWindow {
         return "/home/carlosm/Pictures/wallpaper_thumbs/" + thumbName
     }
 
-    function applyWallpaper(thumbName) {
+    function applyWallpaper(thumbName, stayOpen) {
         if (root.applying) return
         root.applying = true
+        root._stayOpen = stayOpen || false
         var wp = wallpaperFromThumb(thumbName)
-        procApply.command = ["/home/carlosm/.config/scripts/system/wallpaper-change.py", wp]
+        procApply.command = ["awww", "img", wp, "--transition-type", "wipe", "--transition-duration", "2", "--transition-fps", "60"]
         procApply.running = true
     }
 
@@ -127,7 +144,24 @@ PanelWindow {
         onRunningChanged: {
             if (!running && root.applying) {
                 root.applying = false
-                root.visible = false
+                if (!root._stayOpen)
+                    root.visible = false
+                root._stayOpen = false
+            }
+        }
+    }
+
+    Timer {
+        id: applyTimer
+        interval: 500
+        onTriggered: {
+            if (root.applying) return
+            var idx = root._timerFromHover ? root._hoveredIndex : root.selectedIndex
+            if (idx >= 0 && idx < root.wallpapers.length) {
+                root._settingFromTimer = true
+                root.selectedIndex = idx
+                root._settingFromTimer = false
+                root.applyWallpaper(root.wallpapers[idx], true)
             }
         }
     }
@@ -174,9 +208,9 @@ PanelWindow {
                 top: parent.top
                 topMargin: 48
                 left: parent.left
-                leftMargin: 8
+                leftMargin: 20
                 right: parent.right
-                rightMargin: 8
+                rightMargin: 20
                 bottom: parent.bottom
                 bottomMargin: 8
             }
@@ -198,34 +232,32 @@ PanelWindow {
             delegate: Item {
                 width: 320
                 height: listView.height
-                enabled: !root.applying
-                opacity: enabled ? 1.0 : 0.5
+                // enabled: !root.applying
+                // opacity: enabled ? 1.0 : 0.5
 
                 Rectangle {
                     id: card
                     width: parent.width
                     height: parent.height
-                    radius: 10
+                    radius: 4
+                    color: {
+                        if (index === selectedIndex) return Colors.palette.base0D
+                        if (mouseArea.containsMouse) return Colors.palette.base04
+                        // return Colors.palette.base02
+                        return "transparent"
+                    }
 
                     y: (mouseArea.containsMouse || index === selectedIndex) ? -40 : 0
                     Behavior on y { NumberAnimation { duration: 140 } }
+                    Behavior on color { ColorAnimation { duration: 140 } }
 
                     Image {
-                        anchors.fill: parent
+                        anchors {
+                            fill: parent
+                            margins: 2
+                        }
                         source: "file://" + root.thumbPath(modelData)
                         fillMode: Image.PreserveAspectCrop
-
-                    }
-
-                    Rectangle {
-                        anchors.fill: parent
-                        color: {
-                            if (mouseArea.containsMouse)
-                                return "#15ffffff"
-                            if (index === selectedIndex)
-                                return "#30ffffff"
-                            return "transparent"
-                        }
                     }
                 }
 
@@ -234,8 +266,21 @@ PanelWindow {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    onEntered: {
+                        root._hoveredIndex = index
+                        root._timerFromHover = true
+                        applyTimer.restart()
+                    }
+                    onExited: {
+                        if (root._hoveredIndex === index) {
+                            root._hoveredIndex = -1
+                            root._timerFromHover = false
+                            applyTimer.stop()
+                        }
+                    }
                     onClicked: {
                         if (root.applying) return
+                        applyTimer.stop()
                         selectedIndex = index
                         root.applyWallpaper(modelData)
                     }
@@ -260,22 +305,5 @@ PanelWindow {
             }
         }
 
-        Rectangle {
-            anchors.fill: parent
-            radius: 20
-            color: Qt.rgba(0, 0, 0, 0.5)
-            visible: root.applying
-            z: 100
-
-            Text {
-                anchors.centerIn: parent
-                text: "Applying\u2026"
-                color: Colors.palette.base05
-                font {
-                    pixelSize: root.fontSize + 2
-                    family: root.font
-                }
-            }
-        }
     }
 }

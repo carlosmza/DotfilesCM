@@ -175,8 +175,6 @@ PanelWindow {
 			width: 150; height: 60; radius: 8
 			opacity: root.applying ? 0.4 : 1.0
 			color: {
-					// if (mouseArea.containsMouse)
-					// 		return Colors.palette.base03
 					if (index === root.currentIndex)
 							return modelData.base00
 					return Colors.palette.base02
@@ -196,7 +194,7 @@ PanelWindow {
 			Text {
 				anchors.centerIn: parent
 				text: themeLabel(modelData.name, false)
-        rotation: 180
+                rotation: 180
 				color: {
 						if (mouseArea.containsMouse || index === root.currentIndex)
 								// return Colors.palette.base00
@@ -223,21 +221,6 @@ PanelWindow {
 							root.applyTheme(modelData.name)
 					}
 			}
-		}
-	}
-
-	Rectangle {
-		anchors.fill: parent
-		color: Qt.rgba(0, 0, 0, 0.5)
-		radius: 20
-		visible: root.applying
-		z: 100
-
-		Text {
-			anchors.centerIn: parent
-			text: "Applying\u2026"
-			color: Colors.palette.base05
-			font { pixelSize: 16; bold: true }
 		}
 	}
 

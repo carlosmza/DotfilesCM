@@ -1,17 +1,13 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
-import QtQuick.Layouts
+import "../components"
 import qs.config.theme
 import qs.config.fonts
-import "../layout"
 
-Rectangle {
+MenuLayout {
     id: root
-    anchors.fill: parent
-    color: Colors.palette.base00
-    radius: 15
-    clip: true
+    title: ""
 
     property string font: Fonts.varelaRound
     property bool btPowered: false
@@ -155,159 +151,118 @@ Rectangle {
         command: ["bash"]
     }
 
-    ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 12
+    Row {
+        spacing: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        // Text {
+        //     text: ""
+        //     color: root.btPowered ? Colors.palette.base0D : Colors.palette.base03
+        //     font.pixelSize: 20
+        //     anchors.verticalCenter: parent.verticalCenter
+        // }
+
+        Text {
+            text: "Bluetooth"
+            color: Colors.palette.base05
+            font.pixelSize: 15
+            font.weight: Font.Bold
+            font.family: root.font
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: root.btPowered ? "On" : "Off"
+        color: root.btPowered ? Colors.palette.base0B : Colors.palette.base08
+        font.pixelSize: 12
+        font.family: root.font
+    }
+
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: Colors.palette.base03
+    }
+
+    Row {
+        width: parent.width
         spacing: 6
+        visible: root.btPowered
 
-        // Header
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-
-            Text {
-                text: ""
-                color: root.btPowered ? Colors.palette.base0D : Colors.palette.base03
-                font.pixelSize: 20
-            }
-
-            Text {
-                text: "Bluetooth"
-                color: Colors.palette.base05
-                font.pixelSize: 15
-                font.weight: Font.Bold
-                font.family: root.font
-            }
-
-            Item { Layout.fillWidth: true }
-
-            Text {
-                text: root.btPowered ? "On" : "Off"
-                color: root.btPowered ? Colors.palette.base0B : Colors.palette.base08
-                font.pixelSize: 12
-                font.family: root.font
-            }
-        }
-
-        // Separator
         Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Colors.palette.base03
-        }
-
-        // Combined row: Enable/Disable + Scan
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 6
-            visible: root.btPowered
-
-            // Enable/Disable toggle
-            Rectangle {
-                Layout.fillWidth: true
-                height: 32
-                radius: 8
-                color: Colors.palette.base02
-
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    spacing: 6
-
-                    Text {
-                        text: root.btPowered ? "Disable" : "Enable"
-                        color: Colors.palette.base05
-                        font.pixelSize: 13
-                        font.family: root.font
-                    }
-
-                    Item { Layout.fillWidth: true }
-
-                    Rectangle {
-                        width: 32
-                        height: 18
-                        radius: 9
-                        color: root.btPowered ? Colors.palette.base0B : Colors.palette.base03
-
-                        Rectangle {
-                            x: root.btPowered ? parent.width - width - 2 : 2
-                            y: 2
-                            width: 14
-                            height: 14
-                            radius: 7
-                            color: Colors.palette.base00
-                        }
-
-                        Behavior on x { NumberAnimation { duration: 150 } }
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: root.togglePower()
-                }
-            }
-
-            // Scan button
-            Rectangle {
-                Layout.preferredWidth: 80
-                height: 32
-                radius: 8
-                color: root.scanning ? Colors.palette.base0D : Colors.palette.base02
-
-                RowLayout {
-                    anchors.centerIn: parent
-                    spacing: 4
-
-                    Text {
-                        text: "󰂰"
-                        color: Colors.palette.base00
-                        font.pixelSize: 16
-
-                        RotationAnimation on rotation {
-                            running: root.scanning
-                            from: 0
-                            to: 360
-                            duration: 1500
-                            loops: Animation.Infinite
-                        }
-                    }
-
-                    Text {
-                        text: "Scan"
-                        color: Colors.palette.base00
-                        font.pixelSize: 13
-                        font.family: root.font
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.toggleScan()
-                }
-            }
-        }
-
-        // Off state (show enable button only)
-        Rectangle {
-            Layout.fillWidth: true
+            width: parent.width - 86
             height: 32
             radius: 8
             color: Colors.palette.base02
-            visible: !root.btPowered
 
-            RowLayout {
+            Text {
+                text: "Disable"
+                color: Colors.palette.base05
+                font.pixelSize: 13
+                font.family: root.font
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Rectangle {
+                width: 32
+                height: 18
+                radius: 9
+                color: root.btPowered ? Colors.palette.base0B : Colors.palette.base03
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+
+                Rectangle {
+                    x: root.btPowered ? parent.width - width - 2 : 2
+                    y: 2
+                    width: 14
+                    height: 14
+                    radius: 7
+                    color: Colors.palette.base00
+                }
+
+                Behavior on x { NumberAnimation { duration: 150 } }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.togglePower()
+            }
+        }
+
+        Rectangle {
+            width: 80
+            height: 32
+            radius: 8
+            color: root.scanning ? Colors.palette.base0D : Colors.palette.base02
+
+            Row {
                 anchors.centerIn: parent
-                spacing: 6
+                spacing: 4
 
                 Text {
-                    text: "󰂰 Enable Bluetooth"
-                    color: Colors.palette.base05
+                    text: "󰂰"
+                    color: Colors.palette.base00
+                    font.pixelSize: 16
+
+                    RotationAnimation on rotation {
+                        running: root.scanning
+                        from: 0
+                        to: 360
+                        duration: 1500
+                        loops: Animation.Infinite
+                    }
+                }
+
+                Text {
+                    text: "Scan"
+                    color: Colors.palette.base00
                     font.pixelSize: 13
                     font.family: root.font
                 }
@@ -315,153 +270,153 @@ Rectangle {
 
             MouseArea {
                 anchors.fill: parent
+                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: root.togglePower()
+                onClicked: root.toggleScan()
             }
-        }
-
-        // Devices list
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            radius: 8
-            color: Colors.palette.base02
-            visible: root.btPowered && root.devices.length > 0
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 4
-                spacing: 2
-
-                Text {
-                    text: "Devices"
-                    color: Colors.palette.base04
-                    font.pixelSize: 11
-                    font.family: root.font
-                    leftPadding: 6
-                    topPadding: 4
-                }
-
-                ListView {
-                    id: deviceList
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    clip: true
-                    model: root.devices
-                    spacing: 2
-
-                    delegate: Rectangle {
-                        width: deviceList.width
-                        height: 34
-                        radius: 6
-                        color: mA.containsMouse ? Colors.palette.base03 : "transparent"
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.leftMargin: 6
-                            anchors.rightMargin: 4
-                            spacing: 4
-
-                            Text {
-                                text: "󰂱"
-                                color: Colors.palette.base0B
-                                font.pixelSize: 14
-                                visible: modelData.connected
-                                Layout.preferredWidth: 14
-                            }
-
-                            Column {
-                                Layout.fillWidth: true
-                                spacing: 1
-
-                                Text {
-                                    text: modelData.name
-                                    color: Colors.palette.base05
-                                    font.pixelSize: 12
-                                    font.family: root.font
-                                    elide: Text.ElideRight
-                                    width: parent.width
-                                }
-
-                                Text {
-                                    text: modelData.mac + (modelData.connected ? " (connected)" : "")
-                                    color: Colors.palette.base03
-                                    font.pixelSize: 9
-                                    font.family: "monospace"
-                                    width: parent.width
-                                    elide: Text.ElideRight
-                                }
-                            }
-
-                            Rectangle {
-                                width: 28
-                                height: 26
-                                radius: 6
-                                color: Colors.palette.base01
-                                visible: !modelData.connected
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "󰐗"
-                                    color: Colors.palette.base05
-                                    font.pixelSize: 12
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onClicked: {
-                                        root.pairDevice(modelData.mac, modelData.name)
-                                    }
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            id: mA
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (modelData.connected) {
-                                    connectProc.command = ["bash", "-c", "bluetoothctl disconnect " + modelData.mac]
-                                } else {
-                                    connectProc.command = ["bash", "-c", "bluetoothctl connect " + modelData.mac]
-                                }
-                                connectProc.running = true
-                                root.refreshStatus()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Empty state
-        Text {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            visible: root.btPowered && root.devices.length === 0
-            text: "No devices found.\nEnable scan to discover."
-            color: Colors.palette.base03
-            font.pixelSize: 12
-            font.family: root.font
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            wrapMode: Text.WordWrap
         }
     }
 
-    // Notification overlay
-    Item {
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+    Rectangle {
+        width: parent.width
+        height: 32
+        radius: 8
+        color: Colors.palette.base02
+        visible: !root.btPowered
+
+        Text {
+            anchors.centerIn: parent
+            text: "Enable Bluetooth"
+            color: Colors.palette.base05
+            font.pixelSize: 13
+            font.family: root.font
         }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.togglePower()
+        }
+    }
+
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: Colors.palette.base03
+        visible: root.btPowered && root.devices.length > 0
+    }
+
+    MenuSection {
+        label: "DEVICES"
+        visible: root.btPowered && root.devices.length > 0
+    }
+
+    Repeater {
+        model: root.devices
+        visible: root.btPowered && root.devices.length > 0
+
+        delegate: Rectangle {
+            width: parent.width
+            height: 34
+            radius: 6
+            color: mA.containsMouse ? Colors.palette.base03 : "transparent"
+
+            Behavior on color { ColorAnimation { duration: 150 } }
+
+            Row {
+                anchors.fill: parent
+                anchors.leftMargin: 6
+                anchors.rightMargin: 4
+                spacing: 4
+
+                Text {
+                    text: "󰂱"
+                    color: Colors.palette.base0B
+                    font.pixelSize: 14
+                    visible: modelData.connected
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 14
+                }
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - (modelData.connected ? 14 + 4 : 28 + 4) - 6 - 4
+
+                    Text {
+                        text: modelData.name
+                        color: Colors.palette.base05
+                        font.pixelSize: 14
+                        font.family: root.font
+                        elide: Text.ElideRight
+                        width: parent.width
+                    }
+
+                    Text {
+                        text: modelData.mac + (modelData.connected ? " (connected)" : "")
+                        color: Colors.palette.base03
+                        font.pixelSize: 12
+                        font.family: "monospace"
+                        width: parent.width
+                        elide: Text.ElideRight
+                    }
+                }
+
+                Rectangle {
+                    width: 28
+                    height: 26
+                    radius: 6
+                    color: Colors.palette.base01
+                    visible: !modelData.connected
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "󰐗"
+                        color: Colors.palette.base05
+                        font.pixelSize: 12
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: root.pairDevice(modelData.mac, modelData.name)
+                    }
+                }
+            }
+
+            MouseArea {
+                id: mA
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (modelData.connected) {
+                        connectProc.command = ["bash", "-c", "bluetoothctl disconnect " + modelData.mac]
+                    } else {
+                        connectProc.command = ["bash", "-c", "bluetoothctl connect " + modelData.mac]
+                    }
+                    connectProc.running = true
+                    root.refreshStatus()
+                }
+            }
+        }
+    }
+
+    Text {
+        width: parent.width
+        visible: root.btPowered && root.devices.length === 0
+        text: "No devices found.\nEnable scan to discover."
+        color: Colors.palette.base03
+        font.pixelSize: 12
+        font.family: root.font
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.WordWrap
+    }
+
+    overlay: Item {
         height: 36
-        z: 30
 
         Notification {
             id: pairNotif

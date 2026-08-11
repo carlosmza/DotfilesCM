@@ -59,8 +59,6 @@ Item {
         return Colors.palette.base05
     }
 
-    signal clicked()
-
     Text {
         id: btIcon
         text: root.icon
@@ -70,9 +68,4 @@ Item {
         anchors.centerIn: parent
     }
 
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
-    }
 }

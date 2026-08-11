@@ -6,14 +6,14 @@ Singleton {
     id: root
 
     // Cargadores de fuentes
-    FontLoader { id: font_anurati;           source: Qt.resolvedUrl("Anurati.otf") }
-    FontLoader { id: font_azedo;             source: Qt.resolvedUrl("Azedo-Bold.otf") }
-    FontLoader { id: font_beyno;             source: Qt.resolvedUrl("BEYNO.otf") }
-    FontLoader { id: font_elianto;           source: Qt.resolvedUrl("Elianto-Regular.otf") }
-    FontLoader { id: font_instrument_serif;  source: Qt.resolvedUrl("InstrumentSerif-Regular.ttf") }
-    FontLoader { id: font_lato_italic;       source: Qt.resolvedUrl("Lato-Italic.ttf") }
-    FontLoader { id: font_poppins;           source: Qt.resolvedUrl("Poppins.ttf") }
-    FontLoader { id: font_varela_round;      source: Qt.resolvedUrl("VarelaRound-Regular.ttf") }
+    FontLoader { id: font_anurati;           source: Qt.resolvedUrl("01-Anurati.otf") }
+    FontLoader { id: font_azedo;             source: Qt.resolvedUrl("02-Azedo-Bold.otf") }
+    FontLoader { id: font_beyno;             source: Qt.resolvedUrl("03-BEYNO.otf") }
+    FontLoader { id: font_elianto;           source: Qt.resolvedUrl("04-Elianto-Regular.otf") }
+    FontLoader { id: font_instrument_serif;  source: Qt.resolvedUrl("05-InstrumentSerif-Regular.ttf") }
+    FontLoader { id: font_lato_italic;       source: Qt.resolvedUrl("06-Lato-Italic.ttf") }
+    FontLoader { id: font_poppins;           source: Qt.resolvedUrl("07-Poppins.ttf") }
+    FontLoader { id: font_varela_round;      source: Qt.resolvedUrl("08-VarelaRound-Regular.ttf") }
 
     // Exposición de nombres de fuente como propiedades de solo lectura
     // Puedes elegir una activa por defecto, por ejemplo BEYNO

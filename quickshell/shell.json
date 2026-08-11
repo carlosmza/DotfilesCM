@@ -1,0 +1,12 @@
+{
+	"appeareance": {
+		"fontFamily": "anutari"
+	},
+	"paths": {
+		""
+	},
+	"modules": {
+		"leftBar": true,
+		"dictionary": true
+	}
+}
