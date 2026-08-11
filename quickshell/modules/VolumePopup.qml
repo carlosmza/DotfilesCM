@@ -30,22 +30,23 @@ ShellRoot {
             anchors.fill: parent
             anchors.topMargin: mostrar ? 0 : -30
             color: Colors.palette.base00
+            border.color: "#30" + Colors.palette.base04.slice(1) // Implementacion de alpha #AARRGGBB
             radius: 6
             opacity: mostrar ? 1.0 : 0.0
             visible: opacity > 0.0
             enabled: opacity > 0.0
 
             Behavior on opacity {
-                NumberAnimation { duration: 400 }
+                NumberAnimation { duration: 150 }
             }
 
             Behavior on anchors.topMargin {
-                NumberAnimation { duration: 300; easing: Easing.OutCubic }
+                NumberAnimation { duration: 150 }
             }
 
             Timer {
                 id: hideTimer
-                interval: 1500
+                interval: 1000
                 repeat: false
                 onTriggered: osdItem.mostrar = false
             }
@@ -61,17 +62,18 @@ ShellRoot {
                 radius: 6
 
                 Behavior on anchors.rightMargin {
-                    NumberAnimation { duration: 200 }
+                    SmoothedAnimation { duration: 150; easing: Easing.OutCubic }
                 }
 
                 Text {
                     text: "󰽴"
                     color: svc.volumeValue < svc.threshold ? Colors.palette.base05 : Colors.palette.base06
                     font.pixelSize: 18
-                    x: svc.volumeValue < svc.threshold ? osdPanel.implicitWidth - 50 : osdPanel.implicitWidth - 100
+                    x: svc.volumeValue < svc.threshold ? osdPanel.implicitWidth - 50 : osdPanel.implicitWidth - 120
                     y: 5
                 }
             }
+
 
             Rectangle {
                 id: levelItem
@@ -83,7 +85,7 @@ ShellRoot {
                 y: 5
 
                 Behavior on x {
-                    NumberAnimation { duration: 200 }
+                    SmoothedAnimation { duration: 150; easing: Easing.OutCubic }
                 }
             }
         }

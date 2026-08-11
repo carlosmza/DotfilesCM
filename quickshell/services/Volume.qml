@@ -1,91 +1,39 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
+import Quickshell.Services.Pipewire
 
 Item {
     id: root
     visible: false
+
+    property var _node: Pipewire.defaultAudioSink
+    property bool _booted: false
 
     property real volumeValue: 0
     property int threshold: 80
 
     signal valueChanged()
 
-    Process {
-        id: volumeUpdater
-        running: true
-
-        command: [
-            "sh", "-c",
-            "flag=/tmp/volume_osd_initialized; " +
-            "if [ ! -f \"$flag\" ]; then " +
-            "  old_vol=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | " +
-            "    awk -F'/' '{print $2}' | awk '{print $1}' | tr -d '%'); " +
-            "  old_mute=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | awk '{print $2}'); " +
-            "  [ -n \"$old_vol\" ] && echo \"$old_vol\" > /tmp/volume_osd_level; " +
-            "  touch \"$flag\"; " +
-            "else " +
-            "  old_vol=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | " +
-            "    awk -F'/' '{print $2}' | awk '{print $1}' | tr -d '%'); " +
-            "  old_mute=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | awk '{print $2}'); " +
-            "fi; " +
-            "stdbuf -oL pactl subscribe 2>/dev/null | " +
-            "while read -r line; do " +
-            "  case \"$line\" in " +
-            "    *\"change\"*\"sink \"*) " +
-            "      vol=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | " +
-            "        awk -F'/' '{print $2}' | awk '{print $1}' | tr -d '%'); " +
-            "      mute=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | awk '{print $2}'); " +
-            "      if [ -n \"$vol\" ] && { [ \"$vol\" != \"$old_vol\" ] || [ \"$mute\" != \"$old_mute\" ]; }; then " +
-            "        echo \"$vol\" > /tmp/volume_osd_level; " +
-            "        old_vol=\"$vol\"; " +
-            "        old_mute=\"$mute\"; " +
-            "      fi ;; " +
-            "  esac; " +
-            "done"
-        ]
+    PwObjectTracker {
+        objects: root._node ? [root._node] : []
     }
 
-    Process {
-        id: volumeWatcher
-        running: true
-
-        command: [
-            "sh", "-c",
-            "[ -f /tmp/volume_osd_level ] || echo '0' > /tmp/volume_osd_level; " +
-            "inotifywait -m -e modify /tmp/volume_osd_level 2>/dev/null"
-        ]
-
-        stdout: SplitParser {
-            onRead: data => {
-                volumeReader.running = true
-                root.valueChanged()
-            }
-        }
+    Connections {
+        target: Pipewire
+        function onDefaultAudioSinkChanged() { root._sync() }
     }
 
-    Process {
-        id: volumeReader
-        running: false
-
-        command: [
-            "sh", "-c",
-            "cat /tmp/volume_osd_level 2>/dev/null || echo 0"
-        ]
-
-        stdout: SplitParser {
-            onRead: data => {
-                const val = parseInt(data)
-                if (!isNaN(val)) {
-                    root.volumeValue = val
-                }
-            }
-        }
+    Connections {
+        target: root._node ? root._node.audio : null
+        function onVolumesChanged() { root._sync() }
+        function onMutedChanged() { root._sync() }
     }
 
-    Component.onDestruction: {
-        volumeUpdater.running = false
-        volumeWatcher.running = false
-        volumeReader.running = false
+    Component.onCompleted: Qt.callLater(() => root._booted = true)
+
+    function _sync() {
+        const audio = root._node && root._node.audio ? root._node.audio : null
+        root.volumeValue = audio ? Math.round(audio.volume * 100) : 0
+        if (root._booted) root.valueChanged()
     }
 }
