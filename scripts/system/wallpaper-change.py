@@ -24,9 +24,11 @@ def random_bezier():
 
 def build_args(image_path: str) -> list[str]:
     ttype = random.choice(TRANSITION_TYPES)
-    duration = random.randint(2, 6)
+    # duration = random.randint(2, 6)
+    duration = 1
     step = random.randint(20, 120)
-    fps = random.choice([30, 60])
+    # fps = random.choice([30, 60])
+    fps = 60
     filt = random.choice(FILTERS)
     bezier = random_bezier()
 
