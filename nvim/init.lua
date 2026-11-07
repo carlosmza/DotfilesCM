@@ -1,3 +1,11 @@
+-- Si Neovim corre embebido dentro de VS Code (vscode-neovim), cargamos solo la
+-- configuración de integración y salimos antes de levantar lazy.nvim: snacks,
+-- blink.cmp, lualine, etc. no aplican (VS Code aporta UI, LSP y completado).
+if vim.g.vscode then
+  require("config.vscode")
+  return
+end
+
 require("vim._core.ui2").enable({})
 require ("config.lazy")
 require ("config.keymaps")
@@ -10,10 +18,12 @@ local colorscheme_file = vim.fn.expand("~/.config/nvim/.colorscheme")
 local theme_map = {
 -- "Theme name": "colorscheme name"
 	ashes    = "noirbuddy",
-  ["gruvbox-dark-medium"]  = "gruvbox",
-  ["gruvbox-light-soft"]  = "gruvbox",
+  ["gruvbox-dark-hard"]  = "gruvbox",
+  ["gruvbox-light"]  = "gruvbox",
   ["rose-pine-dawn"]    = "rose-pine-dawn",
   ["tokyo-night-dark"]    = "tokyonight-night",
+  ["catppuccin-latte"]    = "catppuccin-latte",
+  ["catppuccin-macchiato"]    = "catppuccin-macchiato",
 }
 
 local function aplicar_tema()
