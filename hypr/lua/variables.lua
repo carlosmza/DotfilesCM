@@ -7,11 +7,12 @@ local palette = theme.palette
 local var = {}
 
 -- Apps
-var.terminal = "kitty"
-var.browser = "zen-browser"
-var.fileExplorer = "nautilus"
+var.terminal = "foot"
+var.browser = "librewolf"
+var.fileExplorer = "dolphin"
 var.pdfViewer = "okular"
-var.menu = "rofi -show drun -theme ~/.config/rofi/layouts/list-apps.rasi"
+var.menu = "quickshell ipc call launcher toggle"
+-- var.menu = "rofi -show drun -theme ~/.config/rofi/layouts/list-apps.rasi"
 
 -- Touchpad
 var.touchpadFingers = 3
@@ -34,15 +35,15 @@ var.shadowInactiveColor = "rgba(" .. palette.base01 .. "7F)"
 -- Window
 var.windowActiveOpacity = 0.98
 var.windowInactiveOpacity = 0.95
-var.windowRounding = 10
-var.windowRoundingPower = 10
-var.windowBorderSize = 1
+var.windowRounding = 0
+var.windowRoundingPower = 0
+var.windowBorderSize = 0
 var.activeWindowBorderColour = "rgba(" .. palette.base04 .. "4F)"
 var.inactiveWindowBorderColour = "rgba(" .. palette.base00 .. "4F)"
 -- var.windowGapsIn = {10,10,10,10}
-var.windowGapsIn = 5
+var.windowGapsIn = 0
 -- var.windowGapsOut = {40, 40, 40, 40}
-var.windowGapsOut = 10
+var.windowGapsOut = 0
 -- var.windowGapsOut = {5, 5, 5, 5}
 
 
