@@ -8,15 +8,15 @@ ShellRoot {
 	property color textColor: "#ffffff"
 
 	//--Size--
-	property int sizeTop:  90
-	property int sizeCenter: 20
-	property int sizeDown:  18
+	property int sizeTop:  80
+	property int sizeCenter: 40
+	property int sizeDown:  20
 
     //--Spacing--
-	property int spaceWith: 4
+	property int spaceWith: 5
 
 	//--Spacing between text--
-	property int spaceBetweenTopText: 10
+	property int spaceBetweenTopText: 0
 	property int spaceBetweenDownText: 0
 	
     PanelWindow {
@@ -29,10 +29,10 @@ ShellRoot {
             anchors.left: true                 
             anchors.bottom: true               
         //    Position     
-            margins.top: 0                   
-            margins.right: 0              
-            margins.left: 1300                   
-            margins.bottom: 50                   
+            margins.top: 0
+            margins.right: 0
+            margins.left: 1200                   
+            margins.bottom: 30
         // └─────────────────────────────────────┘
  
  //─────────────────────────────────────────────────────────────────────────
@@ -40,6 +40,7 @@ ShellRoot {
         WlrLayershell.layer: WlrLayer.Background
         WlrLayershell.namespace: "clock-widget"
         WlrLayershell.exclusiveZone: -1
+        implicitHeight: 180
         color: "transparent"
 
         // --- Time ---
@@ -59,7 +60,7 @@ ShellRoot {
 
                 // shadow
                 Text {
-                    x: 2; y: 2
+                    x: 2.5; y: 2.5
                     text: clock_day.text
                     font: clock_day.font
                     color: "#550000"
@@ -84,7 +85,7 @@ ShellRoot {
 
                 // shadow
                 Text {
-                    x: 1; y: 1
+                    x: 2; y: 2
                     text: clock_date.text
                     font: clock_date.font
                     color: "#550000"
@@ -108,7 +109,7 @@ ShellRoot {
 
                 // shadow
                 Text {
-                    x: 1; y: 1
+                    x: 3.5; y: 3
                     text: clock_time.text
                     font: clock_time.font
                     color: "#550000"

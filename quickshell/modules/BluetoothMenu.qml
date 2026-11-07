@@ -1,13 +1,14 @@
-import Quickshell
+pragma ComponentBehavior: Bound
+
 import Quickshell.Io
 import QtQuick
+import QtQuick.Layouts
 import "../components"
 import qs.config.theme
 import qs.config.fonts
 
 MenuLayout {
     id: root
-    title: ""
 
     property string font: Fonts.varelaRound
     property bool btPowered: false
@@ -21,21 +22,18 @@ MenuLayout {
         powerCheckProc.running = true
         scanCheckProc.running = true
         deviceListProc.running = true
-        connectedListProc.running = true
     }
 
     function togglePower() {
-        var cmd = root.btPowered ? "bluetoothctl power off" : "bluetoothctl power on"
-        togglePowerProc.command = ["bash", "-c", cmd]
+        togglePowerProc.command = ["bluetoothctl", "power", root.btPowered ? "off" : "on"]
         togglePowerProc.running = true
     }
 
     function toggleScan() {
-        if (root.scanning) {
-            toggleScanProc.command = ["bash", "-c", "bluetoothctl scan off"]
-        } else {
+        if (root.scanning)
+            toggleScanProc.command = ["bluetoothctl", "scan", "off"]
+        else
             toggleScanProc.command = ["bash", "-c", "bluetoothctl -- scan on > /dev/null 2>&1 & sleep 1"]
-        }
         toggleScanProc.running = true
     }
 
@@ -44,11 +42,6 @@ MenuLayout {
         pairNotif.show()
         pairProc.command = ["bash", "-c", "bluetoothctl pair " + mac + " 2>&1 | tail -1"]
         pairProc.running = true
-    }
-
-    function connectDevice(mac) {
-        connectProc.command = ["bash", "-c", "bluetoothctl connect " + mac]
-        connectProc.running = true
     }
 
     Process {
@@ -85,48 +78,11 @@ MenuLayout {
                 var list = []
                 for (var i = 0; i < lines.length; i++) {
                     var parts = lines[i].split("|")
-                    if (parts.length >= 2) {
+                    if (parts.length >= 2)
                         list.push({ mac: parts[0], name: parts[1], connected: false })
-                    }
                 }
                 root.devices = list
-            }
-        }
-    }
-
-    Process {
-        id: togglePowerProc
-        command: ["bash"]
-        onRunningChanged: {
-            if (!running) {
-                powerCheckProc.running = true
-            }
-        }
-    }
-
-    Process {
-        id: toggleScanProc
-        command: ["bash"]
-        onRunningChanged: {
-            if (!running) {
-                scanCheckProc.running = true
-            }
-        }
-    }
-
-    Process {
-        id: pairProc
-        command: ["bash"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                var out = this.text.trim().toLowerCase()
-                if (out.indexOf("successful") !== -1 || out.indexOf("already") !== -1) {
-                    root.notifText = "Paired successfully"
-                } else {
-                    root.notifText = "Pairing failed"
-                }
-                pairNotif.show()
-                root.refreshStatus()
+                connectedListProc.running = true
             }
         }
     }
@@ -138,38 +94,154 @@ MenuLayout {
             onStreamFinished: {
                 var text = this.text.trim()
                 var connected = text === "" ? [] : text.split("\n")
+                var list = []
                 for (var i = 0; i < root.devices.length; i++) {
-                    root.devices[i].connected = connected.indexOf(root.devices[i].mac) !== -1
+                    var device = root.devices[i]
+                    list.push({
+                        mac: device.mac,
+                        name: device.name,
+                        connected: connected.indexOf(device.mac) !== -1
+                    })
                 }
-                root.devices = root.devices
+                root.devices = list
+            }
+        }
+    }
+
+    Process {
+        id: togglePowerProc
+        onRunningChanged: {
+            if (!running)
+                powerCheckProc.running = true
+        }
+    }
+
+    Process {
+        id: toggleScanProc
+        onRunningChanged: {
+            if (!running)
+                scanCheckProc.running = true
+        }
+    }
+
+    Process {
+        id: pairProc
+        stdout: StdioCollector {
+            onStreamFinished: {
+                var out = this.text.trim().toLowerCase()
+                root.notifText = (out.indexOf("successful") !== -1 || out.indexOf("already") !== -1)
+                    ? "Paired successfully"
+                    : "Pairing failed"
+                pairNotif.show()
+                root.refreshStatus()
             }
         }
     }
 
     Process {
         id: connectProc
-        command: ["bash"]
     }
 
-    Row {
-        spacing: 8
-        anchors.horizontalCenter: parent.horizontalCenter
+    component DeviceRow: Rectangle {
+        id: delegateRow
 
-        // Text {
-        //     text: ""
-        //     color: root.btPowered ? Colors.palette.base0D : Colors.palette.base03
-        //     font.pixelSize: 20
-        //     anchors.verticalCenter: parent.verticalCenter
-        // }
+        required property var modelData
 
-        Text {
-            text: "Bluetooth"
-            color: Colors.palette.base05
-            font.pixelSize: 15
-            font.weight: Font.Bold
-            font.family: root.font
-            anchors.verticalCenter: parent.verticalCenter
+        readonly property bool isConnected: modelData.connected
+
+        width: parent.width
+        height: 34
+        radius: 6
+        color: rowMouse.containsMouse ? Colors.palette.base03 : "transparent"
+
+        Behavior on color { ColorAnimation { duration: 150 } }
+
+        MouseArea {
+            id: rowMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                connectProc.command = [
+                    "bluetoothctl",
+                    delegateRow.isConnected ? "disconnect" : "connect",
+                    delegateRow.modelData.mac
+                ]
+                connectProc.running = true
+                root.refreshStatus()
+            }
         }
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 6
+            anchors.rightMargin: 4
+            spacing: 4
+
+            Text {
+                text: "󰂱"
+                color: Colors.palette.base0B
+                font.pixelSize: 14
+                visible: delegateRow.isConnected
+                Layout.preferredWidth: 14
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                spacing: 2
+
+                Text {
+                    Layout.fillWidth: true
+                    text: delegateRow.modelData.name
+                    color: Colors.palette.base05
+                    font.pixelSize: 14
+                    font.family: root.font
+                    elide: Text.ElideRight
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: delegateRow.modelData.mac + (delegateRow.isConnected ? " (connected)" : "")
+                    color: Colors.palette.base03
+                    font.pixelSize: 12
+                    font.family: "monospace"
+                    elide: Text.ElideRight
+                }
+            }
+
+            Rectangle {
+                Layout.preferredWidth: 28
+                Layout.preferredHeight: 26
+                Layout.alignment: Qt.AlignVCenter
+                radius: 6
+                color: Colors.palette.base01
+                visible: !delegateRow.isConnected
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "󰐗"
+                    color: Colors.palette.base05
+                    font.pixelSize: 12
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: root.pairDevice(delegateRow.modelData.mac, delegateRow.modelData.name)
+                }
+            }
+        }
+    }
+
+    Text {
+        text: "Bluetooth"
+        color: Colors.palette.base05
+        font.pixelSize: 15
+        font.weight: Font.Bold
+        font.family: root.font
     }
 
     Text {
@@ -180,11 +252,7 @@ MenuLayout {
         font.family: root.font
     }
 
-    Rectangle {
-        width: parent.width
-        height: 1
-        color: Colors.palette.base03
-    }
+    MenuSeparator {}
 
     Row {
         width: parent.width
@@ -300,10 +368,7 @@ MenuLayout {
         }
     }
 
-    Rectangle {
-        width: parent.width
-        height: 1
-        color: Colors.palette.base03
+    MenuSeparator {
         visible: root.btPowered && root.devices.length > 0
     }
 
@@ -316,92 +381,7 @@ MenuLayout {
         model: root.devices
         visible: root.btPowered && root.devices.length > 0
 
-        delegate: Rectangle {
-            width: parent.width
-            height: 34
-            radius: 6
-            color: mA.containsMouse ? Colors.palette.base03 : "transparent"
-
-            Behavior on color { ColorAnimation { duration: 150 } }
-
-            Row {
-                anchors.fill: parent
-                anchors.leftMargin: 6
-                anchors.rightMargin: 4
-                spacing: 4
-
-                Text {
-                    text: "󰂱"
-                    color: Colors.palette.base0B
-                    font.pixelSize: 14
-                    visible: modelData.connected
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 14
-                }
-
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - (modelData.connected ? 14 + 4 : 28 + 4) - 6 - 4
-
-                    Text {
-                        text: modelData.name
-                        color: Colors.palette.base05
-                        font.pixelSize: 14
-                        font.family: root.font
-                        elide: Text.ElideRight
-                        width: parent.width
-                    }
-
-                    Text {
-                        text: modelData.mac + (modelData.connected ? " (connected)" : "")
-                        color: Colors.palette.base03
-                        font.pixelSize: 12
-                        font.family: "monospace"
-                        width: parent.width
-                        elide: Text.ElideRight
-                    }
-                }
-
-                Rectangle {
-                    width: 28
-                    height: 26
-                    radius: 6
-                    color: Colors.palette.base01
-                    visible: !modelData.connected
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "󰐗"
-                        color: Colors.palette.base05
-                        font.pixelSize: 12
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: root.pairDevice(modelData.mac, modelData.name)
-                    }
-                }
-            }
-
-            MouseArea {
-                id: mA
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (modelData.connected) {
-                        connectProc.command = ["bash", "-c", "bluetoothctl disconnect " + modelData.mac]
-                    } else {
-                        connectProc.command = ["bash", "-c", "bluetoothctl connect " + modelData.mac]
-                    }
-                    connectProc.running = true
-                    root.refreshStatus()
-                }
-            }
-        }
+        delegate: DeviceRow {}
     }
 
     Text {
@@ -422,7 +402,6 @@ MenuLayout {
             id: pairNotif
             icon: ""
             label: root.notifText
-            value: -1
             duration: 2000
         }
     }

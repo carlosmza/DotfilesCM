@@ -8,12 +8,13 @@ Item {
 
     property real brightnessValue: 0
     property bool backlightAvailable: false
-    property int threshold: 80
+    property int threshold: 90
+    property bool _booted: false
 
     signal valueChanged()
 
     Process {
-        id: deviceDetector
+        id: detector
         running: true
 
         command: [
@@ -26,52 +27,39 @@ Item {
                 const device = data.trim()
                 if (device !== "N/A" && device.length > 0) {
                     root.backlightAvailable = true
-                    brightnessReader.running = true
-                    brightnessWatcher.running = true
+                    streamer.running = true
                 }
             }
         }
     }
 
     Process {
-        id: brightnessWatcher
+        id: streamer
         running: false
 
         command: [
             "sh", "-c",
-            "d=$(ls /sys/class/backlight/ | head -1); exec inotifywait -m -e modify \"/sys/class/backlight/$d/brightness\" 2>/dev/null"
+            "while :; do brightnessctl -m; sleep 0.2; done"
         ]
 
         stdout: SplitParser {
-            onRead: data => {
-                brightnessReader.running = true
-                root.valueChanged()
-            }
+            onRead: data => root._parse(data)
         }
     }
 
-    Process {
-        id: brightnessReader
-        running: false
-
-        command: [
-            "sh", "-c",
-            "d=$(ls /sys/class/backlight/ | head -1); [ -n \"$d\" ] && awk 'FNR==1 && NR==1{b=$1} FNR==1 && NR==2{print int(b*100/$1)}' \"/sys/class/backlight/$d/brightness\" \"/sys/class/backlight/$d/max_brightness\""
-        ]
-
-        stdout: SplitParser {
-            onRead: data => {
-                const val = parseInt(data)
-                if (!isNaN(val)) {
-                    root.brightnessValue = val
-                }
-            }
+    function _parse(line) {
+        const fields = line.trim().split(",")
+        const pct = Math.round(parseFloat(fields[3]))
+        if (isNaN(pct)) return
+        if (pct !== root.brightnessValue) {
+            root.brightnessValue = pct
+            if (root._booted) root.valueChanged()
         }
     }
 
+    Component.onCompleted: Qt.callLater(() => root._booted = true)
     Component.onDestruction: {
-        brightnessWatcher.running = false
-        brightnessReader.running = false
-        deviceDetector.running = false
+        streamer.running = false
+        detector.running = false
     }
 }

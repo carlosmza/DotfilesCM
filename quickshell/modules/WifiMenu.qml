@@ -1,62 +1,43 @@
-import Quickshell
 import Quickshell.Io
 import QtQuick
 import "../components"
+import "../components/js/WifiShared.js" as WifiShared
 import qs.config.theme
 
 MenuLayout {
     id: root
-    title: ""
 
     property bool connected: false
     property string ssid: ""
-    property int signal: 0
+    property int strength: 0
 
-    property var icons: ["󰤭", "󰤯", "󰤟", "󰤢", "󰤥", "󰤨"]
-    property string icon: {
-        if (!root.connected) return icons[0]
-        var p = Math.max(0, Math.min(100, root.signal))
-        if (p <= 10) return icons[1]
-        if (p <= 30) return icons[2]
-        if (p <= 60) return icons[3]
-        if (p <= 85) return icons[4]
-        return icons[5]
-    }
-    property string iconColor: root.connected
-        ? (root.signal <= 20 ? Colors.palette.base08 : Colors.palette.base06)
+    readonly property string icon: WifiShared.iconFor(root.connected, root.strength)
+    readonly property color iconColor: root.connected
+        ? (root.strength <= 20 ? Colors.palette.base08 : Colors.palette.base06)
         : Colors.palette.base03
+
+    Process {
+        id: infoProc
+        command: WifiShared.queryCommand
+        stdout: StdioCollector {
+            onStreamFinished: {
+                var info = WifiShared.parse(this.text)
+                root.connected = info.connected
+                root.ssid = info.ssid
+                root.strength = info.strength
+            }
+        }
+    }
 
     Timer {
         id: refreshTimer
         interval: 5000
         running: true
         repeat: true
-        onTriggered: {
-            infoProc.running = true
-        }
+        onTriggered: infoProc.running = true
     }
 
-    Process {
-        id: infoProc
-        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi | grep '^yes' || true"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                var out = this.text.trim()
-                if (!out) {
-                    root.connected = false
-                    root.ssid = ""
-                    root.signal = 0
-                    return
-                }
-                var parts = out.split(":")
-                if (parts.length >= 3) {
-                    root.connected = parts[0] === "yes"
-                    root.ssid = parts[1] || ""
-                    root.signal = parseInt(parts[2]) || 0
-                }
-            }
-        }
-    }
+    Component.onCompleted: infoProc.running = true
 
     Row {
         spacing: 8
@@ -79,11 +60,7 @@ MenuLayout {
         }
     }
 
-    Rectangle {
-        width: parent.width
-        height: 1
-        color: Colors.palette.base03
-    }
+    MenuSeparator {}
 
     Rectangle {
         width: parent.width
@@ -95,13 +72,13 @@ MenuLayout {
             height: parent.height
             radius: 3
             color: root.connected ? Colors.palette.base0D : Colors.palette.base03
-            width: parent.width * (root.signal / 100)
+            width: parent.width * (root.strength / 100)
         }
     }
 
     Text {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: root.connected ? root.signal + "% — Connected" : "No connection"
+        text: root.connected ? root.strength + "% — Connected" : "No connection"
         color: Colors.palette.base04
         font.pixelSize: 12
     }

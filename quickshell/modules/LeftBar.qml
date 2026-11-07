@@ -1,246 +1,134 @@
 import Quickshell
-import Quickshell.Io
 import QtQuick
 import "../components"
 import qs.config.theme
 
 PanelWindow {
     id: root
-    anchors { top: true; left: true; bottom: true}
-    margins { left: 5; top: 5; bottom: 5; right: 5 }
+    anchors { top: true; left: true; bottom: true }
+    property int marg: 0
+    margins { left: root.marg; top: root.marg; bottom: root.marg; right: root.marg }
     color: "transparent"
     implicitWidth: 40
 
     Rectangle {
         anchors.fill: parent
         color: Colors.palette.base00
-        border.color: "#7F" + Colors.palette.base04.slice(1) // Implementacion de alpha #AARRGGBB
-        border.width: 1
-        clip: false
-        radius: 10
-        Item {
-            id: workspaces
-            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 40 }
-            Workspaces {
-                anchors.centerIn: parent
-            }
+        border.color: Qt.alpha(Colors.palette.base04, 0.5)
+        border.width: 0
+        radius: 0
+
+        Workspaces {
+            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 15 }
         }
-        BarButtom {
-            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 400 }
-            Window { anchors.centerIn: parent }
-            implicitHeight: 160
+
+        BarButton {
+            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 200 }
+            implicitHeight: 500
             bgEnable: false
+            Window { anchors.centerIn: parent }
         }
-        BarButtom {
+
+        BarButton {
             anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 250 }
+            implicitHeight: 80
+            active: calendarPopup.open
             Clock { anchors.centerIn: parent }
-            implicitHeight: 64
+            onClicked: calendarPopup.toggle()
         }
-        BarButtom {
-            id: toolsBtn
-            iconText: ""
-            anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 148 }
-            active: toolsPopup.visible
-            autoHideDelay: 150
-            onClicked: {
-                toolsPopup.visible = !toolsPopup.visible
-                toolsReveal.open = toolsPopup.visible
+
+        Column {
+            anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 40 }
+            spacing: 4
+
+            BarButton {
+                iconText: ""
+                active: toolsPopup.open
+                onClicked: toolsPopup.toggle()
             }
-            onHoverEntered: {
-                toolsCloseTimer.stop()
-                toolsPopup.visible = true
-                toolsReveal.open = true
+
+            BarButton {
+                active: batteryPopup.open
+                Battery { anchors.centerIn: parent }
+                onClicked: batteryPopup.toggle()
             }
-            onHoverExited: {
-                toolsCloseTimer.restart()
+
+            BarButton {
+                active: btPopup.open
+                Bluetooth { anchors.centerIn: parent }
+                onClicked: btPopup.toggle()
             }
-        }
-        BarButtom {
-            id: batteryBtn
-            anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; bottomMargin: 112 }
-            active: batteryPopup.visible
-            autoHideDelay: 150
-            Battery { anchors.centerIn: parent }
-            onClicked: {
-                batteryPopup.visible = !batteryPopup.visible
-                batteryReveal.open = batteryPopup.visible
-            }
-            onHoverEntered: {
-                batteryCloseTimer.stop()
-                batteryPopup.visible = true
-                batteryReveal.open = true
-            }
-            onHoverExited: {
-                batteryCloseTimer.restart()
-            }
-        }
-        BarButtom {
-            id: btBtn
-            anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; bottomMargin: 76 }
-            active: btPopup.visible
-            autoHideDelay: 150
-            Bluetooth { anchors.centerIn: parent }
-            onClicked: {
-                btPopup.visible = !btPopup.visible
-                btReveal.open = btPopup.visible
-            }
-            onHoverEntered: {
-                btCloseTimer.stop()
-                btPopup.visible = true
-                btReveal.open = true
-            }
-            onHoverExited: {
-                btCloseTimer.restart()
-            }
-        }
-        BarButtom {
-            id: wifiBtn
-            anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; bottomMargin: 40 }
-            active: wifiPopup.visible
-            autoHideDelay: 150
-            Wifi { anchors.centerIn: parent }
-            onClicked: {
-                wifiPopup.visible = !wifiPopup.visible
-                wifiReveal.open = wifiPopup.visible
-            }
-            onHoverEntered: {
-                wifiCloseTimer.stop()
-                wifiPopup.visible = true
-                wifiReveal.open = true
-            }
-            onHoverExited: {
-                wifiCloseTimer.restart()
+
+            BarButton {
+                active: wifiPopup.open
+                Wifi { anchors.centerIn: parent }
+                onClicked: wifiPopup.toggle()
             }
         }
     }
+
     // Popups
-    PopupWindow {
+    BarPopup {
+        id: calendarPopup
+        implicitWidth: 220
+        implicitHeight: 270
+        anchorWindow: root
+        anchorY: root.height - 402
+        contentComponent: Component {
+            CalendarPopup {
+                onCloseRequested: calendarPopup.close()
+            }
+        }
+    }
+
+    BarPopup {
         id: toolsPopup
-        color: "transparent"
-        implicitWidth: 180; implicitHeight: 220
-        visible: false
-        property bool hovered: false
-        anchor { window: root; rect.x: 40; rect.y: 815 }
-        onVisibleChanged: {
-            if (visible) toolsContent.forceActiveFocus()
-        }
-        Timer {
-            id: toolsCloseTimer
-            interval: 200
-            onTriggered: {
-                if (!toolsPopup.hovered && !toolsBtn.hovered) {
-                    toolsPopup.visible = false
-                    toolsReveal.open = false
-                }
-            } 
-        }
-        AnimatedReveal {
-            id: toolsReveal
-            anchors.fill: parent
-            open: false
+        implicitWidth: 180
+        implicitHeight: 220
+        anchorWindow: root
+        anchorY: root.height - 255
+        contentComponent: Component {
             ToolsMenu {
-                id: toolsContent
-                anchors.fill: parent
-                onCloseRequested: {
-                    toolsPopup.visible = false
-                    toolsReveal.open = false
-                }
-            }
-            HoverHandler {
-                onHoveredChanged: {
-                    if (hovered) { toolsPopup.hovered = true; toolsCloseTimer.stop() }
-                    else { toolsPopup.hovered = false; toolsCloseTimer.restart() }
-                }
+                onCloseRequested: toolsPopup.close()
             }
         }
     }
-    PopupWindow {
+
+    BarPopup {
         id: batteryPopup
-        color: "transparent"
-        implicitWidth: 180; implicitHeight: 220
-        visible: false
-        property bool hovered: false
-        anchor { window: root; rect.x: 40; rect.y: 850 }
-        Timer { 
-            id: batteryCloseTimer
-            interval: 200
-            onTriggered: {
-                if (!batteryPopup.hovered && !batteryBtn.hovered) {
-                    batteryPopup.visible = false
-                    batteryReveal.open = false
-                }
-            } 
-        }
-        AnimatedReveal {
-            id: batteryReveal
-            anchors.fill: parent
-            open: false
-            BatteryPopup { anchors.fill: parent }
-            HoverHandler {
-                onHoveredChanged: {
-                    if (hovered) { batteryPopup.hovered = true; batteryCloseTimer.stop() }
-                    else { batteryPopup.hovered = false; batteryCloseTimer.restart() }
-                }
+        implicitWidth: 180
+        implicitHeight: 220
+        anchorWindow: root
+        anchorY: root.height - 220
+        contentComponent: Component {
+            BatteryPopup {
+                onCloseRequested: batteryPopup.close()
             }
         }
     }
-    PopupWindow {
+
+    BarPopup {
         id: btPopup
-        color: "transparent"
-        implicitWidth: 250; implicitHeight: 300
-        visible: false
-        property bool hovered: false
-        anchor { window: root; rect.x: 40; rect.y: 1050 }
-        Timer {
-            id: btCloseTimer
-            interval: 200
-            onTriggered: {
-                if (!btPopup.hovered && !btBtn.hovered) {
-                    btPopup.visible = false
-                    btReveal.open = false
-                }
-            } 
-        }
-        AnimatedReveal {
-            id: btReveal
-            anchors.fill: parent
-            open: false
-            BluetoothMenu { anchors.fill: parent }
-            HoverHandler {
-                onHoveredChanged: {
-                    if (hovered) { btPopup.hovered = true; btCloseTimer.stop() }
-                    else { btPopup.hovered = false; btCloseTimer.restart() }
-                }
+        implicitWidth: 250
+        implicitHeight: 300
+        anchorWindow: root
+        anchorY: root.height - 20
+        contentComponent: Component {
+            BluetoothMenu {
+                onCloseRequested: btPopup.close()
             }
         }
     }
-    PopupWindow {
+
+    BarPopup {
         id: wifiPopup
-        color: "transparent"
-        implicitWidth: 200; implicitHeight: 100
-        visible: false
-        property bool hovered: false
-        anchor { window: root; rect.x: 40; rect.y: 1070 }
-        Timer {
-            id: wifiCloseTimer
-            interval: 200
-            onTriggered: {
-                if (!wifiPopup.hovered && !wifiBtn.hovered) {
-                    wifiPopup.visible = false
-                    wifiReveal.open = false
-                }
-            } 
-        }
-        AnimatedReveal {
-            id: wifiReveal
-            anchors.fill: parent
-            open: false
-            WifiMenu { anchors.fill: parent }
-            HoverHandler {
-                onHoveredChanged: {
-                    if (hovered) { wifiPopup.hovered = true; wifiCloseTimer.stop() }
-                    else { wifiPopup.hovered = false; wifiCloseTimer.restart() }
-                }
+        implicitWidth: 200
+        implicitHeight: 100
+        anchorWindow: root
+        anchorY: root.height
+        contentComponent: Component {
+            WifiMenu {
+                onCloseRequested: wifiPopup.close()
             }
         }
     }

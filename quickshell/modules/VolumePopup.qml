@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import "../services"
+import qs.services
 import qs.config.theme
 
 ShellRoot {

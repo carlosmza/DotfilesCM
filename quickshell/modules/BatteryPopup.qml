@@ -1,4 +1,3 @@
-import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
 import QtQuick
@@ -7,10 +6,9 @@ import qs.config.theme
 
 MenuLayout {
     id: root
-    title: ""
 
     readonly property real percentage: Math.max(0, Math.min(100, UPower.displayDevice?.percentage * 100 || 0))
-    readonly property bool isCharging: UPower.onBattery === false
+    readonly property bool isCharging: !UPower.onBattery
     property string currentProfile: ""
 
     property var profiles: [
@@ -19,9 +17,7 @@ MenuLayout {
         { name: "performance", label: "Performance", icon: "" }
     ]
 
-    onVisibleChanged: {
-        if (visible) getProfileProc.running = true
-    }
+    Component.onCompleted: getProfileProc.running = true
 
     Process {
         id: getProfileProc
@@ -71,17 +67,10 @@ MenuLayout {
         font.pixelSize: 13
     }
 
-    Rectangle {
-        width: parent.width
-        height: 1
-        color: Colors.palette.base03
-    }
+    MenuSeparator {}
 
-    Text {
-        text: "POWER PROFILE"
-        color: Colors.palette.base03
-        font.pixelSize: 11
-        font.weight: Font.Bold
+    MenuSection {
+        label: "POWER PROFILE"
     }
 
     Repeater {

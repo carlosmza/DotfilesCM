@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import Qt5Compat.GraphicalEffects
 import qs.config.theme
 import qs.config.fonts
 
@@ -11,19 +12,33 @@ PanelWindow {
         left: true
         right: true
     }
-
     margins {
-        left: 40
-        bottom: 10
-        right: 40
+        bottom: 0
     }
 
-    implicitHeight: 280
-    implicitWidth: Math.min(Math.max(wallpapers.length * 340, 400), 1400)
+    implicitHeight: 400
     color: "transparent"
     exclusiveZone: -1
     visible: false
     focusable: true
+
+    property var wallpapers: []
+    property int currentIndex: 0
+    property int previousIndex: -1
+    property string font: Fonts.varelaRound
+    property int fontSize: 14
+    property bool applying: false
+    property bool _stayOpen: false
+    property int _hoveredIndex: -1
+    property bool _timerFromHover: false
+    property bool _settingFromTimer: false
+
+    property real cx: root.width / 2
+    property real cy: root.height - 90
+    property real rx: 380
+    property real ry: 120
+    property real cardWidth: 280
+    property real cardHeight: 180
 
     onVisibleChanged: {
         if (visible) {
@@ -37,32 +52,14 @@ PanelWindow {
         }
     }
 
-    property var wallpapers: []
-    property int selectedIndex: -1
-    property string font: Fonts.varelaRound
-    property int fontSize: 14
-    property bool applying: false
-    property int previousIndex: -1
-    property bool _stayOpen: false
-    property int _hoveredIndex: -1
-    property bool _timerFromHover: false
-    property bool _settingFromTimer: false
-
     Component.onCompleted: loadWallpapers()
 
-    onSelectedIndexChanged: {
+    onCurrentIndexChanged: {
         if (previousIndex < 0) {
-            previousIndex = selectedIndex
-            listView.currentIndex = selectedIndex
-            if (!root._settingFromTimer && visible) {
-                root._timerFromHover = false
-                applyTimer.restart()
-            }
+            previousIndex = currentIndex
             return
         }
-        listView.currentIndex = selectedIndex
-        scrollToSelected()
-        previousIndex = selectedIndex
+        previousIndex = currentIndex
         if (!root._settingFromTimer && visible) {
             root._timerFromHover = false
             applyTimer.restart()
@@ -104,28 +101,28 @@ PanelWindow {
         procApply.running = true
     }
 
-    function scrollToSelected() {
-        if (wallpapers.length === 0) return
-        var itemWidth = 320 + 15
-        var viewWidth = listView.width
-        if (viewWidth <= 0) return
-        var itemsPerView = Math.max(1, Math.floor(viewWidth / itemWidth))
-        var firstVisible = Math.floor(listView.contentX / itemWidth)
-        var lastVisible = firstVisible + itemsPerView - 1
+    function angleFor(index) {
+        if (wallpapers.length < 2) return 90
+        return 180 - index * 180 / (wallpapers.length - 1)
+    }
 
-        if (selectedIndex >= firstVisible && selectedIndex <= lastVisible)
-            return
+    function orbitPosition(angleDeg) {
+        const angleRad = angleDeg * Math.PI / 180
+        return {
+            // x: root.cx + root.rx * Math.cos(angleRad),
+            x: angleDeg === 180 ? root.cx - 20 + root.rx * Math.cos(angleRad) : 
+                angleDeg === 0 ? root.cx + 20 + root.rx * Math.cos(angleRad) : 
+                root.cx + root.rx * Math.cos(angleRad),
+            y: root.cy - root.ry * Math.sin(angleRad)
+        }
+    }
 
-        var movingRight = selectedIndex > previousIndex
-        var targetX
-        if (movingRight)
-            targetX = selectedIndex * itemWidth
-        else
-            targetX = Math.max(0, (selectedIndex - itemsPerView + 1) * itemWidth)
+    function gaussianValue (x) {
+        const mu = 90.0
+        const sigma = 3
+        const aplitude = 10.0
 
-        scrollAnim.from = listView.contentX
-        scrollAnim.to = targetX
-        scrollAnim.start()
+        return aplitude * Math.exp(-Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2)))
     }
 
     Process {
@@ -153,13 +150,13 @@ PanelWindow {
 
     Timer {
         id: applyTimer
-        interval: 500
+        interval: 500 /////
         onTriggered: {
             if (root.applying) return
-            var idx = root._timerFromHover ? root._hoveredIndex : root.selectedIndex
+            var idx = root._timerFromHover ? root._hoveredIndex : root.currentIndex
             if (idx >= 0 && idx < root.wallpapers.length) {
                 root._settingFromTimer = true
-                root.selectedIndex = idx
+                root.currentIndex = idx
                 root._settingFromTimer = false
                 root.applyWallpaper(root.wallpapers[idx], true)
             }
@@ -168,7 +165,6 @@ PanelWindow {
 
     Rectangle {
         id: wpContent
-        // color: Colors.palette.base00
         color: "transparent"
         anchors.fill: parent
         radius: 20
@@ -179,21 +175,19 @@ PanelWindow {
                 if (root.applying) return
                 root.visible = false
                 event.accepted = true
-            } else if (event.key === Qt.Key_Left) {
-                if (selectedIndex > 0)
-                    selectedIndex--
-                else
-                    selectedIndex = wallpapers.length - 1
+            } else if (event.key === Qt.Key_Left || event.key === Qt.Key_Up) {
+                if (root.wallpapers.length > 0) {
+                    root.currentIndex = (root.currentIndex - 1 + root.wallpapers.length) % root.wallpapers.length
+                }
                 event.accepted = true
-            } else if (event.key === Qt.Key_Right) {
-                if (selectedIndex < wallpapers.length - 1)
-                    selectedIndex++
-                else
-                    selectedIndex = 0
+            } else if (event.key === Qt.Key_Right || event.key === Qt.Key_Down) {
+                if (root.wallpapers.length > 0) {
+                    root.currentIndex = (root.currentIndex + 1) % root.wallpapers.length
+                }
                 event.accepted = true
             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                if (!root.applying && selectedIndex >= 0 && selectedIndex < wallpapers.length) {
-                    root.applyWallpaper(wallpapers[selectedIndex])
+                if (!root.applying && root.wallpapers.length > 0) {
+                    root.applyWallpaper(root.wallpapers[root.currentIndex])
                 }
                 event.accepted = true
             } else if (event.key === Qt.Key_F5) {
@@ -202,63 +196,62 @@ PanelWindow {
             }
         }
 
-        ListView {
-            id: listView
-            anchors {
-                top: parent.top
-                topMargin: 48
-                left: parent.left
-                leftMargin: 20
-                right: parent.right
-                rightMargin: 20
-                bottom: parent.bottom
-                bottomMargin: 8
-            }
-            orientation: ListView.Horizontal
-            spacing: 15
-            clip: false
+        Repeater {
+            id: orbiter
             model: wallpapers
-            currentIndex: selectedIndex
-            interactive: !root.applying
-
-            NumberAnimation {
-                id: scrollAnim
-                target: listView
-                property: "contentX"
-                duration: 250
-                easing.type: Easing.OutCubic
-            }
-
             delegate: Item {
-                width: 320
-                height: listView.height
-                // enabled: !root.applying
-                // opacity: enabled ? 1.0 : 0.5
+                id: card
+                width: root.cardWidth
+                height: root.cardHeight
+
+                property real itemAngle: root.angleFor(index)
+                property var itemPos: root.orbitPosition(itemAngle)
+                property bool isFocused: index === root.currentIndex
+                property bool isHovered: mouseArea.containsMouse
+
+                x: itemPos.x - width / 2
+                // Evita salirse de la patalla hacia abajo y genera una mejor curva superior
+                y: (itemAngle === 180 || itemAngle === 0) && isFocused ?
+                    itemPos.y - height / 2 - 10 : 
+                    (itemAngle > 80 && itemAngle < 100) ?
+                    itemPos.y - height / 2 - gaussianValue(itemAngle) : 
+                    itemPos.y - height / 2
+                z: isFocused ? 5000 : (180 - itemAngle) / 180 * 2000
+                scale: isFocused || isHovered ? 1.1 : 1.0
+
+                Behavior on x { SmoothedAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                Behavior on y { SmoothedAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
                 Rectangle {
-                    id: card
-                    width: parent.width
-                    height: parent.height
-                    radius: 4
-                    color: {
-                        if (index === selectedIndex) return Colors.palette.base0D
-                        if (mouseArea.containsMouse) return Colors.palette.base04
-                        // return Colors.palette.base02
-                        return "transparent"
+                    id: bg
+                    anchors.fill: parent
+                    // radius: 12
+                    color: isFocused ? Colors.palette.base02 : "transparent"
+                    layer.enabled: true
+                    layer.effect: DropShadow {
+                        verticalOffset: isFocused ? 12 : 6
+                        radius: isFocused ? 20 : 10
+                        color: Qt.rgba(0, 0, 0, isFocused ? 0.5 : 0.3)
+                        samples: 16
                     }
+                }
 
-                    y: (mouseArea.containsMouse || index === selectedIndex) ? -40 : 0
-                    Behavior on y { NumberAnimation { duration: 140 } }
-                    Behavior on color { ColorAnimation { duration: 140 } }
+                Image {
+                    anchors.fill: bg
+                    anchors.margins: 3
+                    source: "file://" + root.thumbPath(modelData)
+                    fillMode: Image.PreserveAspectCrop
+                    clip: true
+                }
 
-                    Image {
-                        anchors {
-                            fill: parent
-                            margins: 2
-                        }
-                        source: "file://" + root.thumbPath(modelData)
-                        fillMode: Image.PreserveAspectCrop
-                    }
+                Rectangle {
+                    id: dim
+                    anchors.fill: bg
+                    anchors.margins: 3
+                    color: "black"
+                    opacity: (isFocused || isHovered) ? 0.0 : 0.4
+                    Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                 }
 
                 MouseArea {
@@ -281,15 +274,10 @@ PanelWindow {
                     onClicked: {
                         if (root.applying) return
                         applyTimer.stop()
-                        selectedIndex = index
+                        root.currentIndex = index
                         root.applyWallpaper(modelData)
                     }
                 }
-
-                Behavior on scale {
-                    NumberAnimation { duration: 140 }
-                }
-                scale: (mouseArea.containsMouse || index === selectedIndex) ? 1.04 : 1.0
             }
         }
 
@@ -304,6 +292,5 @@ PanelWindow {
                 family: root.font
             }
         }
-
     }
 }

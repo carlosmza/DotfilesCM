@@ -100,9 +100,12 @@ PanelWindow {
 			proc.running = true
 	}
 // themeLabel("nombre-de-tema", false)   // "Nombre De\nTema"
-	function themeLabel(text, reverse) {
+function themeLabel(text, reverse, maxChars) {
     if (!text || text.length === 0)
         return ""
+
+    if (maxChars === undefined || maxChars <= 0)
+        maxChars = 18
 
     if (reverse) {
         return text
@@ -113,17 +116,30 @@ PanelWindow {
             .toLowerCase()
     }
 
-    const parts = text.split("-").filter(p => p.length > 0)
-    if (parts.length === 0)
-        return ""
+    const words = text
+        .split("-")
+        .filter(p => p.length > 0)
+        .map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
 
-    const words = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+    const result = []
+    let line = ""
 
-    if (words.length <= 2)
-        return words.join(" ")
+    words.forEach(word => {
+        const nextLine = line ? line + " " + word : word
 
-    return words.slice(0, 2).join(" ") + "\n" + words.slice(2).join(" ")
-	}
+        if (line && nextLine.length > maxChars) {
+            result.push(line)
+            line = word
+        } else {
+            line = nextLine
+        }
+    })
+
+    if (line)
+        result.push(line)
+
+    return result.join("\n")
+}
 	Process {
 			id: proc
 			command: ["bash"]
@@ -193,7 +209,7 @@ PanelWindow {
 
 			Text {
 				anchors.centerIn: parent
-				text: themeLabel(modelData.name, false)
+				text: themeLabel(modelData.name, false, 15)
                 rotation: 180
 				color: {
 						if (mouseArea.containsMouse || index === root.currentIndex)

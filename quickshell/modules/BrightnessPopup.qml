@@ -1,11 +1,16 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import "../services"
+import qs.services
 import qs.config.theme
 
 ShellRoot {
     id: root
+
+    function mostrar() {
+        osdItem.mostrar = true
+        hideTimer.restart()
+    }
 
     Brightness {
         id: svc
@@ -30,22 +35,23 @@ ShellRoot {
             anchors.fill: parent
             anchors.topMargin: mostrar ? 0 : -30
             color: Colors.palette.base00
+            border.color: "#10" + Colors.palette.base04.slice(1) // Implementacion de alpha #AARRGGBB
             radius: 6
             opacity: mostrar ? 1.0 : 0.0
             visible: opacity > 0.0
             enabled: opacity > 0.0
 
             Behavior on opacity {
-                NumberAnimation { duration: 400 }
+                NumberAnimation { duration: 100 }
             }
 
             Behavior on anchors.topMargin {
-                NumberAnimation { duration: 300; easing: Easing.OutCubic }
+                NumberAnimation { duration: 200; easing: Easing.OutCubic }
             }
 
             Timer {
                 id: hideTimer
-                interval: 1500
+                interval: 1000
                 repeat: false
                 onTriggered: osdItem.mostrar = false
             }
@@ -61,14 +67,14 @@ ShellRoot {
                 radius: 6
 
                 Behavior on anchors.rightMargin {
-                    NumberAnimation { duration: 200 }
+                    SmoothedAnimation { duration: 150; easing: Easing.OutCubic  }
                 }
 
                 Text {
                     text: "󰃟"
                     color: svc.brightnessValue < svc.threshold ? Colors.palette.base05 : Colors.palette.base06
                     font.pixelSize: 18
-                    x: svc.brightnessValue < svc.threshold ? osdPanel.implicitWidth - 50 : osdPanel.implicitWidth - 100
+                    x: svc.brightnessValue < svc.threshold ? osdPanel.implicitWidth - 50 : osdPanel.implicitWidth - 65
                     y: 5
                 }
             }
@@ -83,7 +89,7 @@ ShellRoot {
                 y: 5
 
                 Behavior on x {
-                    NumberAnimation { duration: 150 }
+                    SmoothedAnimation { duration: 150; easing: Easing.OutCubic}
                 }
             }
         }
