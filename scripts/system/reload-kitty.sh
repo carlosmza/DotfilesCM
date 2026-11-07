@@ -1,21 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Script para recargar todas las instancias de kitty con SIGUSR1
 # Autor: Carlos Octavio Mendoza Jimenez
-# Versión: 1.0
+# Versión: 1.1
+#
+# Contrato de salida (se llama desde apply-theme.sh con `set -e`):
+#   exit 0 = nada que recargar o recarga parcial → el flujo de cambio de tema continúa
+#   exit 1 = había instancias y ninguna pudo recargarse
 
 # Verificar que kitty está instalado
 if ! command -v kitty &> /dev/null; then
-    echo "❌ Error: kitty no está instalado o no está en PATH"
-    exit 1
+    echo "Aviso: kitty no está instalado — nada que recargar."
+    exit 0
 fi
 
 # Obtener todos los PIDs de kitty usando pgrep
-KITTY_PIDS=$(pgrep -x kitty)
+KITTY_PIDS=$(pgrep -x kitty || true)
 
-# Verificar si hay instancias de kitty
-if [ -z "$KITTY_PIDS" ]; then
-    echo "❌ No hay instancias de kitty ejecutadas"
-    exit 1
+# Sin instancias en ejecución no es un error (nada que recargar)
+if [[ -z "$KITTY_PIDS" ]]; then
+    echo "Aviso: no hay instancias de kitty en ejecución — nada que recargar."
+    exit 0
 fi
 
 # Contar número de instancias
@@ -31,9 +35,9 @@ for PID in $KITTY_PIDS; do
         # Enviar señal SIGUSR1 para recargar configuración
         if kill -SIGUSR1 $PID 2>/dev/null; then
             echo "  ✅ Instancia PID $PID recargada correctamente"
-            ((RELOADED++))
+            RELOADED=$((RELOADED + 1))
         else
-            echo "  ❌ Error recargando PID $PID"
+            echo "  ⚠️  Error recargando PID $PID"
         fi
     else
         echo "  ⚠️  PID $PID ya no existe (proceso finalizado)"
@@ -44,8 +48,9 @@ done
 echo ""
 echo "📊 Resumen: ${RELOADED}/${NUM_INSTANCES} instancias recargadas exitosamente"
 
-if [ $RELOADED -eq $NUM_INSTANCES ]; then
-    exit 0
-else
+if [[ "$RELOADED" -eq 0 ]]; then
+    echo "❌ Error: no se pudo recargar ninguna instancia de kitty" >&2
     exit 1
 fi
+
+exit 0

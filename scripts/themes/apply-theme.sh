@@ -43,9 +43,13 @@ echo "[2] Symlink system-themes"
 ln -sf "$THEME_SOURCE" "$THEME_SYSTEM"
 
 # __________ HYPRLAND LUA __________
-echo "[3] Recargando Hyprland"
-hyprctl reload || echo "Aviso: hyprctl reload falló (¿estás fuera de una sesión de Hyprland?)" >&2
-lua "$HOME/.config/hypr/lua/scripts/read_theme.lua"
+if [[ "$XDG_CURRENT_DESKTOP" =~ HYPRLAND ]]; then
+	echo "[3] Recargando Hyprland"
+	hyprctl reload || echo "Aviso: hyprctl reload falló (¿estás fuera de una sesión de Hyprland?)" >&2
+	lua "$HOME/.config/hypr/lua/scripts/read_theme.lua" || echo "Aviso: read_theme.lua falló." >&2
+else
+	echo "[3] Aviso: Session: "$XDG_CURRENT_DESKTOP""
+fi
 
 # __________ ZELLIJ __________
 echo "[4] Modificando Zellij"
@@ -68,7 +72,7 @@ fi
 # __________ ROFI __________
 echo "[6] Modificando Rofi"
 "$HOME/.config/scripts/themes/json-to-rasi.py" "$THEME_SYSTEM" -o \
-    "$HOME/.config/rofi/themes/current.rasi"
+    "$HOME/.config/rofi/themes/current.rasi" || echo "Aviso: No se pudo generar el tema para Rofi." >&2
 
 # __________ QUICKSHELL __________
 echo "[7] Notificando Quickshell"
@@ -78,10 +82,10 @@ quickshell ipc call colores recargar || echo "Aviso: No se pudo comunicar con Qu
 # __________ DARK/LIGHT MODE __________
 if [[ "$MODE" =~ dark ]]; then
     echo "[8] Modo detectado: Dark"
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || echo "Aviso: gsettings falló." >&2
 else
     echo "[8] Modo detectado: Light"
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light' || echo "Aviso: gsettings falló." >&2
 fi
 
 # __________ KITTY __________
@@ -93,7 +97,7 @@ if [[ -n "$EXPECTED_NAME" ]]; then
     VERIFIED=false
     for attempt in 1 2 3 4; do
         if "$HOME/.config/scripts/themes/json-to-kitty.py" "$THEME_SYSTEM" --output "$KITTY_CONF"; then
-            READ_NAME=$(head -1 "$KITTY_CONF" 2>/dev/null | sed 's/^# name: //')
+            READ_NAME=$(head -1 "$KITTY_CONF" 2>/dev/null | sed 's/^# name: //' || true)
             if [[ "$READ_NAME" == "$EXPECTED_NAME" ]]; then
                 echo "  ✓ Verificado con éxito (intento $attempt)"
                 VERIFIED=true
@@ -105,7 +109,7 @@ if [[ -n "$EXPECTED_NAME" ]]; then
     done
 
     if [ "$VERIFIED" = true ]; then
-        "$HOME/.config/scripts/system/reload-kitty.sh"
+        "$HOME/.config/scripts/system/reload-kitty.sh" || echo "Aviso: No se pudo recargar Kitty (el tema ya quedó escrito en current.conf)." >&2
     else
         echo "ERROR: No se pudo verificar la consistencia del tema de Kitty tras 4 intentos." >&2
     fi
@@ -115,7 +119,7 @@ fi
 
 # __________ Yazi __________
 echo "[10] Modificando Yazi"
-"$HOME/.config/scripts/themes/yazi-theme-toggle.py" "$THEME"
+"$HOME/.config/scripts/themes/yazi-theme-toggle.py" "$THEME" || echo "Aviso: No se pudo cambiar el tema de Yazi." >&2
 
 # __________ Nvim __________
 echo "[11] Notificando Nvim"
@@ -123,11 +127,43 @@ echo "$THEME" > "$HOME/.config/nvim/.colorscheme"
 
 # __________ Oh-my-posh __________
 echo "[12] Modificando Oh-my-posh"
-"$HOME/.config/scripts/themes/json-to-prompt.py" "$THEME_SYSTEM" "$HOME/.config/oh-my-posh/current.json"
+"$HOME/.config/scripts/themes/json-to-prompt.py" "$THEME_SYSTEM" "$HOME/.config/oh-my-posh/current.json" || echo "Aviso: No se pudo generar el tema para Oh-my-posh." >&2
 pkill -USR1 fish || true
 
+# __________ YTM-PLAYER __________
+# echo "[13] Modificando ytm-player"
+# YTM_THEME_FILE="$HOME/.config/ytm-player/themes/config-${THEME}.toml"
+# if [[ -f "$YTM_THEME_FILE" ]]; then
+#     ln -sf "$YTM_THEME_FILE" "$HOME/.config/ytm-player/config.toml"
+# else
+#     echo "Aviso: No hay config de ytm-player para el tema '$THEME' ($YTM_THEME_FILE)" >&2
+# fi
+echo "[13] Modificando Sistema"
+if [[ "$THEME" =~ catppuccin-macchiato ]]; then
+    echo "Tema encontrado: $THEME"
+    lookandfeeltool -a Catppuccin-Macchiato-Rosewater || echo "Aviso: lookandfeeltool falló." >&2
+
+elif [[ "$THEME" =~ catppuccin-latte ]]; then
+    echo "Tema encontrado: $THEME"
+    lookandfeeltool -a Catppuccin-Latte-Pink || echo "Aviso: lookandfeeltool falló." >&2
+else
+    echo "Tema NO encontrado: $THEME. Revisar temas disponibles."
+fi
+
+# __________ FOOT __________
+echo "[14] Modificando Foot"
+FOOT_THEME_FILE="$HOME/.config/foot/theme-current.ini"
+if "$HOME/.config/scripts/themes/json-to-foot.py" "$THEME_SYSTEM" --output "$FOOT_THEME_FILE"; then
+    echo "  ✓ Tema Foot generado (el server de foot cachea la config: aplica tras reiniciarlo, pkill -f 'foot --server')"
+else
+    echo "Aviso: No se pudo generar el tema para Foot." >&2
+fi
 
 echo "______ finish ______"
+
+notify-send "Colorscheme:" "$THEME" || true
+# quickshell ipc call notify mostrar "󰂃" "Batería baja" 15 5000 
+
 # Mantenemos tu lógica para terminales interactivas
 [[ -t 0 ]] && exec fish
 exit 0
