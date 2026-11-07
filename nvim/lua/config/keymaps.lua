@@ -157,8 +157,10 @@ kmap("t", "<C-l>", "<C-\\><C-N><C-l>", { desc = "General | Go to right window(Te
 ----------- </window> -----------
 
 ----------- <buffers> -----------
-kmap("n", "L", "<cmd>BufferLineCycleNext<CR>", { desc = "Next Buffer" })
-kmap("n", "H", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous Buffer" })
+-- lua/config/keymaps.lua
+-- Navegación nativa de buffers (compatible con mini.tabline)
+kmap("n", "L", "<cmd>bnext<CR>", { desc = "Next Buffer" })
+kmap("n", "H", "<cmd>bprevious<CR>", { desc = "Previous Buffer" })
 kmap("n", "<leader>b1", "<cmd>BufferLineGoToBuffer 1<CR>", { desc = "Go to Buffer [1]" })
 kmap("n", "<leader>b2", "<cmd>BufferLineGoToBuffer 2<CR>", { desc = "Go to Buffer [2]" })
 kmap("n", "<leader>b3", "<cmd>BufferLineGoToBuffer 3<CR>", { desc = "Go to Buffer [3]" })
@@ -272,9 +274,9 @@ kmap("n", "<leader>z", zoxide_fzf, { desc = "Change CWD" })
 -- Desactiva el carácter raro de los audífonos
 kmap("i", "", "<nop>", { silent = true})
 
-kmap("n", "<leader>d", function()
-  snacks.dashboard.open()
-end, { desc = "Open Dashboard" })
+-- kmap("n", "<leader>d", function()
+--   snacks.dashboard.open()
+-- end, { desc = "Open Dashboard" })
 
 kmap("n", "<leader>E", function()
   snacks.explorer.open({ cwd = vim.fn.expand("%:p:h") })
@@ -323,6 +325,9 @@ blackhole_operator("d")
 blackhole_operator("D")
 blackhole_operator("c")
 blackhole_operator("C")
+
+-- Delete visual selection to clipboard (unnamed register)
+kmap("x", "<leader>d", "d", { desc = "Delete selection to clipboard" })
 
 ----------- </copy-paste> -----------
 

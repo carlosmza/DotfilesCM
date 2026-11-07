@@ -3,6 +3,7 @@ return {
 	lazy = false,
 	priority = 900,
   version = "*",
+	enabled = false,
   dependencies = "nvim-tree/nvim-web-devicons",
   config = function()
     require("bufferline").setup {

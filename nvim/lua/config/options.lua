@@ -23,7 +23,7 @@ vim.opt.smartcase = true
 vim.opt.swapfile = false -- Es clave para los molestos .swp
 vim.opt.backup = false
 vim.opt.undofile = true
-vim.opt.scrolloff = 5
+vim.opt.scrolloff = 0
 --vim.opt.signcolumn = "yes"
 --vim.opt.colorcolumn = "80"
 

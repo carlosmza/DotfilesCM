@@ -1,19 +1,29 @@
+-- lua/plugins/mini.lua
 return {
   "echasnovski/mini.nvim",
+	priority = 900,
   version = false,
-  -- mini.pairs
+  event = "VeryLazy",
   config = function()
-    require("mini.pairs").setup({
+    -- Manipulación de envoltorios (paréntesis, comillas)
+    require("mini.surround").setup()
 
-      modes = { insert = true, command = true, terminal = false },
-      skip_next = [=[[%w%%%'%[%"%.%`%$]]=],
-      skip_ts = { "string" },
-      skip_unbalanced = true,
-      markdown = true,
+    -- Extensión de objetos de texto (funciones, argumentos)
+    require("mini.ai").setup()
+
+    -- Autocompletado de parejas
+    require("mini.pairs").setup()
+
+    -- Resaltado de colores Hex en archivos de config
+    require("mini.hipatterns").setup({
+      highlighters = {
+        hex_color = require("mini.hipatterns").gen_highlighter.hex_color(),
+      },
     })
 
+    -- Resaltado automático de la palabra bajo el cursor
+    -- require("mini.cursorword").setup()
+		require('mini.tabline').setup()
   end,
-
-  -- probar mini.ai para textobjects
 }
 
