@@ -2,10 +2,14 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.UPower
 import Quickshell.Wayland
+import qs.services
 import "../components"
 
 ShellRoot {
     id: root
+
+    readonly property int maxVisible: 6
+    readonly property int toastWidth: 320
 
     readonly property bool hasBattery: UPower.displayDevice !== null
     readonly property real batteryPercentage: Math.max(0, Math.min(100, UPower.displayDevice?.percentage * 100 || 0))
@@ -13,21 +17,11 @@ ShellRoot {
     property bool batteryLowNotified: false
     property bool batteryChargingNotified: false
     property bool batteryFullNotified: false
-    property string notificationIcon: ""
-    property string notificationLabel: ""
-    property int notificationValue: -1
 
     Component.onCompleted: updateBatteryNotificationState()
     onHasBatteryChanged: updateBatteryNotificationState()
     onBatteryPercentageChanged: updateBatteryNotificationState()
     onBatteryChargingChanged: updateBatteryNotificationState()
-
-    function showNotification(icon, label, value) {
-        root.notificationIcon = icon
-        root.notificationLabel = label
-        root.notificationValue = value
-        notification.show()
-    }
 
     function updateBatteryNotificationState() {
         if (!root.hasBattery)
@@ -37,7 +31,7 @@ ShellRoot {
 
         if (percentage < 25 && !root.batteryCharging) {
             if (!root.batteryLowNotified) {
-                root.showNotification("󰂃", "low", percentage)
+                Notifications.mostrar("󰂃", "low", percentage, 4000)
                 root.batteryLowNotified = true
             }
         } else if (percentage >= 25 || root.batteryCharging) {
@@ -46,7 +40,7 @@ ShellRoot {
 
         if (percentage >= 100) {
             if (!root.batteryFullNotified) {
-                root.showNotification("󰁹", "full", percentage)
+                Notifications.mostrar("󰁹", "full", percentage, 4000)
                 root.batteryFullNotified = true
             }
         } else {
@@ -55,7 +49,7 @@ ShellRoot {
 
         if (root.batteryCharging && percentage < 100) {
             if (!root.batteryChargingNotified) {
-                root.showNotification("󰢝", "charging", percentage)
+                Notifications.mostrar("󰢝", "charging", percentage, 3000)
                 root.batteryChargingNotified = true
             }
         } else {
@@ -68,19 +62,37 @@ ShellRoot {
         anchors { top: true }
         margins { top: 100 }
         color: "transparent"
-        implicitWidth: 160
-        implicitHeight: 36
-        visible: notification.showing || notification.opacity > 0
+        implicitWidth: root.toastWidth
+        implicitHeight: toastColumn.implicitHeight
+        visible: Notifications.toasts.length > 0
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.exclusiveZone: -1
 
-        Notification {
-            id: notification
-            anchors.fill: parent
-            icon: root.notificationIcon
-            label: root.notificationLabel
-            value: root.notificationValue
-            duration: 4000
+        Column {
+            id: toastColumn
+            width: parent.width
+            spacing: 8
+
+            Repeater {
+                model: Notifications.toasts.slice(0, root.maxVisible)
+
+                Notification {
+                    id: toast
+                    width: parent.width
+                    icon: modelData.icon
+                    label: modelData.label
+                    value: modelData.value
+                    summary: modelData.summary
+                    body: modelData.body
+                    appName: modelData.appName
+                    appIcon: modelData.appIcon
+                    urgency: modelData.urgency
+                    duration: modelData.duration
+
+                    Component.onCompleted: toast.show()
+                    onExpired: Notifications.dismiss(modelData.id)
+                }
+            }
         }
     }
 }

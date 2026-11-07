@@ -1,0 +1,4 @@
+module qs.services
+singleton Notifications 1.0 Notifications.qml
+Volume 1.0 Volume.qml
+Brightness 1.0 Brightness.qml
