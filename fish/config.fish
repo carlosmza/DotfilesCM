@@ -24,6 +24,7 @@ alias tree="eza --color=always --icons=always --group-directories-first --tree"
 alias y="yazi"
 alias lg="lazygit"
 alias n="nvim"
+alias theme ~/.config/scripts/themes/apply-theme.sh
 
 function reload_prompt --on-signal USR1
     source (oh-my-posh init fish \
@@ -50,3 +51,9 @@ function update_python_project --on-variable PWD
         set dir (path dirname "$dir")
     end
 end
+
+# Added by codebase-memory-mcp install
+fish_add_path /home/carlosm/.local/bin
+
+# SSH agent (socket activado por systemd, ruta estable)
+set -gx SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
