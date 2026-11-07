@@ -30,3 +30,13 @@ hash = "8b2a726a1395106f7f1aac1619864bac"
 use = "Mintass/rose-pine-dawn"
 rev = "d82f54f"
 hash = "15ae5f83d3770b9ffc276af77f642e2b"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "20b47bf"
+hash = "ce320f877fe709b189433941aba747c4"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-latte"
+rev = "20b47bf"
+hash = "273ee53369ccfbf7feb9b0c65e387ed8"

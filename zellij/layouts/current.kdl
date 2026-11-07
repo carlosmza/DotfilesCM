@@ -11,23 +11,23 @@ layout {
             plugin location="file:/home/carlosm/.config/zellij/plugins/zjstatus.wasm" {
 
                 // Style mode
-                mode_normal        "#[fg=#83a598,bold] NORMAL "
-                mode_locked        "#[fg=#fb4934,bold] LOCKED "
-                mode_pane          "#[fg=#b8bb26,bold] PANE "
-                mode_tab        "#[fg=#8ec07c,bold] TAB "
-                mode_scroll        "#[fg=#fe8019,bold] SCROLL "
-                mode_enter_search          "#[fg=#fabd2f,bold] ENT_SEARCH "
-                mode_search        "#[fg=#d3869b,bold] SEARCH "
-                mode_resize        "#[fg=#fb4934,bold] RESIZE "
-                mode_rename_tab          "#[fg=#d65d0e,bold] REN_TAB "
-                mode_move        "#[fg=#fe8019,bold] MOVE "
-                mode_rename_pane          "#[fg=#d65d0e,bold] REN_PANE "
-                mode_session        "#[fg=#8ec07c,bold] SESSION "
-                mode_prompt          "#[fg=#fabd2f,bold] PROMPT "
+                mode_normal        "#[fg=#458588,bold] NORMAL "
+                mode_locked        "#[fg=#cc241d,bold] LOCKED "
+                mode_pane          "#[fg=#98971a,bold] PANE "
+                mode_tab        "#[fg=#689d6a,bold] TAB "
+                mode_scroll        "#[fg=#d65d0e,bold] SCROLL "
+                mode_enter_search          "#[fg=#d79921,bold] ENT_SEARCH "
+                mode_search        "#[fg=#b16286,bold] SEARCH "
+                mode_resize        "#[fg=#cc241d,bold] RESIZE "
+                mode_rename_tab          "#[fg=#9d0006,bold] REN_TAB "
+                mode_move        "#[fg=#d65d0e,bold] MOVE "
+                mode_rename_pane          "#[fg=#9d0006,bold] REN_PANE "
+                mode_session        "#[fg=#689d6a,bold] SESSION "
+                mode_prompt          "#[fg=#d79921,bold] PROMPT "
 
                 // Notifications
-                notification_format_unread           "#[fg=#83a598,bg=#282828,blink]  #[fg=#89B4FA,bg=#181825] {message} "
-                notification_format_no_notifications "#[fg=#83a598,bg=#282828,dim]   "
+                notification_format_unread           "#[fg=#458588,bg=#fbf1c7,blink]  #[fg=#89B4FA,bg=#181825] {message} "
+                notification_format_no_notifications "#[fg=#458588,bg=#fbf1c7,dim]   "
                 notification_show_interval           "10"
 
                 // Format
@@ -38,20 +38,20 @@ layout {
 
                 border_enabled  "false"
                 border_char     "─"
-                border_format   "#[fg=#665c54]{char}"
+                border_format   "#[fg=#bdae93]{char}"
                 border_position "top"
 
                 hide_frame_for_single_pane "false"
 
 
                 // Tabs
-                tab_normal   "#[fg=#bdae93] {name} "
-                tab_active   "#[fg=#282828,bg=#83a598,bold,italic] {name} "
-                tab_separator   "#[fg=#665c54] | "
-                tab_rename   "#[fg=#fb4934,bg=#282828] {index} {name} {floating_indicator} "
+                tab_normal   "#[fg=#7c6f64] {name} "
+                tab_active   "#[fg=#fbf1c7,bg=#458588,bold,italic] {name} "
+                tab_separator   "#[fg=#bdae93] | "
+                tab_rename   "#[fg=#cc241d,bg=#fbf1c7] {index} {name} {floating_indicator} "
 
                 command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                command_git_branch_format      "#[fg=#83a598] {stdout} "
+                command_git_branch_format      "#[fg=#458588] {stdout} "
                 command_git_branch_interval    "10"
                 command_git_branch_rendermode  "static"
 
