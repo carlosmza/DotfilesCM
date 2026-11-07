@@ -1,37 +1,36 @@
 import QtQuick
-import Quickshell
 import Quickshell.Services.UPower
-import Quickshell.Io
 import qs.config.theme
 
 Item {
     id: root
 
     readonly property real capacity: (UPower.displayDevice?.percentage ?? 0) * 100
-    readonly property bool status: !UPower.onBattery
+    readonly property bool isCharging: !UPower.onBattery
 
     implicitWidth: 31
     implicitHeight: 50
 
-    property string icon: {
-        var icons = ["󰂃","󰁺","󰁻","󰁼","󰁽","󰁾","󰁿","󰂀","󰂁","󰂂","󰁹"]
-        var lvl = Math.max(0, Math.min(100, parseInt(capacity)))
-        var n = icons.length
-        var idx = Math.min(n - 1, Math.floor(lvl * n / 100))
+    readonly property var icons: ["󰂃","󰁺","󰁻","󰁼","󰁽","󰁾","󰁿","󰂀","󰂁","󰂂","󰁹"]
+
+    readonly property string icon: {
+        var lvl = Math.max(0, Math.min(100, Math.floor(capacity)))
+        var idx = Math.min(icons.length - 1, Math.floor(lvl * icons.length / 100))
         return icons[idx]
     }
 
-    property string icon_color: {
-        if (capacity >= 99 && status === true) return "#00ff00" // verde para cargando
-        if (capacity < 99 && status === true) return "blue"
-        if (capacity <= 20) return "#ff0000" // rojo para batería baja
-        return Colors.palette.base06 // blanco para niveles normales
+    readonly property color iconColor: {
+        if (isCharging)
+            return capacity >= 99 ? Colors.palette.base0B : Colors.palette.base0D
+        if (capacity <= 20)
+            return Colors.palette.base08
+        return Colors.palette.base06
     }
 
     Text {
         anchors.centerIn: parent
         text: root.icon
-        color: root.icon_color
+        color: root.iconColor
         font.pixelSize: 20
         horizontalAlignment: Text.AlignHCenter
     }

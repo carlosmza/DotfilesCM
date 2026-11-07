@@ -1,76 +1,49 @@
 import QtQuick
-import Quickshell
 import Quickshell.Io
 import qs.config.theme
+import "js/WifiShared.js" as WifiShared
 
 Item {
     id: root
 
-    // API
     property bool connected: false
-    property int signal: 0
+    property int strength: 0
     property string ssid: ""
-    property bool tooltipVisible: false
 
     implicitWidth: 30
     implicitHeight: 10
 
-    // Try NetworkManager first
+    readonly property string icon: WifiShared.iconFor(root.connected, root.strength)
+    readonly property color iconColor: root.connected
+        ? (root.strength <= 20 ? Colors.palette.base08 : Colors.palette.base06)
+        : Colors.palette.base03
+
     Process {
         id: nmcliProc
-        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi | grep '^yes' || true"]
+        command: WifiShared.queryCommand
         running: true
 
         stdout: StdioCollector {
             onStreamFinished: {
-                var out = this.text.trim()
-                if (!out) {
-                    // leave fallback to other procs
-                    return
-                }
-                var parts = out.split(":")
-                if (parts.length >= 3 && (parts[0] === "yes" || parts[0] === "*")) {
-                    root.connected = true
-                    root.ssid = parts[1] || ""
-                    root.signal = parseInt(parts[2]) || 0
-                } else {
-                    root.connected = false
-                    root.ssid = ""
-                    root.signal = 0
-                }
+                var info = WifiShared.parse(this.text)
+                root.connected = info.connected
+                root.ssid = info.ssid
+                root.strength = info.strength
             }
         }
     }
 
-
     Timer {
-        id: refreshTimer
         interval: 1000
         running: true
         repeat: true
-        onTriggered: {
-            nmcliProc.running = true
-        }
+        onTriggered: nmcliProc.running = true
     }
-    //
-    // Icons (nerdfont) for signal intervals. Adjust glyphs if your font differs.
-    property var icons: ["󰤭", "󰤯", "󰤟", "󰤢", "󰤥", "󰤨"]
-    property string icon: {
-        if (!root.connected) return icons[0]
-        var p = Math.max(0, Math.min(100, parseInt(root.signal)))
-        if (p <= 10) return icons[1]
-        if (p <= 30) return icons[2]
-        if (p <= 60) return icons[3]
-        if (p <= 85) return icons[4]
-        return icons[5]
-    }
-    property string icon_color: root.connected ? (root.signal <= 20 ? Colors.palette.base08 : Colors.palette.base06) : Colors.palette.base03
 
     Text {
-        id: wifiIcon
-        text: root.icon
-        color: root.icon_color
-        font.pixelSize: 20
         anchors.centerIn: parent
+        text: root.icon
+        color: root.iconColor
+        font.pixelSize: 20
     }
 }

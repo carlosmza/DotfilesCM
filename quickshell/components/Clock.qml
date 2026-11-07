@@ -1,60 +1,62 @@
 import Quickshell
-import Quickshell.Io
 import QtQuick
+import "js/TimeShared.js" as TimeShared
 import qs.config.theme
 import qs.config.fonts
 
 Item {
     id: root
-    property string timeStr: "00:00"
+
+    readonly property date now: TimeShared.mexicoCityDate(clock.date)
     property string font: Fonts.varelaRound
+
     implicitWidth: 40
-    implicitHeight: 300
+    implicitHeight: 64
 
-
-    Column {
-      id: vColumn
-      anchors.centerIn: parent
-      spacing: 2
-      width: parent.width
-
-      Text {
-        id: hoursText
-        text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[0] : "00"
-        color: Colors.palette.base06
-        font {
-            pixelSize: 20
-            bold: true
-            family: root.font
-        }
-        horizontalAlignment: Text.AlignHCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-      }
-
-      Text {
-        id: minutesText
-        text: root.timeStr && root.timeStr.indexOf(":") !== -1 ? root.timeStr.split(":")[1] : "00"
-        color: Colors.palette.base06
-        font {
-            pixelSize: 22
-            bold: true
-            family: root.font
-        }
-        horizontalAlignment: Text.AlignHCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-      }
+    SystemClock {
+        id: clock
+        precision: SystemClock.Seconds
     }
 
-  Timer {
-      interval: 1000
-      running: true
-      repeat: true
+    Column {
+        anchors.centerIn: parent
+        width: parent.width
+        spacing: 2
 
-      onTriggered: {
-          let now = new Date()
-          let h = now.getHours().toString().padStart(2, "0")
-          let m = now.getMinutes().toString().padStart(2, "0")
-          root.timeStr = h + ":" + m
-      }
-  }
+        Text {
+            width: parent.width
+            text: Qt.formatTime(root.now, "hh")
+            color: Colors.palette.base06
+            font {
+                pixelSize: 20
+                bold: false
+                family: root.font
+            }
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            width: parent.width
+            text: Qt.formatTime(root.now, "mm")
+            color: Colors.palette.base06
+            font {
+                pixelSize: 20
+                bold: false
+                family: root.font
+            }
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            width: parent.width
+            text: Qt.formatTime(root.now, "ss")
+            color: Colors.palette.base04
+            font {
+                pixelSize: 19
+                bold: false
+                family: root.font
+            }
+            horizontalAlignment: Text.AlignHCenter
+        }
+    }
 }

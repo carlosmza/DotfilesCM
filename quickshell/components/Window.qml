@@ -1,51 +1,29 @@
-import Quickshell
-import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick
-import QtQuick.Controls
 import qs.config.theme
 import qs.config.fonts
 
 Item {
     id: root
-    // Angle in degrees; negative for counterclockwise
-    property int rotationAngle: -90
-    // Vertical offset in pixels applied after anchoring
-    property int yOffset: 0
-    // Maximum length for the window title text
-    property int maxTitleLength: 40
 
-    // sensible implicit size so parents can lay this out
-    implicitWidth: 24
-    implicitHeight: 200
-    
     property string font: Fonts.varelaRound
 
-    function truncateText(text, maxLength) {
-        // console.log("name:", Colors.name)
-        return text.length > maxLength ? text.substring(0, maxLength) + "..." : text
-    }
-
+    implicitWidth: 24
+    implicitHeight: 500
 
     Text {
-        id: titleText
+        anchors.centerIn: parent
+        width: root.height
+        rotation: -90
+        text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : "NA"
         color: Colors.palette.base06
         font {
             pixelSize: 20
             bold: true
             family: root.font
         }
-        anchors.centerIn: parent
-        anchors.top: parent.bottom
-        anchors.topMargin: 10
-        rotation: root.rotationAngle
-        transformOrigin: Item.Center
-        y: root.yOffset
-        elide: Text.ElideRight
-        text: {
-            var title = Hyprland.activeToplevel ? Hyprland.activeToplevel.title : "NA"
-            return truncateText(title, root.maxTitleLength)
-        }
-
+        elide: Text.ElideLeft
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
     }
 }

@@ -1,6 +1,5 @@
-import Quickshell
-import Quickshell.Io
 import QtQuick
+import Quickshell.Io
 import qs.config.theme
 
 Item {
@@ -12,60 +11,52 @@ Item {
     implicitWidth: 32
     implicitHeight: 32
 
-    function queryStatus() {
-        btPowerProc.running = true
-        btConnectedProc.running = true
+    readonly property string icon: {
+        if (!root.powered)
+            return "󰂲"
+        if (root.connected)
+            return "󰂱"
+        return "󰂯"
+    }
+
+    readonly property color iconColor: {
+        if (!root.powered)
+            return Colors.palette.base03
+        if (root.connected)
+            return Colors.palette.base06
+        return Colors.palette.base05
     }
 
     Process {
-        id: btPowerProc
-        command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && echo on || echo off"]
+        id: statusProc
+        command: [
+            "bash", "-c",
+            "p=off; bluetoothctl show | grep -q 'Powered: yes' && p=on; "
+            + "c=no; bluetoothctl devices Connected | grep -q . && c=yes; "
+            + "echo \"$p $c\""
+        ]
         stdout: StdioCollector {
             onStreamFinished: {
-                root.powered = this.text.trim() === "on"
-            }
-        }
-    }
-
-    Process {
-        id: btConnectedProc
-        command: ["bash", "-c", "bluetoothctl devices Connected | grep -q . && echo yes || echo no"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                root.connected = this.text.trim() === "yes"
+                var parts = this.text.trim().split(" ")
+                root.powered = parts[0] === "on"
+                root.connected = parts[1] === "yes"
             }
         }
     }
 
     Timer {
-        id: refreshTimer
-        interval: 1000
+        interval: 2000
         running: true
         repeat: true
-        onTriggered: {
-            btPowerProc.running = true
-            btConnectedProc.running = true
-        }
+        onTriggered: statusProc.running = true
     }
 
-    property string icon: {
-        if (!root.powered) return "󰂲"
-        if (root.connected) return "󰂱"
-        return "󰂯"
-    }
-    property string iconColor: {
-        if (!root.powered) return Colors.palette.base03
-        if (root.connected) return Colors.palette.base06
-        return Colors.palette.base05
-    }
+    Component.onCompleted: statusProc.running = true
 
     Text {
-        id: btIcon
+        anchors.centerIn: parent
         text: root.icon
         color: root.iconColor
         font.pixelSize: 20
-        // horizontalAlignment: Text.AlignHCenter
-        anchors.centerIn: parent
     }
-
 }

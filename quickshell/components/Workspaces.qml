@@ -1,4 +1,5 @@
-import Quickshell.Wayland
+pragma ComponentBehavior: Bound
+
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
@@ -14,12 +15,14 @@ Item {
 
     property string font: Fonts.varelaRound
     property string activeSpecialName: ""
-    property var windowIconMap: { "ytm": "" }
+    property var windowIconMap: { "ytm": "", "notes": "" }
 
     function iconForName(name) {
-        if (!name) return ""
+        if (!name)
+            return ""
         for (var key in root.windowIconMap)
-            if (name === key) return root.windowIconMap[key]
+            if (name === key)
+                return root.windowIconMap[key]
         return ""
     }
 
@@ -28,7 +31,6 @@ Item {
         function onRawEvent(event) {
             if (event.name === "activespecial") {
                 // event.data puede venir como "WORKSPACE_NAME" o "WORKSPACE_NAME,MONITOR"
-                // Extraemos solo el nombre del workspace para comparar
                 var data = event.data || ""
                 var sepIdx = data.indexOf(",")
                 root.activeSpecialName = sepIdx !== -1 ? data.substring(0, sepIdx) : data
@@ -36,103 +38,79 @@ Item {
         }
     }
 
-    Loader {
+    ColumnLayout {
         anchors.fill: parent
-        sourceComponent: verticalComp
-    }
+        anchors.margins: 5
+        spacing: 10
 
-    Component {
-        id: verticalComp
+        Repeater {
+            model: Hyprland.workspaces
 
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 5
-            spacing: 10
+            delegate: Rectangle {
+                id: workspaceDot
 
-            Repeater {
-                model: Hyprland.workspaces
+                required property var modelData
 
-                delegate: Rectangle {
-                    id: workspaceDot
-
-                    property bool isSpecial: modelData.id < 0
-                    // Coincide si los nombres son iguales, o si modelData.name trae
-                    // además el monitor como sufijo (e.g. "special:scratch,HDMI-A-1").
-                    property bool nameMatches: isSpecial && root.activeSpecialName.length > 0 && (
-                        root.activeSpecialName === modelData.name
-                        || modelData.name.indexOf(root.activeSpecialName + ",") === 0
-                    )
-                    property bool isFocused: isSpecial ? nameMatches : modelData.focused
-                    property bool isActive: isSpecial ? nameMatches : modelData.active
-                    property string windowIcon: {
-                        var toplevels = modelData.toplevels.values || []
-                        for (var i = 0; i < toplevels.length; i++) {
-                            var icon = root.iconForName(toplevels[i].title)
-                            if (icon) return icon
-                        }
-                        return ""
+                readonly property bool isSpecial: modelData.id < 0
+                // Coincide si los nombres son iguales, o si modelData.name trae
+                // además el monitor como sufijo (e.g. "special:scratch,HDMI-A-1").
+                readonly property bool nameMatches: isSpecial && root.activeSpecialName.length > 0 && (
+                    root.activeSpecialName === modelData.name
+                    || modelData.name.indexOf(root.activeSpecialName + ",") === 0
+                )
+                readonly property bool isFocused: isSpecial ? nameMatches : modelData.focused
+                readonly property bool isActive: isSpecial ? nameMatches : modelData.active
+                readonly property string windowIcon: {
+                    var toplevels = modelData.toplevels.values || []
+                    for (var i = 0; i < toplevels.length; i++) {
+                        var tl = toplevels[i]
+                        var icon = root.iconForName(tl.wayland && tl.wayland.appId ? tl.wayland.appId : "")
+                            || root.iconForName(tl.title)
+                        if (icon)
+                            return icon
                     }
-                    width: 28
-                    height: 28
-                    radius: width / 3
+                    return ""
+                }
 
-                    color: {
-                        if (isFocused)
-                            return Colors.palette.base0D
-                            // return isSpecial ? 
-                            //     Colors.palette.base0D : Colors.palette.base0D
+                Layout.preferredWidth: 28
+                Layout.preferredHeight: 28
+                Layout.alignment: Qt.AlignHCenter
+                radius: width / 3
 
-                        if (mouseArea.containsMouse)
-                            return Colors.palette.base03
+                color: {
+                    if (isFocused)
+                        return Colors.palette.base0D
 
-                        return Colors.palette.base01
+                    if (mouseArea.containsMouse)
+                        return Colors.palette.base03
+
+                    return Colors.palette.base01
+                }
+                border.width: isActive ? 2 : 0
+                border.color: isFocused ? Colors.palette.base0D : Colors.palette.base00
+
+                Behavior on color { ColorAnimation { duration: 150 } }
+                Behavior on scale { NumberAnimation { duration: 120 } }
+
+                scale: mouseArea.containsMouse ? 1.15 : 1.0
+
+                Text {
+                    anchors.centerIn: parent
+                    text: workspaceDot.windowIcon ? workspaceDot.windowIcon : workspaceDot.isSpecial ? "" : workspaceDot.modelData.id
+                    color: workspaceDot.isFocused ? Colors.palette.base00 : Colors.palette.base0F
+                    font {
+                        pixelSize: 16
+                        bold: true
+                        family: root.font
                     }
-                    border.width: isActive ? 2 : 0
-                    border.color: isFocused ? Colors.palette.base0D : Colors.palette.base00
+                }
 
-                    Layout.alignment: Qt.AlignHCenter
-
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 150
-                        }
-                    }
-
-                    Behavior on scale {
-                        NumberAnimation {
-                            duration: 120
-                        }
-                    }
-
-                    scale: mouseArea.containsMouse ? 1.15 : 1.0
-
-                    Text {
-                        anchors.centerIn: parent
-
-                        // text: (modelData.id < 4 && modelData.id > 0) ? icons[modelData.id - 1] : isSpecial ? "S" : modelData.id
-                        // text: isSpecial ? "" : modelData.id
-                        text: windowIcon ? windowIcon : isSpecial ? "" : modelData.id
-
-
-                        color: isFocused ? Colors.palette.base00 : Colors.palette.base0F
-                        font {
-                            pixelSize: 16
-                            bold: true
-                            family: root.font
-                        }
-                    }
-
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked: {
-                            modelData.activate()
-                        }
-                    }
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: workspaceDot.modelData.activate()
                 }
             }
         }
