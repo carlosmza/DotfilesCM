@@ -29,3 +29,9 @@ hl.workspace_rule({
 	on_created_empty = "kitty ytm",
 	gaps_out = 90
 })
+
+hl.workspace_rule({
+	workspace = "special:notes",
+	on_created_empty = "foot nvim /tmp/notes",
+	gaps_out = 90,
+})

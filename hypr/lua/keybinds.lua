@@ -4,46 +4,56 @@ local var = require("lua.variables")
 local mainMod = var.mainMod
 
 -- Apps
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(var.terminal))
-hl.bind(mainMod .. " + Q", hl.dsp.window.close())
+hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(var.terminal))
+hl.bind(mainMod .. " + Q", hl.dsp.window.kill())
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(var.menu))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(var.fileExplorer))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(var.browser))
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd( "systemctl --user start argos-daemon.service && " .. var.pdfViewer))
-hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("hyprshot -m region -o /home/carlosm/Pictures/Screenshots -f \"Screenshot-From-$(date +%Y-%m-%d_%H-%M-%S).png\""))
-hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p 'History:' -theme ~/.config/rofi/menus/clipboard.rasi | cliphist decode | wl-copy"))
+hl.bind(mainMod .. " + U", hl.dsp.exec_cmd("killall dolphin-emu"))
+-- hl.bind(mainMod .. " + O", hl.dsp.exec_cmd( "systemctl --user start argos-daemon.service && " .. var.pdfViewer))
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(var.pdfViewer))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprshot -m region -o /home/carlosm/Pictures/Screenshots -f \"Screenshot-From-$(date +%Y-%m-%d_%H-%M-%S).png\""))
+hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p 'History:' -theme ~/.config/rofi/menus/clipboard.rasi | cliphist decode | wl-copy"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("/home/carlosm/Apps/Musescore/MuseScore-Studio-4.7.6.261022093-x86_64.AppImage"))
 
 -- Theme and display
--- hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/themes/theme-switcher.sh"))
+---- hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/themes/theme-switcher.sh"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("skwd-wall-v2"))
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("quickshell ipc call theme toggle"))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell ipc call wallpapers toggle"))
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/display-switcher.sh"))
+-- hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell ipc call wallpapers toggle"))
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("quickshell ipc call display toggle"))
+-- hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/display-switcher.sh"))
 
 -- Lock screen
-hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("qs -p /home/carlosm/.config/quickshell/lock --no-duplicate"))
 
 -- Power
-hl.bind("XF86PowerOff", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/power-menu.sh"))
+hl.bind("XF86PowerOff", hl.dsp.exec_cmd("quickshell ipc call power toggle"))
+-- hl.bind("XF86PowerOff", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/system/power-menu.sh"))
 
 -- Utilities
--- hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/argos-client.sh"))
-hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("/home/carlosm/noqs.sh"))
--- hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/traduction-es-en.sh"))
--- hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/dictionary-en-en.sh"))
-hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/2lyrics-pdf.py"))
-hl.bind(mainMod .. " +  D", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/translate.py"))
 hl.bind(mainMod .. " +  D", hl.dsp.exec_cmd("quickshell ipc call dictionary toggle"))
 hl.bind(mainMod .. " +  E", hl.dsp.exec_cmd("systemctl --user start argos-daemon.service && quickshell ipc call translate toggle"))
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("systemctl --user start argos-daemon.service && quickshell ipc call translate-window toggle"))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("pkill -USR2 -x handy"))
+hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/sync-linuxsync.sh"))
+-- hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/argos-client.sh"))
+-- hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("/home/carlosm/noqs.sh"))
+-- hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/traduction-es-en.sh"))
+-- hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/dictionary-en-en.sh"))
+-- hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/2lyrics-pdf.py"))
+-- hl.bind(mainMod .. " +  D", hl.dsp.exec_cmd("/home/carlosm/.config/scripts/utilities/translate.py"))
 
 
--- Scratchpad
+-- Special
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+-- notes 
+hl.bind(mainMod .. " + N", hl.dsp.workspace.toggle_special("notes"))
 -- ytm
-hl.bind(mainMod .. " + M", function()
-    hl.dispatch(hl.dsp.workspace.toggle_special("ytm"))
-end)
+-- hl.bind(mainMod .. " + M", function()
+--     hl.dispatch(hl.dsp.workspace.toggle_special("ytm"))
+-- end)
 
 -- Focus movement
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
@@ -72,8 +82,8 @@ hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),         { locked = true, repeating = true })
 hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),        { locked = true, repeating = true })
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),      { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),                     { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                     { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+ && quickshell ipc call brillo mostrar"),   { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%- && quickshell ipc call brillo mostrar"),   { locked = true, repeating = true })
 
 hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
